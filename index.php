@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Design Reciclagem</title>
+    <title>Página Inicial</title>
     <link rel="icon" href="img/logo.png" type="image/png">
     <link rel="stylesheet" href="CSS/index.css">
 </head>
@@ -90,3 +90,4 @@
 
 </body>
 </html>
+
