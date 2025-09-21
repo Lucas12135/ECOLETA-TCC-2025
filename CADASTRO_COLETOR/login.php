@@ -19,7 +19,7 @@
         <span class="logo-text">Portal do Coletor</span>
       </div>
       <nav>
-        <a href="#" class="btn-outline">Home</a>
+        <a href="../index.php" class="btn-outline">Home</a>
         <a href="#" class="btn-filled">Entrar</a>
         <div class="menu-icon" onclick="toggleMenu()" id="menuIcon">
           <span></span>
