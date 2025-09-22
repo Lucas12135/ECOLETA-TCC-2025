@@ -4,13 +4,14 @@ Ecoleta tem como principal objetivo solucionar um problema ambiental e social na
 
 O funcionamento é bem simples:
 
-O usuário solicita a coleta do óleo de cozinha usado por meio do aplicativo.
+O usuário agenda a coleta do óleo de cozinha usado por meio do aplicativo.
 
 Ele informa a quantidade e a localização para a coleta.
 
 Em seguida, um coletor parceiro é acionado para realizar a retirada do material e garantir sua destinação adequada.
 
 Com base na pesquisa de campo realizada por nois, a ideia foi extremamente bem recebida pelo público, que demonstrou grande receptividade à proposta de um aplicativo de coleta. A maioria dos entrevistados afirmaram que usaria a ferramenta, principalmente por sua praticidade e pelo propósito ambiental claro.
+
 
 
 
