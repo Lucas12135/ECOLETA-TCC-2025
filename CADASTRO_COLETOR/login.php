@@ -169,7 +169,6 @@ if(!empty($_POST))
     } catch(PDOException $e) {
     echo "Erro ao cadastrar: " . $e->getMessage();
   }
-  $conn = null; // FECHAMENTO DA CONEXÃO
-
+  $conn = null; 
   }
 ?>
