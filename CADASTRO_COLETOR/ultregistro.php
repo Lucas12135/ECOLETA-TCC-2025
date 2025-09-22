@@ -52,33 +52,50 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="city">Cidade <span class="required">*</span></label>
-                <input type="text" id="city" name="city" placeholder="Sua cidade" required>
+                <input type="text" id="cidade" name="city" placeholder="Sua cidade" required>
               </div>
               <div class="form-group">
                 <label for="cep">CEP <span class="required">*</span></label>
-                <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required>
+                <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9" required onblur="pesquisacep();">
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label for="state">Estado <span class="required">*</span></label>
-                <select id="state" name="state" required>
+                <select id="estado" name="state" required>
                   <option value="">Selecione seu estado</option>
-                  <option value="SP">São Paulo</option>
-                  <option value="RJ">Rio de Janeiro</option>
-                  <option value="MG">Minas Gerais</option>
-                  <option value="RS">Rio Grande do Sul</option>
-                  <option value="PR">Paraná</option>
-                  <option value="SC">Santa Catarina</option>
-                  <option value="BA">Bahia</option>
-                  <option value="GO">Goiás</option>
-                  <option value="PE">Pernambuco</option>
-                  <option value="CE">Ceará</option>
+                  <option value="AC">AC</option>
+                  <option value="AL">AL</option>
+                  <option value="AP">AP</option>
+                  <option value="AM">AM</option>
+                  <option value="BA">BA</option>
+                  <option value="CE">CE</option>
+                  <option value="DF">DF</option>
+                  <option value="ES">ES</option>
+                  <option value="GO">GO</option>
+                  <option value="MA">MA</option>
+                  <option value="MT">MT</option>
+                  <option value="MS">MS</option>
+                  <option value="MG">MG</option>
+                  <option value="PA">PA</option>
+                  <option value="PB">PB</option>
+                  <option value="PR">PR</option>
+                  <option value="PE">PE</option>
+                  <option value="PI">PI</option>
+                  <option value="RJ">RJ</option>
+                  <option value="RN">RN</option>
+                  <option value="RS">RS</option>
+                  <option value="RO">RO</option>
+                  <option value="RR">RR</option>
+                  <option value="SC">SC</option>
+                  <option value="SP">SP</option>
+                  <option value="SE">SE</option>
+                  <option value="TO">TO</option>
                 </select>
               </div>
               <div class="form-group">
                 <label for="neighborhood">Bairro <span class="required">*</span></label>
-                <input type="text" id="neighborhood" name="neighborhood" placeholder="Seu bairro" required>
+                <input type="text" id="bairro" name="neighborhood" placeholder="Seu bairro" required>
               </div>
             </div>
             <div class="form-row">

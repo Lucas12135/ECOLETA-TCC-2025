@@ -119,6 +119,11 @@
         <h2>Cadastre-se como coletor</h2>
         <form method="POST" action="#" onsubmit="return validarEmail(event)">
           <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required>
+          <select id="tipo" name="tipo" required>
+            <option value="" disabled selected>Selecione o tipo de coletor</option>
+            <option value="pessoa_fisica">Pessoa Física</option>
+            <option value="pessoa_juridica">Pessoa Jurídica</option>
+          </select>
           <label>
             <input type="checkbox" required>
             <span>Aceito os <a href="#">Termos de Uso</a> e condições da Ecoleta</span>
@@ -142,7 +147,7 @@
   <script src="../JS/login.js"></script>
 </body>
 </html>
-<?php /*
+<?php 
 if(!empty($_POST))
 {
   $email = $_POST['email'];
@@ -164,7 +169,6 @@ if(!empty($_POST))
     } catch(PDOException $e) {
     echo "Erro ao cadastrar: " . $e->getMessage();
   }
-  $conn = null; // FECHAMENTO DA CONEXÃO
-
+  $conn = null; 
   }
-?>*/
+?>
