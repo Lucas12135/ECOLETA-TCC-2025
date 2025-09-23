@@ -429,11 +429,27 @@
       transition: all 0.3s ease;
     }
 
+      .form-box input[type="password"] {
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
     .form-box input[type="email"]:focus {
       outline: none;
       border-color: var(--cor-secondaria);
       box-shadow: 0 0 0 3px rgba(255, 206, 70, 0.2);
     }
+
+      .form-box input[type="password"]:focus {
+        outline: none;
+        border-color: var(--cor-secondaria);
+        box-shadow: 0 0 0 3px rgba(255, 206, 70, 0.2);
+      }
 
     .form-box label {
       display: flex;
