@@ -74,7 +74,7 @@
 
     // Validação do formulário
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+      
       
       const fullName = document.getElementById('fullName');
       const cpf = document.getElementById('cpf');
@@ -87,6 +87,7 @@
       if (fullName.value.trim().length < 3 || fullName.value.trim().split(' ').length < 2) {
         fullName.closest('.form-group').classList.add('error');
         isValid = false;
+        e.preventDefault();
       } else {
         fullName.closest('.form-group').classList.remove('error');
       }
@@ -95,6 +96,7 @@
       if (!isValidCPF(cpf.value)) {
         cpf.closest('.form-group').classList.add('error');
         isValid = false;
+        e.preventDefault();
       } else {
         cpf.closest('.form-group').classList.remove('error');
       }
@@ -103,6 +105,7 @@
       if (!isValidPhone(phone.value)) {
         phone.closest('.form-group').classList.add('error');
         isValid = false;
+        e.preventDefault();
       } else {
         phone.closest('.form-group').classList.remove('error');
       }
@@ -114,8 +117,6 @@
       }
       
       if (isValid) {
-        alert('Cadastro realizado com sucesso!');
-        window.location.href = "ultregistro.php"; // Redirecionar para a próxima página
         // Aqui você pode prosseguir para a próxima etapa ou enviar os dados
         console.log('Dados do formulário:', {
           fullName: fullName.value,

@@ -56,8 +56,7 @@
     });
   });
 
-  function validarEmail(event) {
-    event.preventDefault();
+  /*function validarEmail() {
     var email = document.getElementById("email").value;
     var usuario = email.substr(0, email.indexOf("@"));
     var dominio = email.substr(email.indexOf("@") + 1, email.length);
@@ -71,9 +70,9 @@
       (dominio.search(".") != -1) &&
       (dominio.indexOf(".") >= 1) &&
       (dominio.lastIndexOf(".") < dominio.length - 1)) {
-      window.location.href = "../CADASTRO_COLETOR/registro.php";
+      
     } else {
       document.getElementById("email").focus();
     }
     return false;
-  }
+  }*/
