@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,12 +36,7 @@
 
     <script>
         document.getElementById('visitProfileBtn').addEventListener('click', function() {
-            // Lógica do JavaScript aqui
-            // Exemplo: redirecionar o usuário
-            console.log("Botão 'Visitar Perfil' clicado!");
-            // window.location.href = "sua_pagina_de_perfil.html";
-            // Para este exemplo, apenas um alerta para demonstrar a interatividade.
-            alert("Redirecionando para o perfil do usuário...");
+            window.location.href = "../index.php";
         });
     </script>
 </body>

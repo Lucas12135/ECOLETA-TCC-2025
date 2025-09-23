@@ -1,3 +1,15 @@
+<?php
+session_start();
+
+if(!empty($_POST)) {
+  $_SESSION['cadastro']['nome'] = $_POST['nome'];
+  $_SESSION['cadastro']['cpf'] = preg_replace('/\D/', '', $_POST['cpf']);
+  $_SESSION['cadastro']['celular'] = preg_replace('/\D/', '', $_POST['celular']);
+  // Redireciona para a próxima página do cadastro
+  header('Location: ultregistro.php');
+  exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -45,8 +57,8 @@
         <h2>Primeiros passos</h2>
         <form method="POST" action="#" id="registrationForm" novalidate>
           <div class="form-group">
-            <label for="fullName" class="field-label">Nome Completo *</label>
-            <input type="text" id="fullName" name="fullName" placeholder="Digite seu nome completo" required>
+            <label for="nome" class="field-label">Nome Completo *</label>
+            <input type="text" id="fullName" name="nome" placeholder="Digite seu nome completo" required>
             <div class="error-message">Por favor, digite seu nome completo</div>
           </div>
 
@@ -57,8 +69,8 @@
           </div>
 
           <div class="form-group">
-            <label for="phone" class="field-label">Telefone *</label>
-            <input type="tel" id="phone" name="phone" placeholder="(00) 00000-0000" maxlength="15" required>
+            <label for="celular" class="field-label">Telefone *</label>
+            <input type="tel" id="phone" name="celular" placeholder="(00) 00000-0000" maxlength="15" required>
             <div class="error-message">Por favor, digite um telefone válido</div>
           </div>
 
@@ -90,29 +102,3 @@
   <script src="../JS/registro.js"></script>
 </body>
 </html>
-<?php /*
-if(!empty($_POST))
-{
-  $email = $_POST['email'];
-
-  include_once('conexao.php');   //   ARQUIVO UTILIZADO COMO BIBLIOTECA PARA CONECTAR AO BANCO DE DADOS
-  
-  try {
-    if ($conn) {
-
-      $stmt = $conn->prepare("INSERT INTO coletores (email)  
-                                           VALUES (:email)"); //INSTRUÇÃO SQL
-
-      $stmt->bindParam(':email', $email);
-
-      
-      $stmt->execute();                    // EXECUÇÃO DA INSTRUÇÃO PELO OBJETO
-
-    }
-    } catch(PDOException $e) {
-    echo "Erro ao cadastrar: " . $e->getMessage();
-  }
-  $conn = null; // FECHAMENTO DA CONEXÃO
-
-  }
-?>*/

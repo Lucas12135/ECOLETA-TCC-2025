@@ -1,3 +1,20 @@
+<?php
+session_start();
+
+if (isset($_SESSION['cadastro'])) {
+    $_SESSION['cadastro'] = [];
+}
+
+if(!empty($_POST))
+{
+  $_SESSION['cadastro']['email'] = $_POST['email'];
+  $_SESSION['cadastro']['tipo'] = $_POST['tipo'];
+  $_SESSION['cadastro']['senha'] = $_POST['senha'];
+  // Redireciona para a próxima página do cadastro
+  header('Location: registro.php');
+  exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -117,8 +134,9 @@
 
       <div class="form-box">
         <h2>Cadastre-se como coletor</h2>
-        <form method="POST" action="#" onsubmit="return validarEmail(event)">
+        <form method="POST" action="#">
           <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required>
+          <input type="password" id="senha" name="senha" placeholder="Insira a sua melhor senha" required>
           <select id="tipo" name="tipo" required>
             <option value="" disabled selected>Selecione o tipo de coletor</option>
             <option value="pessoa_fisica">Pessoa Física</option>
@@ -147,28 +165,3 @@
   <script src="../JS/login.js"></script>
 </body>
 </html>
-<?php 
-if(!empty($_POST))
-{
-  $email = $_POST['email'];
-
-  include_once('conexao.php');   //   ARQUIVO UTILIZADO COMO BIBLIOTECA PARA CONECTAR AO BANCO DE DADOS
-  
-  try {
-    if ($conn) {
-
-      $stmt = $conn->prepare("INSERT INTO coletores (email)  
-                                           VALUES (:email)"); //INSTRUÇÃO SQL
-
-      $stmt->bindParam(':email', $email);
-
-      
-      $stmt->execute();                    // EXECUÇÃO DA INSTRUÇÃO PELO OBJETO
-
-    }
-    } catch(PDOException $e) {
-    echo "Erro ao cadastrar: " . $e->getMessage();
-  }
-  $conn = null; 
-  }
-?>
