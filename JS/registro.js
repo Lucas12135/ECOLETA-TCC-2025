@@ -121,7 +121,6 @@
       
       // Validar consentimento
       if (!dataConsent.checked) {
-        alert('Por favor, concorde com o fornecimento dos dados para continuar.');
         isValid = false;
       }
       
