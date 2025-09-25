@@ -1,3 +1,74 @@
+<?php
+session_start();
+if(!empty($_POST)) {
+  // Salva os dados da última etapa na sessão
+  $endereco = $_POST['endereco'];
+// Exemplo: "Rua das Flores, 123, apto 45"
+$partes = explode(',', $endereco);
+$rua = trim($partes[0] ?? '');
+$numero = trim($partes[1] ?? '');
+$complemento = trim($partes[2] ?? '');
+  $_SESSION['cadastro']['rua'] = $rua;
+  $_SESSION['cadastro']['numero'] = $numero;
+  $_SESSION['cadastro']['complemento'] = $complemento;
+  $_SESSION['cadastro']['cidade'] = $_POST['cidade'];
+  $_SESSION['cadastro']['cep'] = $_POST['cep'];
+  $_SESSION['cadastro']['estado'] = $_POST['estado'];
+  $_SESSION['cadastro']['bairro'] = $_POST['bairro'];
+  $_SESSION['cadastro']['data_nasc'] = $_POST['data_nasc'];
+  $_SESSION['cadastro']['genero'] = $_POST['genero'];
+  $_SESSION['cadastro']['experiencia'] = $_POST['experiencia'];
+  $_SESSION['cadastro']['disponibilidade'] = $_POST['disponibilidade'];
+  $_SESSION['cadastro']['transporte'] = $_POST['transporte'];
+
+  include_once('../BANCO/conexao.php');
+
+  // Recupera todos os dados do cadastro
+  $dados = $_SESSION['cadastro'];
+
+  try {
+    if ($conn) {
+                // 1. Insere endereço na tabela 'enderecos' (PDO)
+                $stmt_endereco = $conn->prepare("INSERT INTO enderecos (
+                rua, numero, complemento, cidade, cep, estado, bairro
+                ) VALUES (
+                  :rua, :numero, :complemento, :cidade, :cep, :estado, :bairro
+                )");
+                $stmt_endereco->bindParam(':rua', $dados['rua']);
+                $stmt_endereco->bindParam(':numero', $dados['numero']);
+                $stmt_endereco->bindParam(':complemento', $dados['complemento']);
+                $stmt_endereco->bindParam(':cidade', $dados['cidade']);
+                $stmt_endereco->bindParam(':cep', $dados['cep']);
+                $stmt_endereco->bindParam(':estado', $dados['estado']);
+                $stmt_endereco->bindParam(':bairro', $dados['bairro']);
+                $stmt_endereco->execute();
+                $id_endereco = $conn->lastInsertId();
+
+                // 2. Insere coletor na tabela 'coletores', relacionando com o endereço
+                $stmt = $conn->prepare("INSERT INTO coletores (
+                  email, senha, tipo_coletor, nome_identificacao, cpf_cnpj, telefone, data_nasc, genero, id_endereco, meio_transporte
+                ) VALUES (
+                  :email, :senha, :tipo_coletor, :nome_identificacao, :cpf_cnpj, :telefone, :data_nasc, :genero, :id_endereco, :meio_transporte
+                )");
+                $stmt->bindParam(':email', $dados['email']);
+                $stmt->bindParam(':senha', $dados['senha']);
+                $stmt->bindParam(':tipo_coletor', $dados['tipo']);
+                $stmt->bindParam(':nome_identificacao', $dados['nome']);
+                $stmt->bindParam(':cpf_cnpj', $dados['cpf']);
+                $stmt->bindParam(':telefone', $dados['celular']);
+                $stmt->bindParam(':data_nasc', $dados['data_nasc']);
+                $stmt->bindParam(':genero', $dados['genero']);
+                $stmt->bindParam(':meio_transporte', $dados['transporte']);
+                $stmt->bindParam(':id_endereco', $id_endereco, PDO::PARAM_INT);
+                $stmt->execute();
+  } 
+} catch(PDOException $e) {
+    echo "<div style='color:red'>Erro ao cadastrar: " . $e->getMessage() . "</div>";
+  }
+  header("Location: final.php");
+  $conn = null;
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -39,20 +110,20 @@
       </div>
 
       <!-- Corpo do Formulário -->
-      <div class="form-body">
-        <div class="form-fields">
-          <form id="finalRegistrationForm" novalidate>
+       <form action="#" method="POST" class="form" id="finalRegistrationForm">
+          <div class="form-body">
+            <div class="form-fields">
             <div class="form-row full">
               <div class="form-group">
-                <label for="address">Endereço Completo <span class="required">*</span></label>
-                <input type="text" id="address" name="address" placeholder="Rua, número, complemento" required>
+                <label for="endereco">Endereço Completo <span class="required">*</span></label>
+                <input type="text" id="endereco" name="endereco" placeholder="Rua, número, complemento" required>
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label for="city">Cidade <span class="required">*</span></label>
-                <input type="text" id="cidade" name="city" placeholder="Sua cidade" required>
+                <label for="cidade">Cidade <span class="required">*</span></label>
+                <input type="text" id="cidade" name="cidade" placeholder="Sua cidade" required>
               </div>
               <div class="form-group">
                 <label for="cep">CEP <span class="required">*</span></label>
@@ -61,8 +132,8 @@
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="state">Estado <span class="required">*</span></label>
-                <select id="estado" name="state" required>
+                <label for="estado">Estado <span class="required">*</span></label>
+                <select id="estado" name="estado" required>
                   <option value="">Selecione seu estado</option>
                   <option value="AC">AC</option>
                   <option value="AL">AL</option>
@@ -94,18 +165,18 @@
                 </select>
               </div>
               <div class="form-group">
-                <label for="neighborhood">Bairro <span class="required">*</span></label>
-                <input type="text" id="bairro" name="neighborhood" placeholder="Seu bairro" required>
+                <label for="bairro">Bairro <span class="required">*</span></label>
+                <input type="text" id="bairro" name="bairro" placeholder="Seu bairro" required>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="birthdate">Data de Nascimento <span class="required">*</span></label>
-                <input type="date" id="birthdate" name="birthdate" required>
+                <label for="data_nasc">Data de Nascimento <span class="required">*</span></label>
+                <input type="date" id="birthdate" name="data_nasc" required>
               </div>
               <div class="form-group">
-                <label for="gender">Gênero</label>
-                <select id="gender" name="gender">
+                <label for="genero">Gênero</label>
+                <select id="gender" name="genero">
                   <option value="">Prefiro não informar</option>
                   <option value="M">Masculino</option>
                   <option value="F">Feminino</option>
@@ -115,14 +186,14 @@
             </div>
             <div class="form-row full">
               <div class="form-group">
-                <label for="experience">Experiência com coleta (opcional)</label>
-                <textarea id="experience" name="experience" placeholder="Conte-nos sobre sua experiência com coleta de materiais recicláveis..."></textarea>
+                <label for="experiencia">Experiência com coleta (opcional)</label>
+                <textarea id="experience" name="experiencia" placeholder="Conte-nos sobre sua experiência com coleta de materiais recicláveis..."></textarea>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="availability">Disponibilidade <span class="required">*</span></label>
-                <select id="availability" name="availability" required>
+                <label for="disponibilidade">Disponibilidade <span class="required">*</span></label>
+                <select id="availability" name="disponibilidade" required>
                   <option value="">Selecione sua disponibilidade</option>
                   <option value="manha">Manhã</option>
                   <option value="tarde">Tarde</option>
@@ -132,8 +203,8 @@
                 </select>
               </div>
               <div class="form-group">
-                <label for="transport">Meio de Transporte <span class="required">*</span></label>
-                <select id="transport" name="transport" required>
+                <label for="transporte">Meio de Transporte <span class="required">*</span></label>
+                <select id="transport" name="transporte" required>
                   <option value="">Selecione seu transporte</option>
                   <option value="bicicleta">Bicicleta</option>
                   <option value="motocicleta">Motocicleta</option>

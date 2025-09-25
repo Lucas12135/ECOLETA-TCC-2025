@@ -43,6 +43,7 @@ if (!("erro" in conteudo)) {
   document.getElementById('estado').value = conteudo.uf;
   document.getElementById('bairro').value = conteudo.bairro;
   document.getElementById('cidade').value = conteudo.localidade;
+  document.getElementById('endereco').value = conteudo.logradouro;
 } //end if.
 else {
     //CEP não Encontrado.
@@ -114,7 +115,7 @@ else {
 
     // Validação e envio do formulário
     document.getElementById('finalRegistrationForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+      
       
       const requiredFields = this.querySelectorAll('[required]');
       let isValid = true;
@@ -122,6 +123,7 @@ else {
       requiredFields.forEach(field => {
         if (!field.value.trim()) {
           field.style.borderColor = '#e74c3c';
+          e.preventDefault();
           isValid = false;
         } else {
           field.style.borderColor = '#ddd';
@@ -129,7 +131,6 @@ else {
       });
       
       if (isValid) {
-        alert('Cadastro finalizado com sucesso! Bem-vindo ao Portal do Coletor!');
         console.log('Dados do formulário final:', new FormData(this));
         // Aqui você redirecionaria para a página de sucesso ou dashboard
       }

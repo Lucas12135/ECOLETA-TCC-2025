@@ -1,4 +1,14 @@
- // Seleciona os elementos do DOM
+new window.VLibras.Widget('https://vlibras.gov.br/app');
+
+  function toggleAccessibility(event) {
+    if (event) event.stopPropagation();
+
+    const vlibrasButton = document.querySelector('div[vw-access-button]');
+    if (vlibrasButton) {
+      vlibrasButton.click();
+    }
+  }
+// Seleciona os elementos do DOM
 var loginBtn = document.getElementById('open-login-modal-btn');
 var modal = document.getElementById('modal');
 var closeBtn = document.querySelector('.close-btn');

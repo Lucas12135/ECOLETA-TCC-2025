@@ -55,25 +55,3 @@
       document.getElementById('menuOverlay').classList.remove('active');
     });
   });
-
-  function validarEmail(event) {
-    event.preventDefault();
-    var email = document.getElementById("email").value;
-    var usuario = email.substr(0, email.indexOf("@"));
-    var dominio = email.substr(email.indexOf("@") + 1, email.length);
-
-    if ((usuario.length >= 1) &&
-      (dominio.length >= 3) &&
-      (usuario.search("@") == -1) &&
-      (dominio.search("@") == -1) &&
-      (usuario.search(" ") == -1) &&
-      (dominio.search(" ") == -1) &&
-      (dominio.search(".") != -1) &&
-      (dominio.indexOf(".") >= 1) &&
-      (dominio.lastIndexOf(".") < dominio.length - 1)) {
-      window.location.href = "../CADASTRO_COLETOR/registro.php";
-    } else {
-      document.getElementById("email").focus();
-    }
-    return false;
-  }

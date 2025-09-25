@@ -68,13 +68,22 @@
 
     // Validação de telefone
     function isValidPhone(phone) {
-      const phoneNumbers = phone.replace(/\D/g, '');
-      return phoneNumbers.length >= 10 && phoneNumbers.length <= 11;
-    }
+  const dddsValidos = [
+    11,12,13,14,15,16,17,18,19,21,22,24,27,28,31,32,33,34,35,37,38,41,42,43,44,45,46,
+    47,48,49,51,53,54,55,61,62,64,63,65,66,67,68,69,71,73,74,75,77,79,81,82,83,84,85,
+    86,87,88,89,91,92,93,94,95,96,97,98,99
+  ];
+  phone = phone.replace(/\D/g, '');
+  if (phone.length < 10 || phone.length > 11) return false;
+  const ddd = parseInt(phone.substring(0,2));
+  if (!dddsValidos.includes(ddd)) return false;
+  if (phone.length === 11 && phone[2] !== '9') return false; // Celular deve começar com 9
+  return true;
+}
 
     // Validação do formulário
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
-      e.preventDefault();
+      
       
       const fullName = document.getElementById('fullName');
       const cpf = document.getElementById('cpf');
@@ -87,6 +96,7 @@
       if (fullName.value.trim().length < 3 || fullName.value.trim().split(' ').length < 2) {
         fullName.closest('.form-group').classList.add('error');
         isValid = false;
+        e.preventDefault();
       } else {
         fullName.closest('.form-group').classList.remove('error');
       }
@@ -95,6 +105,7 @@
       if (!isValidCPF(cpf.value)) {
         cpf.closest('.form-group').classList.add('error');
         isValid = false;
+        e.preventDefault();
       } else {
         cpf.closest('.form-group').classList.remove('error');
       }
@@ -103,6 +114,7 @@
       if (!isValidPhone(phone.value)) {
         phone.closest('.form-group').classList.add('error');
         isValid = false;
+        e.preventDefault();
       } else {
         phone.closest('.form-group').classList.remove('error');
       }
@@ -114,8 +126,6 @@
       }
       
       if (isValid) {
-        alert('Cadastro realizado com sucesso!');
-        window.location.href = "ultregistro.php"; // Redirecionar para a próxima página
         // Aqui você pode prosseguir para a próxima etapa ou enviar os dados
         console.log('Dados do formulário:', {
           fullName: fullName.value,

@@ -1,3 +1,45 @@
+<?php
+session_start();
+
+$errors = [];
+
+if (isset($_SESSION['cadastro'])) {
+    $_SESSION['cadastro'] = [];
+}
+
+if(!empty($_POST))
+{
+  // Validação dos campos
+  if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+    $errors['email'] = 'Digite um email válido.';
+  }
+if (empty($_POST['senha'])) {
+  $errors['senha'] = 'Digite uma senha.';
+} else {
+  $senha = $_POST['senha'];
+  if (
+    strlen($senha) < 8 ||
+    !preg_match('/[A-Z]/', $senha) || // pelo menos uma maiúscula
+    !preg_match('/[a-z]/', $senha) || // pelo menos uma minúscula
+    !preg_match('/[0-9]/', $senha) || // pelo menos um número
+    !preg_match('/[^A-Za-z0-9]/', $senha) // pelo menos um caractere especial
+  ) {
+    $errors['senha'] = '* A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.';
+  }
+}
+  if (empty($_POST['tipo'])) {
+    $errors['tipo'] = 'Selecione o tipo de coletor.';
+  }
+
+  if (empty($errors)) {
+    $_SESSION['cadastro']['email'] = $_POST['email'];
+    $_SESSION['cadastro']['tipo'] = $_POST['tipo'];
+    $_SESSION['cadastro']['senha'] = $_POST['senha'];
+    header('Location: registro.php');
+    exit;
+  }
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -117,13 +159,23 @@
 
       <div class="form-box">
         <h2>Cadastre-se como coletor</h2>
-        <form method="POST" action="#" onsubmit="return validarEmail(event)">
-          <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required>
+        <form method="POST" action="#">
+          <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
+          <?php if (isset($errors['email'])): ?>
+            <div class="input-error"><?= $errors['email'] ?></div>
+          <?php endif; ?>
+          <input type="password" id="senha" name="senha" placeholder="Insira a sua melhor senha" required>
+          <?php if (isset($errors['senha'])): ?>
+            <div class="input-error"><?= $errors['senha'] ?></div>
+          <?php endif; ?>
           <select id="tipo" name="tipo" required>
-            <option value="" disabled selected>Selecione o tipo de coletor</option>
-            <option value="pessoa_fisica">Pessoa Física</option>
-            <option value="pessoa_juridica">Pessoa Jurídica</option>
+            <option value="" disabled <?= !isset($_POST['tipo']) ? 'selected' : '' ?>>Selecione o tipo de coletor</option>
+            <option value="pessoa_fisica" <?= (isset($_POST['tipo']) && $_POST['tipo'] == 'pessoa_fisica') ? 'selected' : '' ?>>Pessoa Física</option>
+            <option value="pessoa_juridica" <?= (isset($_POST['tipo']) && $_POST['tipo'] == 'pessoa_juridica') ? 'selected' : '' ?>>Pessoa Jurídica</option>
           </select>
+          <?php if (isset($errors['tipo'])): ?>
+            <div class="input-error"><?= $errors['tipo'] ?></div>
+          <?php endif; ?>
           <label>
             <input type="checkbox" required>
             <span>Aceito os <a href="#">Termos de Uso</a> e condições da Ecoleta</span>
@@ -147,28 +199,3 @@
   <script src="../JS/login.js"></script>
 </body>
 </html>
-<?php 
-if(!empty($_POST))
-{
-  $email = $_POST['email'];
-
-  include_once('conexao.php');   //   ARQUIVO UTILIZADO COMO BIBLIOTECA PARA CONECTAR AO BANCO DE DADOS
-  
-  try {
-    if ($conn) {
-
-      $stmt = $conn->prepare("INSERT INTO coletores (email)  
-                                           VALUES (:email)"); //INSTRUÇÃO SQL
-
-      $stmt->bindParam(':email', $email);
-
-      
-      $stmt->execute();                    // EXECUÇÃO DA INSTRUÇÃO PELO OBJETO
-
-    }
-    } catch(PDOException $e) {
-    echo "Erro ao cadastrar: " . $e->getMessage();
-  }
-  $conn = null; 
-  }
-?>
