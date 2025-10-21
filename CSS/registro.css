@@ -12,6 +12,7 @@
   --cor-terciaria: #f8f4e7;
   --cor-quaternaria: #47704a;
   --cor-texto-primaria: #4c4c4c;
+  --cor-botao: #223e2a;
 }
 
 * {
@@ -317,7 +318,7 @@ div[vw-access-button] {
 }
 
 .btn-back:hover {
-  background-color: var(--cor-primaria);
+  background-color: var(--cor-botao);
   color: white;
   transform: translateY(-1px);
   box-shadow: 0 6px 15px rgba(34, 62, 42, 0.2);
