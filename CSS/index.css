@@ -19,6 +19,7 @@
 body {
   background-color: var(--cream-bg);
   color: var(--green-text);
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -143,12 +144,6 @@ header {
 /* Main Content */
 .main-content {
   padding: 1.5rem 0.5rem;
-}
-
-@media (min-width: 768px) {
-  .main-content {
-    padding: 3rem 1.5rem;
-  }
 }
 
 .hero-text {
@@ -278,27 +273,6 @@ header {
   border-radius: 1rem;
 }
 
-.card-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-.card-content {
-  position: relative;
-  height: 100%;
-  padding: 1.5rem;
-  color: white;
-}
-
-.card-content h2 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
 
 .card-button {
   background-color: rgba(255, 255, 255, 0.2);
@@ -315,6 +289,8 @@ header {
   font-weight: 600;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
+  margin-top: 50px;
+  margin-right: 10rem;
 }
 
 .card-button:hover {
@@ -335,9 +311,9 @@ header {
 }
 
 .accessibility-button {
-  position: absolute;
+  position: fixed;
   bottom: 20px;
-  right: -20px;
+  right: 20px;
   width: 60px;
   height: 60px;
   background-color: var(--yellow-btn);
@@ -368,8 +344,134 @@ div[vw-access-button] {
   display: none !important;
 }
 
+
+.coletores-container {
+  max-width: 75rem;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  justify-items: center;
+}
+
+@media (min-width: 768px) {
+  .coletores-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+
+
+.card-content {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
 .coletores-proximos {
+  background: var(--green-btn);
   margin-top: 10rem;
+  margin-bottom: 20rem;
+  padding: 2rem 1rem;
+}
+
+.coletores-titulo {
+  color: white;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 3rem;
+  max-width: 50rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 640px) {
+  .coletores-titulo {
+    font-size: 2.5rem;
+  }
+}
+
+.coletor-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 20rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  margin: 1rem;
+  transition: transform 0.3s ease;
+  border-top: 4px solid var(--green-btn);
+}
+
+.coletor-card:hover {
+  transform: scale(1.02);
+}
+
+.coletor-card .avatar-placeholder {
+  font-size: 2.9rem;
+  text-align: center;
+}
+
+.coletor-nome {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-top: 1rem;
+  color: #1f2937;
+  text-align: center;
+}
+
+.coletor-info {
+  font-size: 1.15rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  margin-bottom: 1.5rem;
+}
+
+.star {
+  color: #9ca3af;
+  font-size: 1.85rem;
+}
+
+.star.filled {
+  color: #f59e0b;
+  font-size: 1.85rem;
+}
+
+.rating-number {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-left: 0.5rem;
+}
+
+.coletor-btn {
+  width: 100%;
+  background-color: var(--green-btn);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.15s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  border: none;
+}
+
+.coletor-btn:hover {
+  background-color: #1a2f20;
 }
 
 .modal-content {
@@ -435,4 +537,89 @@ div[vw-access-button] {
   width: 1.25rem;
   height: 1.25rem;
   color: #9ca3af;
+}
+
+/* Seção de Vantagens */
+.benefits-section {
+  padding: 4rem 1.5rem;
+  text-align: center;
+  background-color: var(--cream-bg);
+}
+
+.title-section {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: var(--green-text);
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .benefits-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.benefit-card {
+  min-height: 250px;
+  padding: 2rem 1rem;
+  border-radius: 1.9rem;
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.benefit-card h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+  color: var(--yellow-btn);
+}
+
+.benefit-card p {
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.card-green-bg {
+  background-color: var(--card-green);
+}
+
+.card-dark-green-bg {
+  background-color: var(--green-btn);
+  transform: scale(1.05);
+}
+
+.main-action-btn {
+  display: inline-block;
+  background-color: var(--card-green);
+  color: white;
+  padding: 1rem 3rem;
+  border-radius: 9999px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 3rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.main-action-btn:hover {
+  background-color: var(--green-btn);
+  transform: translateY(-2px);
 }
