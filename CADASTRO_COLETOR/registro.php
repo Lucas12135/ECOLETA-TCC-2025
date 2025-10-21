@@ -1,13 +1,29 @@
 <?php
 session_start();
-
-if(!empty($_POST)) {
-  $_SESSION['cadastro']['nome'] = $_POST['nome'];
-  $_SESSION['cadastro']['cpf'] = preg_replace('/\D/', '', $_POST['cpf']);
-  $_SESSION['cadastro']['celular'] = preg_replace('/\D/', '', $_POST['celular']);
-  // Redireciona para a próxima página do cadastro
-  header('Location: ultregistro.php');
-  exit;
+// Verifica se existe a sessão e o índice 'tipo'
+$tipo = $_SESSION['cadastro']['tipo'] ?? null;
+if ($tipo === "pessoa_juridica") {
+    $campo = 'cnpj';
+    $tamanho_campo = 18;
+    $placeholder = '00.000.000/0000-00';
+} elseif ($tipo === "pessoa_fisica") {
+    $campo = 'cpf';
+    $tamanho_campo = 14;
+    $placeholder = '000.000.000-00';
+} else {
+    $campo = 'deu ruim bixo'; // fallback
+    header('Location: login.php');
+    exit;
+}
+// Processamento do POST do formulário atual
+if (!empty($_POST)) {
+    // Use nomes corretos de campos: se for cnpj/ cpf, adapte
+    $_SESSION['cadastro']['nome'] = $_POST['nome'] ?? '';
+    // padroniza cpf/cnpj removendo não dígitos
+    $_SESSION['cadastro']['cpf'] = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
+    $_SESSION['cadastro']['celular'] = preg_replace('/\D/', '', $_POST['celular'] ?? '');
+    header('Location: ultregistro.php');
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -63,8 +79,8 @@ if(!empty($_POST)) {
           </div>
 
           <div class="form-group">
-            <label for="cpf" class="field-label">CPF *</label>
-            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
+            <label for="<?= $campo ?>" class="field-label"><?= strtoupper($campo) ?>  *</label>
+            <input type="text" id="<?= $campo ?>" name="<?= $campo ?>" placeholder="<?= $placeholder ?>" maxlength="<?= $tamanho_campo ?>" required>
             <div class="error-message">Por favor, digite um CPF válido</div>
           </div>
 

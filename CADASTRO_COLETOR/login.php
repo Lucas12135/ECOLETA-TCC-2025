@@ -3,41 +3,44 @@ session_start();
 
 $errors = [];
 
-if (isset($_SESSION['cadastro'])) {
+// Inicializa somente se NÃO existir
+if (!isset($_SESSION['cadastro'])) {
     $_SESSION['cadastro'] = [];
 }
 
-if(!empty($_POST))
-{
-  // Validação dos campos
-  if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-    $errors['email'] = 'Digite um email válido.';
-  }
-if (empty($_POST['senha'])) {
-  $errors['senha'] = 'Digite uma senha.';
-} else {
-  $senha = $_POST['senha'];
-  if (
-    strlen($senha) < 8 ||
-    !preg_match('/[A-Z]/', $senha) || // pelo menos uma maiúscula
-    !preg_match('/[a-z]/', $senha) || // pelo menos uma minúscula
-    !preg_match('/[0-9]/', $senha) || // pelo menos um número
-    !preg_match('/[^A-Za-z0-9]/', $senha) // pelo menos um caractere especial
-  ) {
-    $errors['senha'] = '* A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.';
-  }
-}
-  if (empty($_POST['tipo'])) {
-    $errors['tipo'] = 'Selecione o tipo de coletor.';
-  }
+if (!empty($_POST)) {
+    // Validação dos campos (mesma lógica sua)
+    if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Digite um email válido.';
+    }
+    if (empty($_POST['senha'])) {
+        $errors['senha'] = 'Digite uma senha.';
+    } else {
+        $senha = $_POST['senha'];
+        if (
+            strlen($senha) < 8 ||
+            !preg_match('/[A-Z]/', $senha) ||
+            !preg_match('/[a-z]/', $senha) ||
+            !preg_match('/[0-9]/', $senha) ||
+            !preg_match('/[^A-Za-z0-9]/', $senha)
+        ) {
+            $errors['senha'] = '* A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.';
+        }
+    }
+    if (empty($_POST['tipo'])) {
+        $errors['tipo'] = 'Selecione o tipo de coletor.';
+    }
 
-  if (empty($errors)) {
-    $_SESSION['cadastro']['email'] = $_POST['email'];
-    $_SESSION['cadastro']['tipo'] = $_POST['tipo'];
-    $_SESSION['cadastro']['senha'] = $_POST['senha'];
-    header('Location: registro.php');
-    exit;
-  }
+    if (empty($errors)) {
+        // grava na sessão
+        $_SESSION['cadastro']['email'] = $_POST['email'];
+        $_SESSION['cadastro']['tipo'] = $_POST['tipo'];
+        $_SESSION['cadastro']['senha'] = $_POST['senha'];
+
+        // redireciona para registro.php
+        header('Location: registro.php');
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>

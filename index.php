@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,29 +10,32 @@
     <link rel="icon" href="img/logo.png" type="image/png">
     <link rel="stylesheet" href="CSS/index.css">
 </head>
+
 <body class="overflow-x-hidden">
     <!-- Header -->
+
     <header class="header">
-        <div class="header-logo">
-            <div class="logo-placeholder">
-                <img src="img/logo.png" alt="Logo Reciclagem" class="logo-image">
+        <div class="header-container">
+            <div class="header-logo">
+                <div class="logo-placeholder">
+                    <img src="img/logo.png" alt="Logo Reciclagem" class="logo-image">
+                </div>
+
+                <div class="header-nav">
+                    <a href="#">Home</a>
+                </div>
             </div>
-            
-        <div class="header-nav">
-            <a href="#">Home</a>
-        </div>
-        </div>
-        <div class="header-buttons">
-            <button class="btn btn-account" onclick="location.href='CADASTRO_COLETOR/login.php'">Criar Conta</button>
-            <button class="btn btn-login" id="open-login-modal-btn">Entrar</button>
-            <div class="menu-icon">
-                <div></div>
-                <div></div>
-                <div></div>
+            <div class="header-buttons">
+                <button class="btn btn-account" onclick="location.href='CADASTRO_COLETOR/login.php'">Criar Conta</button>
+                <button class="btn btn-login" id="open-login-modal-btn">Entrar</button>
+                <div class="menu-icon">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
             </div>
         </div>
     </header>
-
     <!-- Main Content -->
     <main class="main-content">
         <div class="hero-text">
@@ -50,7 +54,7 @@
             </div>
             <button class="search-button">Buscar</button>
         </div>
-        
+
         <!-- Cards Section -->
         <div class="cards-section">
             <!-- Card 1: Ecopontos -->
@@ -88,43 +92,45 @@
         </div>
 
         <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4"/>
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z"/>
-          </g>
-        </svg>
-      </div>
-      
+            <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                    <title>accessibility</title>
+                    <g>
+                        <circle cx="24" cy="7" r="4" />
+                        <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                    </g>
+                </svg>
+            </div>
+
     </main>
     <!-- Modal -->
-<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-            <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
-            <div class="modal-body">
-                <h2 class="modal-title">Encontre coletores da sua região</h2>
-                <p class="modal-subtitle">A rapidez que você precisa está aqui!</p>
-                <div class="modal-input-container">
-                    <input type="text" placeholder="Insira sua localização">
-                    <!-- Search Icon SVG -->
-                    <svg class="modal-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8A4 4 0 008 4zM16 16l-4.9-4.9" clip-rule="evenodd" />
-                    </svg>
+    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-body">
+                    <h2 class="modal-title">Encontre coletores da sua região</h2>
+                    <p class="modal-subtitle">A rapidez que você precisa está aqui!</p>
+                    <div class="modal-input-container">
+                        <input type="text" placeholder="Insira sua localização">
+                        <!-- Search Icon SVG -->
+                        <svg class="modal-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8A4 4 0 008 4zM16 16l-4.9-4.9" clip-rule="evenodd" />
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
-  </div>
-</div>
-<div vw class="enabled">
-    <div vw-access-button class="active"></div>
-    <div vw-plugin-wrapper>
-      <div class="vw-plugin-top-wrapper"></div>
     </div>
-  </div>
-  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="JS/index.js"></script>
+    <script src="JS/login.js"></script>
 </body>
+
 </html>

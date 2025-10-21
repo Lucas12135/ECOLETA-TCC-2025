@@ -3,6 +3,8 @@
       --cor-primaria: linear-gradient(to right, #223e2a, #2d5238, #386043, #386043, #386043);
       --cor-secondaria: #ffce46;
       --cor-terciaria: #f8f4e7;
+      --cor-quaternaria: #47704a;
+      --cor-texto-primaria: #4c4c4c;
     }
 
     * {
@@ -68,7 +70,7 @@
 
     .logo-text {
       font-weight: 700;
-      color: var(--cor-secondaria);
+      color: var(--cor-quaternaria);
       font-size: 18px;
     }
 
@@ -92,14 +94,14 @@
     }
 
     nav .btn-outline {
-      border: 2px solid var(--cor-secondaria);
-      color: var(--cor-secondaria);
+      border: 2px solid var(--cor-quaternaria);
+      color: var(--cor-quaternaria);
       background-color: var(--cor-terciaria);
     }
 
     nav .btn-filled {
-      background-color: var(--cor-secondaria);
-      color: #fff;
+      background-color: var(--cor-quaternaria);
+      color: var(--cor-terciaria);
     }
 
     /* ========== ESTILOS DO MENU MOBILE ========== */
@@ -116,7 +118,7 @@
     .menu-icon span {
       display: block;
       height: 5px;
-      background-color: var(--cor-secondaria);
+      background-color: var(--cor-quartenaria);
       border-radius: 3px;
       transition: all 0.3s ease;
     }
@@ -255,7 +257,7 @@
 
     .linha1 {
       background-color: var(--cor-secondaria);
-      color: #fff;
+      color: var(--cor-texto-primaria);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -509,12 +511,12 @@
   width: 100%;
   padding: 10px;
   background-color: var(--cor-secondaria);
+  color: var(--cor-texto-primaria);
   border: none;
   border-radius: 8px;
   font-weight: bold;
   font-size: 14px;
   cursor: pointer;
-  color: white;
   transition: all 0.3s ease;
   margin-top: 6px;
     }
