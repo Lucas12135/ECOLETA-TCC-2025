@@ -289,7 +289,6 @@ header {
   font-weight: 600;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
-  margin-top: 50px;
   margin-right: 10rem;
 }
 
@@ -363,13 +362,16 @@ div[vw-access-button] {
 
 
 .card-content {
+  position: relative;
+  height: 100%;
+  padding: 1.5rem;
   color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+}
+
+.card-content h2 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
 }
 
 .coletores-proximos {
