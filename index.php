@@ -186,32 +186,63 @@
         <!-- Seção de Vantagens -->
         <section class="benefits-section">
             <h2 class="title-section">Por que se tornar um coletor?</h2>
-            <div class="benefits-grid">
-                <div class="benefit-card card-green-bg">
-                    <h3>Flexibilidade</h3>
-                    <p>Defina seus próprios horários e áreas de atuação</p>
+            <!-- Bootstrap Carousel -->
+            <div id="benefitsCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
                 </div>
-                
-                <div class="benefit-card card-green-bg">
-                    <h3>Renda Extra</h3>
-                    <p>Ganhe dinheiro ajudando o meio ambiente</p>
+
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Flexibilidade</h3>
+                            <p>Defina seus próprios horários e áreas de atuação</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Renda Extra</h3>
+                            <p>Ganhe dinheiro ajudando o meio ambiente</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Impacto Social</h3>
+                            <p>Contribua para um mundo mais sustentável</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Reconhecimento</h3>
+                            <p>Ganhe destaque na comunidade local</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Crescimento</h3>
+                            <p>Expanda sua rede de contatos e oportunidades</p>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="benefit-card card-dark-green-bg">
-                    <h3>Impacto Social</h3>
-                    <p>Contribua para um mundo mais sustentável</p>
-                </div>
-                
-                <div class="benefit-card card-green-bg">
-                    <h3>Reconhecimento</h3>
-                    <p>Ganhe destaque na comunidade local</p>
-                </div>
-                
-                <div class="benefit-card card-green-bg">
-                    <h3>Crescimento</h3>
-                    <p>Expanda sua rede de contatos e oportunidades</p>
-                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#benefitsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#benefitsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
+
             <button class="main-action-btn">Vire um Coletor</button>
         </section>
 
@@ -255,6 +286,13 @@
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="JS/index.js"></script>
     <script src="JS/login.js"></script>
+    <script>
+        // Inicializa o carousel do Bootstrap
+        const benefitsCarousel = new bootstrap.Carousel(document.querySelector('#benefitsCarousel'), {
+            interval: 3500,
+            wrap: true
+        });
+    </script>
 </body>
 
 </html>
