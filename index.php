@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="img/logo.png" type="image/png">
     <link rel="stylesheet" href="CSS/index.css">
 </head>
@@ -27,7 +28,7 @@
                 </div>
             </div>
             <div class="header-buttons">
-                <button class="btn btn-account" onclick="location.href='CADASTRO_COLETOR/login.php'">Criar Conta</button>
+                <button class="btn btn-account" onclick="location.href='cadastros.php'">Criar Conta</button>
                 <button class="btn btn-login" id="open-login-modal-btn">Entrar</button>
                 <div class="menu-icon">
                     <div></div>

@@ -1,0 +1,92 @@
+:root {
+  --cor-primaria: linear-gradient(
+    to right,
+    #223e2a,
+    #2d5238,
+    #386043,
+    #386043,
+    #386043
+  );
+  --cor-secondaria: #ffce46;
+  --cor-terciaria: #f8f4e7;
+  --cor-quaternaria: #47704a;
+  --cor-texto-primaria: #4c4c4c;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+}
+
+.cadastros-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--cor-terciaria);
+}
+
+.cadastros-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.cadastro-card {
+  border-radius: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1 1 calc(50% - 2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  font-weight: bold;
+  color: var(--cor-terciaria);
+}
+
+.cadastro-gerador {
+  background-color: var(--cor-quaternaria);
+}
+
+.cadastro-coletor {
+  background-color: var(--cor-secondaria);
+}
+
+.cadastro-coletor .card-content {
+  color: var(--cor-texto-primaria);
+}
+
+.card-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.card-actions a {
+  display: inline-block;
+  padding: 1rem 5.5rem;
+  border-radius: 25px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.cadastro-coletor .card-actions a {
+  background-color: var(--cor-terciaria);
+  color: var(--cor-texto-primaria);
+}
+
+.cadastro-coletor .card-actions a:hover {
+  background-color: var(--cor-quaternaria);
+  color: var(--cor-terciaria);
+}
+
+.cadastro-gerador .card-actions a {
+  background-color: var(--cor-terciaria);
+  color: var(--cor-texto-primaria);
+}
+
+.cadastro-gerador .card-actions a:hover {
+  background-color: var(--cor-secondaria);
+  color: var(--cor-texto-primaria);
+}
