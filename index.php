@@ -7,13 +7,12 @@
     <title>Página Inicial</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="img/logo.png" type="image/png">
     <link rel="stylesheet" href="CSS/index.css">
 </head>
 
-<body class="overflow-x-hidden">
+<body>
     <!-- Header -->
 
     <header class="header">
@@ -94,89 +93,89 @@
         </div>
 
         <div class="coletores-proximos">
-          <h1 class="text-center text-3xl sm:text-4xl font-extrabold text-neutral-text mb-12 max-w-4xl mx-auto">
+          <h1 class="coletores-titulo">
             Coletores mais bem avaliados desse mês perto de você
         </h1>
 
         <!-- Container dos Cards (Responsivo: Grid em Desktop, Coluna em Mobile) -->
-        <section class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
+        <section class="coletores-container">
 
             <!-- CARD 1 -->
-            <div class="coletor-card bg-card-bg p-8 w-full max-w-xs rounded-xl shadow-xl transition transform hover:scale-[1.02] duration-300 border-t-4 border-primary-green">
-                <div class="flex flex-col items-center">
+            <div class="coletor-card">
+                <div class="card-content">
                     <!-- Avatar/Ícone -->
                     <div class="avatar-placeholder">
                         &#x1F464; <!-- Emoji de Pessoa -->
                     </div>
                     
-                    <h2 class="text-xl font-bold mt-4 text-gray-800">Carlos Andrade</h2>
-                    <p class="text-sm text-neutral-text mb-4">Afiliado desde 2020</p>
+                    <h2 class="coletor-nome">Carlos Andrade</h2>
+                    <p class="coletor-info">Afiliado desde 2020</p>
                     
                     <!-- Avaliação de Estrelas -->
-                    <div class="star-rating flex space-x-0.5 mb-6">
+                    <div class="star-rating">
                         <!-- 4.5 Estrelas (Unicode: estrela preta) -->
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
-                        <span class="star text-gray-400">&#9733;</span> <!-- Meia estrela simulada com cinza -->
-                        <span class="text-sm text-neutral-text ml-2">(4.5)</span>
+                        <span class="star">&#9733;</span> <!-- Meia estrela simulada com cinza -->
+                        <span class="rating-number">(4.5)</span>
                     </div>
 
                     <!-- Botão de Ação -->
-                    <button class="w-full bg-primary-green text-white font-semibold py-3 rounded-lg hover:bg-primary-green/90 transition duration-150 shadow-md">
+                    <button class="coletor-btn">
                         Ver histórico
                     </button>
                 </div>
             </div>
 
             <!-- CARD 2 -->
-            <div class="coletor-card bg-card-bg p-8 w-full max-w-xs rounded-xl shadow-xl transition transform hover:scale-[1.02] duration-300 border-t-4 border-primary-green">
-                <div class="flex flex-col items-center">
+            <div class="coletor-card">
+                <div class="card-content">
                     <div class="avatar-placeholder">
                         &#x1F464;
                     </div>
                     
-                    <h2 class="text-xl font-bold mt-4 text-gray-800">Maria Silva</h2>
-                    <p class="text-sm text-neutral-text mb-4">Afiliada desde 2021</p>
+                    <h2 class="coletor-nome">Maria Silva</h2>
+                    <p class="coletor-info">Afiliada desde 2021</p>
                     
-                    <div class="star-rating flex space-x-0.5 mb-6">
+                    <div class="star-rating">
                         <!-- 5 Estrelas -->
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
-                        <span class="text-sm text-neutral-text ml-2">(5.0)</span>
+                        <span class="rating-number">(5.0)</span>
                     </div>
 
-                    <button class="w-full bg-primary-green text-white font-semibold py-3 rounded-lg hover:bg-primary-green/90 transition duration-150 shadow-md">
+                    <button class="coletor-btn">
                         Ver histórico
                     </button>
                 </div>
             </div>
 
             <!-- CARD 3 -->
-            <div class="coletor-card bg-card-bg p-8 w-full max-w-xs rounded-xl shadow-xl transition transform hover:scale-[1.02] duration-300 border-t-4 border-primary-green">
-                <div class="flex flex-col items-center">
+            <div class="coletor-card">
+                <div class="card-content">
                     <div class="avatar-placeholder">
                         &#x1F464;
                     </div>
                     
-                    <h2 class="text-xl font-bold mt-4 text-gray-800">João Pereira</h2>
-                    <p class="text-sm text-neutral-text mb-4">Afiliado desde 2019</p>
+                    <h2 class="coletor-nome">João Pereira</h2>
+                    <p class="coletor-info">Afiliado desde 2019</p>
                     
-                    <div class="star-rating flex space-x-0.5 mb-6">
+                    <div class="star-rating">
                         <!-- 4 Estrelas -->
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
                         <span class="star filled">&#9733;</span>
-                        <span class="star text-gray-400">&#9733;</span>
-                        <span class="text-sm text-neutral-text ml-2">(4.0)</span>
+                        <span class="star">&#9733;</span>
+                        <span class="rating-number">(4.0)</span>
                     </div>
 
-                    <button class="w-full bg-primary-green text-white font-semibold py-3 rounded-lg hover:bg-primary-green/90 transition duration-150 shadow-md">
+                    <button class="coletor-btn">
                         Ver histórico
                     </button>
                 </div>
@@ -184,6 +183,69 @@
 
         </section>
 </div>
+
+        <!-- Seção de Vantagens -->
+        <section class="benefits-section">
+            <h2 class="title-section">Por que se tornar um coletor?</h2>
+            <!-- Bootstrap Carousel -->
+            <div id="benefitsCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                    <button type="button" data-bs-target="#benefitsCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+                </div>
+
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Flexibilidade</h3>
+                            <p>Defina seus próprios horários e áreas de atuação</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Renda Extra</h3>
+                            <p>Ganhe dinheiro ajudando o meio ambiente</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Impacto Social</h3>
+                            <p>Contribua para um mundo mais sustentável</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Reconhecimento</h3>
+                            <p>Ganhe destaque na comunidade local</p>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="benefit-card card-green-bg">
+                            <h3>Crescimento</h3>
+                            <p>Expanda sua rede de contatos e oportunidades</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#benefitsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#benefitsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <button class="main-action-btn">Vire um Coletor</button>
+        </section>
 
         <div class="right">
             <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
@@ -225,6 +287,13 @@
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="JS/index.js"></script>
     <script src="JS/login.js"></script>
+    <script>
+        // Inicializa o carousel do Bootstrap
+        const benefitsCarousel = new bootstrap.Carousel(document.querySelector('#benefitsCarousel'), {
+            interval: 3500,
+            wrap: true
+        });
+    </script>
 </body>
 
 </html>

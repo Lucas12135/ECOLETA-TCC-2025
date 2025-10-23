@@ -6,7 +6,7 @@
     <title>Vantagens do Coletor</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../CSS/vantagens.css">
+    <link rel="stylesheet" href="CSS/vantagens.css">
 </head>
 <body>
     
@@ -18,7 +18,7 @@
     <div class="header-container">
       <div class="logo">
         <div class="logo-placeholder">
-          <img src="../img/logo.png" alt="Logo Portal do Coletor">
+          <img src="img/logo.png" alt="Logo Portal do Coletor">
         </div>
         <span class="logo-text">Portal do Coletor</span>
       </div>
