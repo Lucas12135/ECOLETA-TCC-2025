@@ -1,19 +1,4 @@
 /* ========== RESET E CONFIGURAÇÕES GLOBAIS ========== */
-:root {
-  --cor-primaria: linear-gradient(
-    to right,
-    #223e2a,
-    #2d5238,
-    #386043,
-    #386043,
-    #386043
-  );
-  --cor-secondaria: #ffce46;
-  --cor-terciaria: #f8f4e7;
-  --cor-quaternaria: #47704a;
-  --cor-texto-primaria: #4c4c4c;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -38,7 +23,7 @@ header {
 }
 
 .header-container {
-  background-color: var(--cor-terciaria);
+  background-color: var(--background);
   width: 100%;
   max-width: 1320px;
   border-radius: 16px;
@@ -103,12 +88,12 @@ nav a {
 nav .btn-outline {
   border: 2px solid var(--cor-quaternaria);
   color: var(--cor-quaternaria);
-  background-color: var(--cor-terciaria);
+  background-color: var(--background);
 }
 
 nav .btn-filled {
   background-color: var(--cor-quaternaria);
-  color: var(--cor-terciaria);
+  color: var(--background);
 }
 
 /* ========== ESTILOS DO MENU MOBILE ========== */
@@ -165,7 +150,7 @@ nav .btn-filled {
   top: 100%;
   right: 0;
   width: 40%;
-  background-color: var(--cor-terciaria);
+  background-color: var(--background);
   border-radius: 0 0 0 16px;
   padding: 20px 15px;
   display: none;
@@ -256,7 +241,7 @@ main {
   justify-content: flex-start;
   align-items: flex-start;
   gap: 25px;
-  color: var(--cor-terciaria);
+  color: var(--background);
   font-size: 26px;
   font-weight: 600;
   padding-top: 80px;
@@ -370,49 +355,8 @@ main {
   box-shadow: 0 0 0 3px rgba(255, 206, 70, 0.2);
 }
 
-.right {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-
-.accessibility-button {
-  position: absolute;
-  bottom: 20px;
-  right: -20px;
-  width: 60px;
-  height: 60px;
-  background-color: var(--cor-secondaria);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(255, 206, 70, 0.4);
-  transition: all 0.3s ease;
-  z-index: 1002;
-  border: 3px solid white;
-  overflow: hidden;
-}
-
-.accessibility-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(255, 206, 70, 0.6);
-}
-
-.accessibility-button svg {
-  width: 25px;
-  height: 25px;
-  fill: white;
-}
-
-div[vw-access-button] {
-  display: none !important;
-}
-
 .form-box {
-  background-color: var(--cor-terciaria);
+  background-color: var(--background);
   padding: 30px;
   border-radius: 10px;
   width: 100%;
