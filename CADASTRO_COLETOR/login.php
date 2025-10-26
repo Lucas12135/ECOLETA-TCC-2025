@@ -49,7 +49,7 @@ if (!empty($_POST)) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal do Coletor - Cadastro</title>
+  <title>Portal de cadastro - Coletor</title>
   <link rel="icon" href="../img/logo.png" type="image/png">
   <link rel="stylesheet" href="../CSS/login.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -61,9 +61,9 @@ if (!empty($_POST)) {
     <div class="header-container">
       <div class="logo">
         <div class="logo-placeholder">
-          <img src="../img/logo.png" alt="Logo Portal do Coletor">
+          <img src="../img/logo.png" alt="Logo Portal de cadastro - Coletor">
         </div>
-        <span class="logo-text">Portal do Coletor</span>
+        <span class="logo-text">Portal de cadastro - Coletor</span>
       </div>
       <nav>
         <a href="../index.php" class="btn-outline">Home</a>

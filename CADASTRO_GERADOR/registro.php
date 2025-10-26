@@ -1,27 +1,6 @@
 <?php
 session_start();
-// Verifica se existe a sessão e o índice 'tipo'
-$tipo = $_SESSION['cadastro']['tipo'] ?? null;
-if ($tipo === "pessoa_juridica") {
-  $campo = 'cnpj';
-  $tamanho_campo = 18;
-  $placeholder_cnpfj = '00.000.000/0000-00';
-  $nome = 'Nome da Empresa';
-  $placeholder_nome = "Digite o nome da sua empresa";
-} elseif ($tipo === "pessoa_fisica") {
-  $campo = 'cpf';
-  $tamanho_campo = 14;
-  $placeholder_cnpfj = '000.000.000-00';
-  $nome = 'Nome Completo';
-  $placeholder_nome = "Digite seu nome completo";
-} else {
-  $campo = 'deu ruim bixo'; // fallback
-  header('Location: login.php');
-  exit;
-}
-// Processamento do POST do formulário atual
 if (!empty($_POST)) {
-  // Use nomes corretos de campos: se for cnpj/ cpf, adapte
   $_SESSION['cadastro']['nome'] = $_POST['nome'] ?? '';
   // padroniza cpf/cnpj removendo não dígitos
   $_SESSION['cadastro']['cpf'] = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
@@ -36,7 +15,7 @@ if (!empty($_POST)) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de cadastro - Coletor</title>
+  <title>Portal de cadastro - Gerador</title>
   <link rel="icon" href="../img/logo.png" type="image/png">
   <link rel="stylesheet" href="../CSS/registro.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -49,9 +28,9 @@ if (!empty($_POST)) {
     <div class="header-container">
       <div class="logo">
         <div class="logo-placeholder">
-          <img src="../img/logo.png" alt="Logo Portal de cadastro - Coletor">
+          <img src="../img/logo.png" alt="Logo Portal de cadastro - Gerador">
         </div>
-        <span class="logo-text">Portal de cadastro - Coletor</span>
+        <span class="logo-text">Portal de cadastro - Gerador</span>
       </div>
     </div>
   </header>
@@ -79,15 +58,15 @@ if (!empty($_POST)) {
         <h2>Primeiros passos</h2>
         <form method="POST" action="#" id="registrationForm" novalidate>
           <div class="form-group">
-            <label for="nome" class="field-label"><?= $nome ?> *</label>
-            <input type="text" id="fullName" name="nome" placeholder="<?= $placeholder_nome ?>" required>
-            <div class="error-message">Por favor, digite o <?= strtolower($nome) ?></div>
+            <label for="nome" class="field-label">Nome *</label>
+            <input type="text" id="fullName" name="nome" placeholder="Digite seu nome completo" required>
+            <div class="error-message">Por favor, digite o seu nome</div>
           </div>
 
           <div class="form-group">
-            <label for="<?= $campo ?>" class="field-label"><?= strtoupper($campo) ?> *</label>
-            <input type="text" id="<?= $campo ?>" name="<?= $campo ?>" placeholder="<?= $placeholder_cnpfj ?>" maxlength="<?= $tamanho_campo ?>" required>
-            <div class="error-message">Por favor, digite um <?= strtoupper($campo) ?> válido</div>
+            <label for="cpf" class="field-label">CPF *</label>
+            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
+            <div class="error-message">Por favor, digite um CPF válido</div>
           </div>
 
           <div class="form-group">

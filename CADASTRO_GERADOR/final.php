@@ -14,7 +14,7 @@
     <!-- Header -->
     <div class="header">
         <div class="header-logo">
-            <img src="../img/logo.png" alt="Logo Portal de cadastro - Coletor" class="logo-image">
+            <img src="../img/logo.png" alt="Logo Portal de cadastro - Gerador" class="logo-image">
         </div>
         <span class="header-text">Portal de Cadastro</span>
     </div>

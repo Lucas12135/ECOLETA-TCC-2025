@@ -82,14 +82,14 @@ header {
 }
 
 .header-buttons {
-    height: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
 .header-buttons .btn {
-    height: 70%;
+  height: 70%;
   padding: 10px 30px;
   border-radius: 8px;
   font-weight: bold;
@@ -273,7 +273,6 @@ header {
   border-radius: 1rem;
 }
 
-
 .card-button {
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
@@ -342,7 +341,6 @@ header {
 div[vw-access-button] {
   display: none !important;
 }
-
 
 .coletores-container {
   max-width: 75rem;
@@ -586,7 +584,7 @@ div[vw-access-button] {
 /* Make carousel controls more visible on colored background */
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  filter: invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+  filter: invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
 }
 
 /* Reduce mobile horizontal overflow for carousel */
@@ -619,7 +617,6 @@ div[vw-access-button] {
   transition: transform 0.3s ease;
 }
 
-
 .stack-carousel .carousel-item {
   position: relative;
   display: flex;
@@ -629,11 +626,11 @@ div[vw-access-button] {
   max-width: 95vw;
   opacity: 1;
   pointer-events: auto;
-  transition: transform 300ms cubic-bezier(.2,.9,.2,1), box-shadow 300ms cubic-bezier(.2,.9,.2,1);
+  transition: transform 300ms cubic-bezier(0.2, 0.9, 0.2, 1),
+    box-shadow 300ms cubic-bezier(0.2, 0.9, 0.2, 1);
   z-index: 1;
   scroll-snap-align: center;
 }
-
 
 .stack-carousel .carousel-item .benefit-card {
   margin: 0;
@@ -643,13 +640,11 @@ div[vw-access-button] {
   justify-content: center;
 }
 
-
 .stack-carousel .carousel-item.is-active {
   transform: scale(1.08);
   z-index: 2;
-  box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
 }
-
 
 /* Remove unused highlight classes */
 
@@ -675,7 +670,8 @@ div[vw-access-button] {
   background: var(--green-btn);
 }
 
-.stack-prev, .stack-next {
+.stack-prev,
+.stack-next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -685,12 +681,20 @@ div[vw-access-button] {
   height: 48px;
 }
 
-.stack-prev { left: calc(50% - 420px); }
-.stack-next { right: calc(50% - 420px); }
+.stack-prev {
+  left: calc(50% - 420px);
+}
+.stack-next {
+  right: calc(50% - 420px);
+}
 
 @media (max-width: 768px) {
-  .stack-prev { left: 8px; }
-  .stack-next { right: 8px; }
+  .stack-prev {
+    left: 8px;
+  }
+  .stack-next {
+    right: 8px;
+  }
 }
 
 .benefit-card {
@@ -707,7 +711,7 @@ div[vw-access-button] {
 }
 
 .benefit-card h3 {
-  font-size: 1.3rem;
+  font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
   line-height: 1.2;
@@ -715,7 +719,7 @@ div[vw-access-button] {
 }
 
 .benefit-card p {
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   font-weight: 400;
   line-height: 1.4;
 }

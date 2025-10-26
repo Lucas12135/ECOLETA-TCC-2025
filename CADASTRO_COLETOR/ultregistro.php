@@ -29,8 +29,8 @@ if (!empty($_POST)) {
   $endereco = $_POST['endereco'];
   // Exemplo: "Rua das Flores, 123, apto 45"
   $partes = explode(',', $endereco);
-  $rua = trim($partes[0] ?? '');
-  $numero = trim($partes[1] ?? '');
+  $rua = trim($partes[1] ?? '');
+  $numero = trim($partes[0] ?? '');
   $complemento = trim($partes[2] ?? '');
   $_SESSION['cadastro']['rua'] = $rua;
   $_SESSION['cadastro']['numero'] = $numero;
@@ -99,7 +99,7 @@ if (!empty($_POST)) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal do Coletor - Últimos Passos</title>
+  <title>Portal de cadastro - Coletor</title>
   <link rel="icon" href="../img/logo.png" type="image/png">
   <link rel="stylesheet" href="../CSS/ultregistro.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -114,9 +114,9 @@ if (!empty($_POST)) {
     <div class="header-container">
       <div class="logo">
         <div class="logo-placeholder">
-          <img src="../img/logo.png" alt="Logo Portal do Coletor">
+          <img src="../img/logo.png" alt="Logo Portal de cadastro - Coletor">
         </div>
-        <span class="logo-text">Portal do Coletor</span>
+        <span class="logo-text">Portal de cadastro - Coletor</span>
       </div>
     </div>
   </header>
@@ -142,7 +142,7 @@ if (!empty($_POST)) {
             <div class="form-row full">
               <div class="form-group">
                 <label for="endereco">Endereço Completo <span class="required">*</span></label>
-                <input type="text" id="endereco" name="endereco" placeholder="Rua, número, complemento" required>
+                <input type="text" id="endereco" name="endereco" placeholder="Número, rua, complemento" required>
               </div>
             </div>
 
@@ -195,7 +195,7 @@ if (!empty($_POST)) {
                 <input type="text" id="bairro" name="bairro" placeholder="Seu bairro" required>
               </div>
             </div>
-            <?php if($datanasc && $genero)echo "
+            <?php if ($datanasc && $genero) echo "
             <div class='form-row'>
               <div class='form-group'>
                 <label for='data_nasc'>Data de Nascimento <span class='required'>*</span></label>
@@ -251,12 +251,21 @@ if (!empty($_POST)) {
 
     <!-- Seção de Foto -->
     <div class="photo-section">
-      <div class="photo-upload" onclick="selectPhoto()">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L19 5C18.8 4.8 18.5 4.8 18.3 5L16.9 6.4L17.6 7.1L21 9ZM19 17V19C19 20.1 18.1 21 17 21H5C3.9 21 3 20.1 3 19V17L8.5 12.5L11 15L14.5 11.5L19 17ZM17 3H5C3.9 3 3 3.9 3 5V15L6.8 11.2C7.2 10.8 7.8 10.8 8.2 11.2L12 15L15.8 11.2C16.2 10.8 16.8 10.8 17.2 11.2L19 13V5C19 3.9 18.1 3 17 3Z" />
-        </svg>
-        <div class="photo-upload-text">
-          Clique para adicionar<br>sua foto
+      <div class="photo-upload" onclick="selectPhoto()" id="photoUploadArea">
+        <input type="file"
+          id="photoInput"
+          name="photo"
+          accept="image/jpeg,image/png"
+          style="display: none;"
+          onchange="previewPhoto(this)">
+        <img id="photoPreview" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+        <div id="uploadIcon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L19 5C18.8 4.8 18.5 4.8 18.3 5L16.9 6.4L17.6 7.1L21 9ZM19 17V19C19 20.1 18.1 21 17 21H5C3.9 21 3 20.1 3 19V17L8.5 12.5L11 15L14.5 11.5L19 17ZM17 3H5C3.9 3 3 3.9 3 5V15L6.8 11.2C7.2 10.8 7.8 10.8 8.2 11.2L12 15L15.8 11.2C16.2 10.8 16.8 10.8 17.2 11.2L19 13V5C19 3.9 18.1 3 17 3Z" />
+          </svg>
+          <div class="photo-upload-text">
+            Clique para adicionar<br>sua foto
+          </div>
         </div>
       </div>
       <div class="photo-requirements">
