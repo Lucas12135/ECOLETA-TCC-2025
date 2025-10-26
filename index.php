@@ -9,32 +9,25 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="img/logo.png" type="image/png">
+    <link rel="stylesheet" href="CSS/global.css">
     <link rel="stylesheet" href="CSS/index.css">
 </head>
 
 <body>
     <!-- Header -->
 
-    <header class="header">
+<header>
         <div class="header-container">
-            <div class="header-logo">
+            <div class="logo">
                 <div class="logo-placeholder">
-                    <img src="img/logo.png" alt="Logo Reciclagem" class="logo-image">
+                    <img src="img/logo.png" alt="Logo" />
                 </div>
-
-                <div class="header-nav">
-                    <a href="#">Home</a>
-                </div>
+                <span class="logo-text">Portal de Cadastro</span>
             </div>
-            <div class="header-buttons">
-                <button class="btn btn-account" onclick="location.href='cadastros.php'">Criar Conta</button>
-                <button class="btn btn-login" id="open-login-modal-btn">Entrar</button>
-                <div class="menu-icon">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-            </div>
+            <nav>
+                <a href="cadastros.php" class="btn-outline">Criar Conta</a>
+                <a href="#" class="btn-filled">Entrar</a>
+            </nav>
         </div>
     </header>
     <!-- Main Content -->
@@ -78,7 +71,7 @@
             <!-- Card 2: Coletores -->
             <div class="card" style="background-color: #E2B633;">
                 <div class="card-content card-content-green">
-                    <h2>PESSOAS FÍSICAS</h2>
+                    <h2 style='color: #000000'>PESSOAS FÍSICAS</h2>
                     <img src="img/garrafa_de_oleo.png" alt="Ícone de garrafa de óleo" class="card-image">
                     <button class="card-button yellow" data-bs-toggle="modal" data-bs-target="#modal">
                         <span>Ver opções</span>
@@ -244,8 +237,51 @@
                 </button>
             </div>
 
-            <button class="main-action-btn">Vire um Coletor</button>
+            <button class="main-action-btn" onclick="location.href='cadastros.php'">Vire um Coletor</button>
         </section>
+
+        <!-- Portal do Coletor -->
+            <div class="layout-grid">
+                <!-- COLUNA DA ESQUERDA -->
+                <section class="coluna-esquerda">
+                    <div class="hero-section">
+                        <div class="hero-logo"><img src="img/logo.png" alt="Logo Reciclagem" class="logo-image" style='width: 80px; height: 80px;'></div>
+                        <div class="hero-texto">
+                            <h1>Ecoleta</h1>
+                            <h2>Você conta com:</h2>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>Reconhecimento do trabalho.</h3>
+                        <p>O aplicativo transforma o "catador" em "Coletor Parceiro" ou "Agente Ambiental Certificado" pela plataforma. Isso é reforçado por um perfil visível aos usuários, que inclui nome, foto, e histórico de coletas realizadas, construindo uma reputação digital e credibilidade.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>Apoio aos coletores.</h3>
+                        <p>A essência tecnológica do projeto: o algoritmo de roteirização (baseado em GPS) agrupa coletas próximas e sugere a rota mais eficiente. O coletor recebe o endereço e as informações de volume do material antes de aceitar, otimizando o uso do tempo e combustível.</p>
+                    </div>
+                </section>
+
+                <!-- COLUNA DA DIREITA -->
+                <section class="coluna-direita">
+                    <div class="feature-card">
+                        <h3>Orientar os consumidores.</h3>
+                        <p>O aplicativo deve oferecer guias de descarte e dicas de preparação do material (ex.: como armazenar óleo de cozinha). Isso assegura que o coletor receba um material de melhor qualidade (mais valorizado) e engaja o consumidor na logística reversa.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>Comunicação Padronizada.</h3>
+                        <p>O app padroniza a comunicação da solicitação. O consumidor indica o material por meio de menus estruturados, e o coletor recebe a informação de forma clara e objetiva, minimizando erros e mal-entendidos.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>Sistema de Notificação Push.</h3>
+                        <p>Utilizar notificações para alertar o coletor sobre novas demandas em sua área e para informar o consumidor sobre o status da coleta (coletor a caminho, coleta realizada). Isso garante a agilidade da transação.</p>
+                    </div>
+                </section>
+            </div>
+        </div>
 
         <div class="right">
             <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
@@ -278,12 +314,37 @@
             </div>
         </div>
     </div>
+
+    <footer class="footer-principal">
+        <div class="footer-container-amarelo">
+            <div class="footer-links">
+                <span class="footer-titulo-redes">Siga-nos nas redes sociais</span>
+                <div class="icones-sociais">
+                    <!-- Placeholders para ícones -->
+                    <a href="#" class="icone-social"><img src="img/youtube-icon.png" alt="YouTube" class='logo-image'></a> <!-- YouTube (Play) -->
+                    <a href="#" class="icone-social"><img src="img/instagram-icon.png" alt="Instagram" class='logo-image'></a> <!-- Instagram (Camera) -->
+                    <a href="#" class="icone-social pix-icon"><img src="img/facebook-icon.png" alt="Pix" class='logo-image'></a> <!-- Pix (Texto) -->
+                    <a href="#" class="icone-social ecoleta-icon"><img src="img/logo.png" alt="Ecoleta" class='logo-image-ecoleta'></a> <!-- Ecoleta (Emoji) -->
+                </div>
+            </div>
+            <a href="#" class="footer-cta">
+                <span>Seja coletor Ecoleta</span>
+                <!-- Reutilizando o placeholder de logo do header -->
+                <div class="footer-logo"><img src="img/logo.png" alt="Logo Reciclagem" class="logo-image" style='width: 80px; height: 80px;'></div>
+            </a>
+        </div>
+        <div class="footer-copyright">
+            &copy; 2025 Ecoleta | Portal do coletor
+        </div>
+    </footer>
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
+
+
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="JS/index.js"></script>
     <script src="JS/login.js"></script>
