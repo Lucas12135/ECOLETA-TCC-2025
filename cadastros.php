@@ -22,7 +22,7 @@
             </div>
             <nav>
                 <a href="index.php" class="btn-outline">Home</a>
-                <a href="CADASTRO_COLETOR/login.php" class="btn-filled">Entrar</a>
+                <a href="login.php" class="btn-filled">Entrar</a>
                 <div class="menu-icon" onclick="toggleMenu()" id="menuIcon">
                     <span></span>
                     <span></span>

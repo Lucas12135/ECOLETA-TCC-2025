@@ -1,162 +1,181 @@
- @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 :root {
-    --cream-bg: #f8f4e7;
-    --green-text: #223e2a;
-    --green-btn: #223e2a;
-    --yellow-btn: #f8d36b;
-    --card-green: #447b56;
-    --card-yellow: #f7d770;
+  --cream-bg: #f8f4e7;
+  --green-text: #223e2a;
+  --green-btn: #223e2a;
+  --yellow-btn: #f8d36b;
+  --card-green: #447b56;
+  --card-yellow: #f7d770;
+  --cor-primaria: linear-gradient(
+    to right,
+    #223e2a,
+    #2d5238,
+    #386043,
+    #386043,
+    #386043
+  );
+  --cor-secondaria: #ffce46;
+  --cor-quaternaria: #47704a;
+  --cor-texto-primaria: #4c4c4c;
+  --background: #f8f4e7;
+  --verde-escuro: #223e2a;
+  --cor-footer-verde: #386641;
+  --cor-amarelo-escuro: #f59e0b;
+  --cor-borda: #e0e0e0;
+  --cor-branco: #fff;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--yellow-btn);
-    color: var(--green-text);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    flex-direction: column;
+  font-family: "Inter", sans-serif;
+  background-color: var(--yellow-btn);
+  color: var(--green-text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  flex-direction: column;
 }
 
 /* Header */
 .header {
-    position: relative;
-    top: 0;
-    left: 0;
-    width: 90%;
-    max-width: 1200px;
-    margin: 1rem auto;
-    padding: 0.5rem 1rem;
-    border-radius: 30px;
-    background-color: var(--cream-bg);
-    display: flex;
-    
-    justify-content: flex-start;
-    align-items: center;
-    gap: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 90%;
+  max-width: 1200px;
+  margin: 1rem auto;
+  padding: 0.5rem 1rem;
+  border-radius: 30px;
+  background-color: var(--cream-bg);
+  display: flex;
+
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .header-logo {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .logo-image {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
 }
 
 .header-text {
-    font-weight: 600;
-    font-size: 1.25rem;
+  font-weight: 600;
+  font-size: 1.25rem;
 }
 
 /* Container principal para centralizar o conteúdo */
 .container {
-    width: 90%;
-    max-width: 800px;
-    margin: 2rem auto;
+  width: 90%;
+  max-width: 800px;
+  margin: 2rem auto;
 }
 
 .main-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5rem;
 }
 
 @media (min-width: 768px) {
-    .main-content {
-        flex-direction: row;
-        justify-content: center;
-    }
+  .main-content {
+    flex-direction: row;
+    justify-content: center;
+  }
 }
 
 /* Card de Ilustração */
 .illustration-card {
-    background-color: #fefcf5;
-    border-radius: 1.5rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    width: 60%;
-    max-width: 250px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  background-color: #fefcf5;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: 60%;
+  max-width: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .illustration {
-    width: 100%;
-    height: auto;
-    border-radius: 1rem;
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
 }
 
 /* Card de Confirmação */
 .confirmation-card {
-    background-color: #fefcf5;
-    border-radius: 1.5rem;
-    padding: 2rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    width: 100%;
-    max-width: 350px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    color: var(--green-text);
+  background-color: #fefcf5;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  color: var(--green-text);
 }
 
 .confirmation-card h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    line-height: 1.2;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
 }
 
 .confirmation-card h3 {
-    font-size: 2.25rem;
-    color: var(--green-btn);
-    font-weight: 700;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
+  font-size: 2.25rem;
+  color: var(--green-btn);
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .confirmation-card p {
-    font-size: 1.125rem;
-    margin-bottom: 2rem;
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
 }
 
 .profile-button {
-    background-color: var(--green-btn);
-    color: white;
-    padding: 0.75rem 2rem;
-    border-radius: 9999px;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-    border: none;
-    width: 100%;
+  background-color: var(--green-btn);
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  border: none;
+  width: 100%;
 }
 
 .profile-button:hover {
-    background-color: #153c28;
+  background-color: #153c28;
 }
 
 /* AVISO: NÃO USE alert() */
 .alert-box {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #333;
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 0.5rem;
-    z-index: 9999;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #333;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  z-index: 9999;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: none;
 }

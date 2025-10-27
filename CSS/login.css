@@ -1,4 +1,24 @@
 /* ========== RESET E CONFIGURAÇÕES GLOBAIS ========== */
+:root {
+  --cor-primaria: linear-gradient(
+    to right,
+    #223e2a,
+    #2d5238,
+    #386043,
+    #386043,
+    #386043
+  );
+  --cor-secondaria: #ffce46;
+  --cor-quaternaria: #47704a;
+  --cor-texto-primaria: #4c4c4c;
+  --background: #f8f4e7;
+  --verde-escuro: #223e2a;
+  --cor-footer-verde: #386641;
+  --cor-amarelo-escuro: #f59e0b;
+  --cor-borda: #e0e0e0;
+  --cor-branco: #fff;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -514,5 +534,70 @@ main {
   }
   .form-box h2 {
     font-size: 16px;
+  }
+}
+
+/* ========== ESTILOS ESPECÍFICOS PARA LOGIN UNIFICADO ========== */
+.login-unified {
+  display: flex !important;
+  grid-template-columns: none !important;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.login-form {
+  padding: 40px 30px;
+  border-radius: 16px;
+  background-color: var(--background);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.login-form h2 {
+  margin-bottom: 24px;
+  color: #223e2a;
+  font-size: 24px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.login-form .form-footer {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.login-form .form-footer p {
+  margin: 12px 0;
+  font-size: 14px;
+  color: #4a5568;
+}
+
+.login-form .form-footer a {
+  color: var(--cor-quaternaria);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-form .form-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .login-unified {
+    padding: 20px;
+  }
+
+  .login-form {
+    padding: 30px 20px;
+  }
+
+  .login-form h2 {
+    font-size: 20px;
   }
 }

@@ -1,6 +1,26 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 :root {
+  --cor-primaria: linear-gradient(
+    to right,
+    #223e2a,
+    #2d5238,
+    #386043,
+    #386043,
+    #386043
+  );
+  --cor-secondaria: #ffce46;
+  --cor-quaternaria: #47704a;
+  --cor-texto-primaria: #4c4c4c;
+  --background: #f8f4e7;
+  --verde-escuro: #223e2a;
+  --cor-footer-verde: #386641;
+  --cor-amarelo-escuro: #F59E0B;
+  --cor-borda: #E0E0E0;
+  --cor-branco: #fff;
+}
+
+:root {
   --card-green: #447b56;
   --card-yellow: #f7d770;
 }

@@ -22,11 +22,11 @@
                 <div class="logo-placeholder">
                     <img src="img/logo.png" alt="Logo" />
                 </div>
-                <span class="logo-text">Portal de Cadastro</span>
+                <span class="logo-text">Página Inicial</span>
             </div>
             <nav>
                 <a href="cadastros.php" class="btn-outline">Criar Conta</a>
-                <a href="#" class="btn-filled">Entrar</a>
+                <a href="login.php" class="btn-filled">Entrar</a>
             </nav>
         </div>
     </header>
@@ -47,42 +47,6 @@
                 </svg>
             </div>
             <button class="search-button">Buscar</button>
-        </div>
-
-        <!-- Cards Section -->
-        <div class="cards-section">
-            <!-- Card 1: Ecopontos -->
-            <div class="card" style="background-color: #447B56;">
-                <div class="card-overlay"></div>
-                <div class="card-content">
-                    <h2>EMPRESAS</h2>
-                    <img src="img/ecoponto.png" alt="Ícone Ecoponto" class="card-image">
-                    <button class="card-button">
-                        <span>Ver opções</span>
-                        <!-- Arrow Icon SVG -->
-                        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                            <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Card 2: Coletores -->
-            <div class="card" style="background-color: #E2B633;">
-                <div class="card-content card-content-green">
-                    <h2 style='color: #000000'>PESSOAS FÍSICAS</h2>
-                    <img src="img/garrafa_de_oleo.png" alt="Ícone de garrafa de óleo" class="card-image">
-                    <button class="card-button yellow" data-bs-toggle="modal" data-bs-target="#modal">
-                        <span>Ver opções</span>
-                        <!-- Arrow Icon SVG -->
-                        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                            <path fill-rule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
         </div>
 
         <div class="coletores-proximos">
@@ -117,7 +81,7 @@
 
                     <!-- Botão de Ação -->
                     <button class="coletor-btn">
-                        Ver histórico
+                        Ver perfil
                     </button>
                 </div>
             </div>
@@ -143,7 +107,7 @@
                     </div>
 
                     <button class="coletor-btn">
-                        Ver histórico
+                        Ver perfil
                     </button>
                 </div>
             </div>
@@ -169,7 +133,7 @@
                     </div>
 
                     <button class="coletor-btn">
-                        Ver histórico
+                        Ver perfil
                     </button>
                 </div>
             </div>
