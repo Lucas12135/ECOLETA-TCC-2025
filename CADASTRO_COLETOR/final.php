@@ -31,14 +31,14 @@
                 <h2>Obrigado por se juntar à<br>Equipe de Coletores Ecoleta</h2>
                 <h3>Parabéns!</h3>
                 <p>A Ecoleta espera por você</p>
-                <button id="visitProfileBtn" class="profile-button">Visitar Perfil</button>
+                <button id="visitProfileBtn" class="profile-button">Ir para Home</button>
             </div>
         </div>
     </div>
 
     <script>
         document.getElementById('visitProfileBtn').addEventListener('click', function() {
-            window.location.href = "../index.php";
+            window.location.href = "../PAGINAS_COLETOR/home.php";
         });
     </script>
 </body>

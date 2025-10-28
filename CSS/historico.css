@@ -1,0 +1,126 @@
+/* Herda os estilos básicos do home-coletor.css */
+@import url("home-coletor.css");
+
+/* Estilos específicos para o histórico */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.history-item {
+  background-color: var(--cor-branco);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.history-item-header:hover {
+  background-color: var(--background);
+}
+
+.history-main-info {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.collection-id {
+  color: var(--cor-texto-primaria);
+  font-weight: 600;
+  min-width: 100px;
+}
+
+.collection-quantity {
+  color: var(--verde-escuro);
+  font-weight: 500;
+}
+
+.collection-date {
+  color: var(--cor-texto-primaria);
+}
+
+.collection-status {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.status-concluida {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: var(--status-concluido);
+}
+
+.status-cancelada {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: var(--status-cancelado);
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  color: var(--verde-escuro);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.expand-button:hover {
+  color: var(--cor-secondaria);
+}
+
+.expand-button i {
+  transition: transform 0.3s ease;
+}
+
+.history-item.expanded .expand-button i {
+  transform: rotate(180deg);
+}
+
+.history-details {
+  background-color: var(--background);
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.history-item.expanded .history-details {
+  padding: 1.5rem;
+  max-height: 500px;
+}
+
+.detail-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-label {
+  color: var(--cor-texto-primaria);
+  font-weight: 500;
+  min-width: 140px;
+}
+
+.detail-value {
+  color: var(--verde-escuro);
+}

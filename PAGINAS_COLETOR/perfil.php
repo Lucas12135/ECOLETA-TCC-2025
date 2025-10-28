@@ -7,9 +7,9 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Coletor</title>
+    <title>Perfil - Coletor</title>
     <link rel="icon" href="../img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../CSS/home-coletor.css">
+    <link rel="stylesheet" href="../CSS/perfil.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Biblioteca de ícones -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
@@ -28,13 +28,13 @@ session_start();
 
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="active">
-                        <a href="#" class="nav-link">
+                    <li>
+                        <a href="home.php" class="nav-link">
                             <i class="ri-home-4-line"></i>
                             <span>Home</span>
                         </a>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="perfil.php" class="nav-link">
                             <i class="ri-user-line"></i>
                             <span>Perfil</span>
@@ -72,8 +72,8 @@ session_start();
         <main class="main-content">
             <header class="content-header">
                 <div class="welcome-message">
-                    <h1>Olá, <?php echo isset($_SESSION['nome']) ? $_SESSION['nome'] : 'Coletor'; ?>!</h1>
-                    <p>Confira suas coletas e atualizações de hoje</p>
+                    <h1>Página do perfil</h1>
+                    <p>Confira suas informações e configurações do seu perfil.</p>
                 </div>
                 <div class="header-actions">
                     <div class="action-buttons">
@@ -119,121 +119,102 @@ session_start();
                     </div>
                 </div>
             </header>
+            <div class="profile-content">
 
-            <!-- Cards de Informações -->
-            <div class="info-cards">
-                <div class="card next-collection">
-                    <h3>Próxima Coleta</h3>
-                    <div class="card-content">
-                        <div class="time">
-                            <i class="ri-time-line"></i>
-                            <span>14:30</span>
+                </header>
+
+                <div class="profile-content">
+                    <!-- Cabeçalho do Perfil -->
+                    <div class="profile-header">
+                        <div class="profile-info">
+                            <div class="profile-photo">
+                                <img src="../img/profile-placeholder.jpg" alt="Foto do perfil">
+                            </div>
+                            <div class="profile-text">
+                                <h2 class="profile-name"><?php echo isset($_SESSION['nome']) ? $_SESSION['nome'] : 'Nome do Coletor'; ?></h2>
+                                <div class="rating">
+                                    <i class="ri-star-fill star"></i>
+                                    <i class="ri-star-fill star"></i>
+                                    <i class="ri-star-fill star"></i>
+                                    <i class="ri-star-fill star"></i>
+                                    <i class="ri-star-half-fill star"></i>
+                                    <span style="color: var(--cor-branco); margin-left: 0.5rem;">4.5</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="location">
-                            <i class="ri-map-pin-line"></i>
-                            <span>Rua das Flores, 123</span>
-                        </div>
-                        <button class="view-map-btn">Ver no Mapa</button>
+                        <button class="btn-edit-profile">
+                            <i class="ri-edit-line"></i>
+                            Editar Perfil
+                        </button>
                     </div>
-                </div>
 
-                <div class="card today-collections">
-                    <h3>Coletas Hoje</h3>
-                    <div class="card-content">
-                        <div class="collection-count">
-                            <span class="number">5</span>
-                            <span class="label">agendadas</span>
-                        </div>
-                        <div class="collection-progress">
-                            <span class="completed">2</span>
-                            <span class="separator">/</span>
-                            <span class="total">5</span>
-                            <span class="label">completadas</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card pending-requests">
-                    <h3>Solicitações Pendentes</h3>
-                    <div class="card-content">
-                        <div class="request-count">
-                            <span class="number">3</span>
-                            <span class="label">novas Solicitações</span>
-                        </div>
-                        <a href="agendamentos.php"><button class="view-requests-btn">Ver Solicitações</button></a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mapa e Lista de Coletas -->
-            <div class="collections-container">
-                <div class="collections-list">
-                    <h3>Coletas de Hoje</h3>
-                    <div class="collection-items">
-                        <!-- Item de Coleta -->
-                        <div class="collection-item">
-                            <div class="time-location">
-                                <span class="time">14:30</span>
-                                <span class="location">Rua das Flores, 123</span>
+                    <!-- Estatísticas do Perfil -->
+                    <div class="profile-stats">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <i class="ri-oil-line"></i>
+                                Total de Óleo Coletado
                             </div>
-                            <div class="details">
-                                <span class="quantity">5L</span>
-                                <span class="status pending">Pendente</span>
-                                <button class="view-map-btn" title="Ver no mapa">
-                                    <i class="ri-map-pin-line"></i>
-                                </button>
-                            </div>
+                            <div class="stat-value">1.250</div>
+                            <div class="stat-label">litros</div>
                         </div>
 
-                        <div class="collection-item">
-                            <div class="time-location">
-                                <span class="time">16:00</span>
-                                <span class="location">Av. das Palmeiras, 789</span>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <i class="ri-calendar-check-line"></i>
+                                Coletas Realizadas
                             </div>
-                            <div class="details">
-                                <span class="quantity">3L</span>
-                                <span class="status pending">Pendente</span>
-                                <button class="view-map-btn" title="Ver no mapa">
-                                    <i class="ri-map-pin-line"></i>
-                                </button>
-                            </div>
+                            <div class="stat-value">85</div>
+                            <div class="stat-label">coletas</div>
                         </div>
 
-                        <div class="collection-item">
-                            <div class="time-location">
-                                <span class="time">17:30</span>
-                                <span class="location">Rua dos Ipês, 456</span>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <i class="ri-star-smile-line"></i>
+                                Avaliação Média
                             </div>
-                            <div class="details">
-                                <span class="quantity">7L</span>
-                                <span class="status pending">Pendente</span>
-                                <button class="view-map-btn" title="Ver no mapa">
-                                    <i class="ri-map-pin-line"></i>
-                                </button>
+                            <div class="rating" style="margin-top: 0.5rem;">
+                                <i class="ri-star-fill star"></i>
+                                <i class="ri-star-fill star"></i>
+                                <i class="ri-star-fill star"></i>
+                                <i class="ri-star-fill star"></i>
+                                <i class="ri-star-half-fill star"></i>
                             </div>
+                            <div class="stat-label">baseado em 45 avaliações</div>
                         </div>
                     </div>
                 </div>
-
-                <div class="map-container">
-                    <div id="map">
-                        <!-- Aqui será carregado o mapa via JavaScript -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Próximos Dias -->
-            <div class="upcoming-collections">
-                <h3>Próximos Dias</h3>
-                <div class="calendar-view">
-                    <!-- Componente de calendário será implementado aqui -->
-                </div>
-            </div>
         </main>
     </div>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
-    <script src="../JS/home-coletor.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gerenciar notificações
+            const notificationBtn = document.querySelector('.notification-btn');
+            const notificationsPopup = document.querySelector('.notifications-popup');
+
+            document.addEventListener('click', function(event) {
+                const isClickInsidePopup = notificationsPopup.contains(event.target);
+                const isClickOnButton = notificationBtn.contains(event.target);
+
+                if (!isClickInsidePopup && !isClickOnButton) {
+                    notificationsPopup.classList.remove('show');
+                }
+            });
+
+            notificationBtn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                notificationsPopup.classList.toggle('show');
+            });
+
+            // Botão de editar perfil
+            const editBtn = document.querySelector('.btn-edit-profile');
+            editBtn.addEventListener('click', function() {
+                // Aqui você pode adicionar a lógica para editar o perfil
+                alert('Funcionalidade de edição será implementada!');
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -31,7 +31,7 @@
                 <h2>Obrigado por se juntar à<br>Equipe de Coletores Ecoleta</h2>
                 <h3>Parabéns!</h3>
                 <p>A Ecoleta espera por você</p>
-                <button id="visitProfileBtn" class="profile-button">Visitar Perfil</button>
+                <button id="visitProfileBtn" class="profile-button">Visitar Home</button>
             </div>
         </div>
     </div>

@@ -1,0 +1,245 @@
+<?php
+session_start();
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte - Coletor</title>
+    <link rel="icon" href="../img/logo.png" type="image/png">
+    <link rel="stylesheet" href="../CSS/home-coletor.css">
+    <link rel="stylesheet" href="../CSS/suporte.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Biblioteca de ícones -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Barra Lateral -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-placeholder">
+                    <img src="../img/logo.png" alt="Logo Ecoleta" class="logo">
+                </div>
+                <span class="logo-text">Ecoleta</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="home.php" class="nav-link">
+                            <i class="ri-home-4-line"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="perfil.php" class="nav-link">
+                            <i class="ri-user-line"></i>
+                            <span>Perfil</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="agendamentos.php" class="nav-link">
+                            <i class="ri-calendar-line"></i>
+                            <span>Agendamentos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="historico.php" class="nav-link">
+                            <i class="ri-history-line"></i>
+                            <span>Histórico</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="configuracoes.php" class="nav-link">
+                            <i class="ri-settings-3-line"></i>
+                            <span>Configurações</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="suporte.php" class="nav-link">
+                            <i class="ri-customer-service-2-line"></i>
+                            <span>Suporte</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <header class="content-header">
+                <div class="welcome-message">
+                    <h1>Central de Suporte</h1>
+                    <p>Encontre ajuda ou entre em contato com nossa equipe.</p>
+                </div>
+                <div class="header-actions">
+                    <div class="action-buttons">
+                        <button class="notification-btn" title="Notificações">
+                            <i class="ri-notification-3-line"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        <!-- Popup de Notificações -->
+                        <div class="notifications-popup">
+                            <div class="notifications-header">
+                                <h3>Notificações</h3>
+                            </div>
+                            <div class="notification-list">
+                                <div class="notification-item">
+                                    <div class="notification-content">
+                                        <i class="ri-calendar-check-line notification-icon"></i>
+                                        <div class="notification-text">
+                                            <p>Nova coleta agendada para hoje às 14:30</p>
+                                            <span class="notification-time">Há 5 minutos</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-content">
+                                        <i class="ri-map-pin-line notification-icon"></i>
+                                        <div class="notification-text">
+                                            <p>Alteração no endereço de coleta - Rua das Palmeiras, 789</p>
+                                            <span class="notification-time">Há 30 minutos</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-content">
+                                        <i class="ri-message-3-line notification-icon"></i>
+                                        <div class="notification-text">
+                                            <p>Mensagem do gerador sobre a coleta #123</p>
+                                            <span class="notification-time">Há 1 hora</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <div class="support-content">
+                <!-- Seção FAQ -->
+                <div class="faq-section">
+                    <h2 class="section-title"><i class="ri-question-line"></i> Perguntas Frequentes</h2>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como posso ver meus agendamentos? <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Você pode visualizar todos os seus agendamentos na seção "Agendamentos" no menu lateral. Lá você encontrará informações sobre datas, horários e endereços das coletas programadas.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como alterar minhas informações de perfil? <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Acesse a seção "Perfil" no menu lateral e clique no botão de edição. Lá você poderá atualizar suas informações pessoais, foto e dados de contato.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como funciona o sistema de avaliação? <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Após cada coleta, os geradores podem avaliar seu serviço com uma nota de 1 a 5 estrelas. Sua média de avaliações é exibida em seu perfil e influencia sua visibilidade no sistema.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como cancelar um agendamento? <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Na seção "Agendamentos", localize a coleta que deseja cancelar e clique no botão de cancelamento. Lembre-se que é importante avisar com antecedência para não prejudicar o gerador.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Como definir minha área de atuação? <i class="ri-arrow-down-s-line"></i>
+                        </div>
+                        <div class="faq-answer">
+                            Na seção "Configurações", você pode definir sua área de atuação selecionando os bairros ou regiões onde deseja realizar coletas. Isso ajuda a filtrar os agendamentos que aparecem para você.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Contato -->
+                <div class="contact-section">
+                    <!-- Métodos de Contato -->
+                    <div class="contact-card">
+                        <h2 class="section-title"><i class="ri-contacts-line"></i> Formas de Contato</h2>
+                        <div class="contact-methods">
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="ri-mail-line"></i>
+                                </div>
+                                <div class="contact-info">
+                                    <span class="contact-label">E-mail</span>
+                                    <span class="contact-value">suporte@ecoleta.com.br</span>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="ri-whatsapp-line"></i>
+                                </div>
+                                <div class="contact-info">
+                                    <span class="contact-label">WhatsApp</span>
+                                    <span class="contact-value">(11) 98765-4321</span>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <div class="contact-icon">
+                                    <i class="ri-phone-line"></i>
+                                </div>
+                                <div class="contact-info">
+                                    <span class="contact-label">Telefone</span>
+                                    <span class="contact-value">(11) 3456-7890</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário de Contato -->
+                    <div class="contact-card">
+                        <h2 class="section-title"><i class="ri-message-3-line"></i> Envie sua Mensagem</h2>
+                        <form class="contact-form" action="#" method="POST">
+                            <div class="form-group">
+                                <label for="subject">Assunto</label>
+                                <select id="subject" name="subject" required>
+                                    <option value="">Selecione um assunto</option>
+                                    <option value="problema-tecnico">Problema Técnico</option>
+                                    <option value="duvida">Dúvida</option>
+                                    <option value="sugestao">Sugestão</option>
+                                    <option value="reclamacao">Reclamação</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Mensagem</label>
+                                <textarea id="message" name="message" placeholder="Descreva sua mensagem em detalhes" required></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">Enviar Mensagem</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Script para o FAQ
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                faqItem.classList.toggle('expanded');
+            });
+        });
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
+    <script src="../JS/home-coletor.js"></script>
+</body>
+
+</html>
