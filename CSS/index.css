@@ -447,9 +447,8 @@ header {
 
 .modal-content {
   background-color: #fefcf5;
-  padding: 2.5rem;
   border-radius: 2rem;
-  width: 90%;
+  width: 100%;
   max-width: 500px;
   text-align: center;
   position: relative;

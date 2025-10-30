@@ -70,26 +70,78 @@ if (!empty($_POST)) {
 
       // 2. Insere coletor na tabela 'coletores', relacionando com o endereço
       $stmt = $conn->prepare("INSERT INTO coletores (
-                  email, senha, tipo_coletor, nome_identificacao, cpf_cnpj, telefone, data_nasc, genero, id_endereco, meio_transporte
+                  email, senha, tipo_coletor, nome_completo, cpf_cnpj, telefone, 
+                  data_nasc, genero, id_endereco, meio_transporte,
+                  status, raio_atuacao
                 ) VALUES (
-                  :email, :senha, :tipo_coletor, :nome_identificacao, :cpf_cnpj, :telefone, :data_nasc, :genero, :id_endereco, :meio_transporte
+                  :email, :senha, :tipo_coletor, :nome_completo, :cpf_cnpj, :telefone,
+                  :data_nasc, :genero, :id_endereco, :meio_transporte,
+                  'pendente', 5
                 )");
+      
+      // Hash da senha antes de salvar
+      $senha_hash = password_hash($dados['senha'], PASSWORD_DEFAULT);
+      
       $stmt->bindParam(':email', $dados['email']);
-      $stmt->bindParam(':senha', $dados['senha']);
-      $stmt->bindParam(':tipo_coletor', $dados['tipo']);
-      $stmt->bindParam(':nome_identificacao', $dados['nome']);
+      $stmt->bindParam(':senha', $senha_hash);
+      // Converte o tipo de pessoa para o formato esperado pelo banco
+      $tipo_coletor = ($dados['tipo'] === 'pessoa_fisica') ? 'individual' : 'empresa';
+      $stmt->bindParam(':tipo_coletor', $tipo_coletor);
+      $stmt->bindParam(':nome_completo', $dados['nome']);
       $stmt->bindParam(':cpf_cnpj', $dados['cpf']);
       $stmt->bindParam(':telefone', $dados['celular']);
       $stmt->bindParam(':data_nasc', $dados['data_nasc']);
       $stmt->bindParam(':genero', $dados['genero']);
       $stmt->bindParam(':meio_transporte', $dados['transporte']);
       $stmt->bindParam(':id_endereco', $id_endereco, PDO::PARAM_INT);
-      $stmt->execute();
+      if ($stmt->execute()) {
+        $id_coletor = $conn->lastInsertId();
+        
+        // 3. Insere a disponibilidade do coletor
+        if (isset($dados['disponibilidade']) && is_array($dados['disponibilidade'])) {
+          $stmt_disponibilidade = $conn->prepare("INSERT INTO disponibilidade_coletores 
+            (id_coletor, dia_semana, hora_inicio, hora_fim) 
+            VALUES (:id_coletor, :dia_semana, :hora_inicio, :hora_fim)");
+
+          foreach ($dados['disponibilidade'] as $disponibilidade) {
+            $stmt_disponibilidade->bindParam(':id_coletor', $id_coletor);
+            $stmt_disponibilidade->bindParam(':dia_semana', $disponibilidade['dia']);
+            $stmt_disponibilidade->bindParam(':hora_inicio', $disponibilidade['inicio']);
+            $stmt_disponibilidade->bindParam(':hora_fim', $disponibilidade['fim']);
+            $stmt_disponibilidade->execute();
+          }
+        }
+        
+        // 4. Se houver upload de foto, processa
+        if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+          $uploadDir = '../uploads/profile_photos/';
+          if (!file_exists($uploadDir)) {
+              mkdir($uploadDir, 0777, true);
+          }
+          
+          $fileInfo = pathinfo($_FILES['photo']['name']);
+          $extension = strtolower($fileInfo['extension']);
+          
+          if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
+            $newFileName = $id_coletor . '_' . uniqid() . '.' . $extension;
+            $uploadFile = $uploadDir . $newFileName;
+            
+            if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
+              // Atualiza o caminho da foto no banco
+              $stmt_foto = $conn->prepare("UPDATE coletores SET foto_perfil = :foto WHERE id = :id");
+              $stmt_foto->bindParam(':foto', $newFileName);
+              $stmt_foto->bindParam(':id', $id_coletor);
+              $stmt_foto->execute();
+            }
+          }
+        }
+        
+        header("Location: final.php");
+      }
     }
   } catch (PDOException $e) {
     echo "<div style='color:red'>Erro ao cadastrar: " . $e->getMessage() . "</div>";
   }
-  header("Location: final.php");
   $conn = null;
 }
 ?>
@@ -102,6 +154,7 @@ if (!empty($_POST)) {
   <title>Portal de cadastro - Coletor</title>
   <link rel="icon" href="../img/logo.png" type="image/png">
   <link rel="stylesheet" href="../CSS/ultregistro.css">
+  <link rel="stylesheet" href="../CSS/global.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
 
@@ -142,7 +195,7 @@ if (!empty($_POST)) {
             <div class="form-row full">
               <div class="form-group">
                 <label for="endereco">Endereço Completo <span class="required">*</span></label>
-                <input type="text" id="endereco" name="endereco" placeholder="Número, rua, complemento" required>
+                <input type="text" id="endereco" name="endereco" placeholder="Rua, número, complemento" required>
               </div>
             </div>
 

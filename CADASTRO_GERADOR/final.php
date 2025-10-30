@@ -7,6 +7,7 @@
     <title>Confirmação de Cadastro</title>
     <link rel="icon" href="../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../CSS/final.css">
+    <link rel="stylesheet" href="../CSS/global.css">
 </head>
 
 <body>

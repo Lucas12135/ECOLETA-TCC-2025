@@ -1,0 +1,145 @@
+/* Estilos específicos para a página de histórico */
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.historico-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+.coleta-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.coleta-card:hover {
+    transform: translateY(-5px);
+}
+
+.coleta-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+.coleta-header .material-icons {
+    color: var(--primary-color);
+    font-size: 2rem;
+}
+
+.coleta-header h3 {
+    flex-grow: 1;
+    margin: 0;
+    color: var(--text-color);
+}
+
+.status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.status.pendente {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status.aceito {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status.concluido {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status.cancelado {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.coleta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.coleta-info p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.coleta-info strong {
+    color: var(--primary-color);
+}
+
+.no-records {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.no-records .material-icons {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.no-records p {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+    background-color: var(--primary-color-dark);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    main {
+        padding: 1rem;
+    }
+
+    .historico-container {
+        grid-template-columns: 1fr;
+    }
+
+    .coleta-card {
+        padding: 1rem;
+    }
+}

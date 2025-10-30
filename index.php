@@ -286,7 +286,7 @@
                 <div class="icones-sociais">
                     <!-- Placeholders para ícones -->
                     <a href="#" class="icone-social"><img src="img/youtube-icon.png" alt="YouTube" class='logo-image'></a> <!-- YouTube (Play) -->
-                    <a href="#" class="icone-social"><img src="img/instagram-icon.png" alt="Instagram" class='logo-image'></a> <!-- Instagram (Camera) -->
+                    <a href="https://www.instagram.com/ecoleta0?igsh=MXNoNGR1YXhrbWdx" target="_blank" class="icone-social"><img src="img/instagram-icon.png" alt="Instagram" class='logo-image'></a> <!-- Instagram (Camera) -->
                     <a href="#" class="icone-social pix-icon"><img src="img/facebook-icon.png" alt="Pix" class='logo-image'></a> <!-- Pix (Texto) -->
                     <a href="#" class="icone-social ecoleta-icon"><img src="img/logo.png" alt="Ecoleta" class='logo-image-ecoleta'></a> <!-- Ecoleta (Emoji) -->
                 </div>
@@ -310,6 +310,7 @@
 
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places&callback=initAutocomplete" async defer></script>
     <script src="JS/index.js"></script>
     <script src="JS/login.js"></script>
     <script>

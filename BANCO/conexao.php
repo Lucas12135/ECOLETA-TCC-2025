@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "ecoleta";
+$dbname = "ecoleta1";
 
 try {
     // Cria a conexao com o banco de dados
