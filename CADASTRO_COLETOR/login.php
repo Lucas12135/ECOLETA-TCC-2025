@@ -201,6 +201,8 @@ if (!empty($_POST)) {
       <div class="vw-plugin-top-wrapper"></div>
     </div>
   </div>
+  </div>
+  </div>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script src="../JS/login.js"></script>
 </body>

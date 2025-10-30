@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmação de Cadastro</title>
+    <title>Confirmação de Cadastro - Gerador</title>
     <link rel="icon" href="../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../CSS/final.css">
     <link rel="stylesheet" href="../CSS/global.css">
@@ -17,7 +17,7 @@
         <div class="header-logo">
             <img src="../img/logo.png" alt="Logo Portal de cadastro - Gerador" class="logo-image">
         </div>
-        <span class="header-text">Portal de Cadastro</span>
+        <span class="header-text">Portal de Cadastro - Gerador</span>
     </div>
 
     <div class="container">
@@ -29,7 +29,7 @@
 
             <!-- Card de Confirmação -->
             <div class="confirmation-card">
-                <h2>Obrigado por se juntar à<br>Equipe de Coletores Ecoleta</h2>
+                <h2>Obrigado por se cadastrar como gerador!</h2>
                 <h3>Parabéns!</h3>
                 <p>A Ecoleta espera por você</p>
                 <button id="visitProfileBtn" class="profile-button">Visitar Home</button>
@@ -39,7 +39,7 @@
 
     <script>
         document.getElementById('visitProfileBtn').addEventListener('click', function() {
-            window.location.href = "../index.php";
+            window.location.href = "../PAGINAS_GERADOR/home.php";
         });
     </script>
 </body>

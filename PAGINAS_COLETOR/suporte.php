@@ -10,7 +10,7 @@ session_start();
     <title>Suporte - Coletor</title>
     <link rel="icon" href="../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../CSS/home-coletor.css">
-    <link rel="stylesheet" href="../CSS/suporte.css">
+    <link rel="stylesheet" href="../CSS/coletor-suporte.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Biblioteca de ícones -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
