@@ -41,7 +41,7 @@ session_start();
                         </a>
                     </li>
                     <li>
-                        <a href="solicitar-coleta.php" class="nav-link">
+                        <a href="solicitar_coleta.php" class="nav-link">
                             <i class="ri-add-circle-line"></i>
                             <span>Solicitar Coleta</span>
                         </a>

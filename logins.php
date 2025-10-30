@@ -21,8 +21,8 @@
                 <span class="logo-text">Portal de Cadastro</span>
             </div>
             <nav>
-                <a href="index.php" class="btn-outline">Home</a>
-                <a href="logins.php" class="btn-filled">Entrar</a>
+                <a href="cadastros.php" class="btn-outline">Cadastrar</a>
+                <a href="index.php" class="btn-filled">Home</a>
                 <div class="menu-icon" onclick="toggleMenu()" id="menuIcon">
                     <span></span>
                     <span></span>
@@ -88,8 +88,8 @@
 
     <main class="cadastros-page">
         <div class="cadastros-header">
-            <h1>Criar conta</h1>
-            <p>Escolha o tipo de conta que deseja criar:</p>
+            <h1>Entrar na conta</h1>
+            <p>Escolha o tipo de conta que deseja acessar:</p>
         </div>
 
         <div class="cadastros-grid">
@@ -109,7 +109,7 @@
                     <p>Quero me cadastrar como coletor afiliado para recolher óleo de geradores.</p>
                 </div>
                 <div class="card-actions">
-                    <a href="CADASTRO_COLETOR/login.php" class="card-cta">Cadastre-se</a>
+                    <a href="LOGINS/login-coletor/login.php" class="card-cta">Cadastre-se</a>
                 </div>
             </article>
         </div>
