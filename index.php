@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+// Verifica se o usuário está logado e qual seu tipo
+$usuarioLogado = isset($_SESSION['id_usuario']);
+$tipoUsuario = $_SESSION['tipo_usuario'] ?? null;
+$nomeUsuario = $_SESSION['nome_usuario'] ?? 'Usuário';
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -6,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Inicial</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz4YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="img/logo.png" type="image/png">
     <link rel="stylesheet" href="CSS/global.css">
@@ -15,8 +23,7 @@
 
 <body>
     <!-- Header -->
-
-<header>
+    <header>
         <div class="header-container">
             <div class="logo">
                 <div class="logo-placeholder">
@@ -25,8 +32,22 @@
                 <span class="logo-text">Página Inicial</span>
             </div>
             <nav>
-                <a href="cadastros.php" class="btn-outline">Criar Conta</a>
-                <a href="login.php" class="btn-filled">Entrar</a>
+                <?php if ($usuarioLogado): ?>
+                    <!-- Usuário Logado -->
+                    <div class="user-menu">
+                        <span class="welcome-text">Olá, <?php echo htmlspecialchars($nomeUsuario); ?>!</span>
+                        <?php if ($tipoUsuario === 'coletor'): ?>
+                            <a href="PAGINAS_COLETOR/home.php" class="btn-filled">Ver Perfil</a>
+                        <?php elseif ($tipoUsuario === 'gerador'): ?>
+                            <a href="PAGINAS_GERADOR/home.php" class="btn-filled">Ver Perfil</a>
+                        <?php endif; ?>
+                        <a href="logout.php" class="btn-outline">Sair</a>
+                    </div>
+                <?php else: ?>
+                    <!-- Usuário Não Logado -->
+                    <a href="cadastros.php" class="btn-outline">Criar Conta</a>
+                    <a href="login.php" class="btn-filled">Entrar</a>
+                <?php endif; ?>
             </nav>
         </div>
     </header>
@@ -201,7 +222,9 @@
                 </button>
             </div>
 
-            <button class="main-action-btn" onclick="location.href='cadastros.php'">Vire um Coletor</button>
+            <?php if (!$usuarioLogado): ?>
+                <button class="main-action-btn" onclick="location.href='cadastros.php'">Vire um Coletor</button>
+            <?php endif; ?>
         </section>
 
         <!-- Portal do Coletor -->

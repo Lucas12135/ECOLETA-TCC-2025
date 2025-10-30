@@ -1,22 +1,47 @@
 <?php
 session_start();
 
-$errors = [];
-
-if (!empty($_POST)) {
-    if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Digite um email válido.';
+try {
+    include_once('BANCO/conexao.php');
+    if (!isset($conn) || !$conn) {
+        $errors['db'] = 'Não foi possível conectar ao banco de dados.';
+    } else {
+        $stmt = $conn->prepare('SELECT id, nome, email, senha, tipo FROM coletores WHERE email = :email LIMIT 1');
+        $stmt->bindParam(':email', $_POST['email']);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user) {
+            // Verifica senha hashed. Se a senha estiver em texto plano (não recomendado),
+            // tentamos migrar para hash automaticamente.
+            if (password_verify($_POST['senha'], $user['senha'])) {
+                // sucesso
+            } elseif ($user['senha'] === $_POST['senha']) {
+                // senha em texto plano — fazer rehash e atualizar (migração)
+                $newHash = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+                $upd = $conn->prepare('UPDATE coletores SET senha = :senha WHERE id = :id');
+                $upd->bindParam(':senha', $newHash);
+                $upd->bindParam(':id', $user['id']);
+                $upd->execute();
+            } else {
+                $user = false;
+            }
+        }
+        if ($user) {
+            // autentica usuário
+            $_SESSION['user'] = [
+                'id' => $user['id'],
+                'nome' => $user['nome'],
+                'email' => $user['email'],
+                'tipo' => $user['tipo'] ?? null
+            ];
+            header('Location: index.php');
+            exit;
+        } else {
+            $errors['login'] = 'Email ou senha inválidos.';
+        }
     }
-    if (empty($_POST['senha'])) {
-        $errors['senha'] = 'Digite sua senha.';
-    }
-
-    if (empty($errors)) {
-        // TODO: Adicionar lógica de autenticação
-        // Por enquanto, apenas redireciona para a página inicial
-        header('Location: index.php');
-        exit;
-    }
+} catch (Exception $e) {
+    $errors['db'] = 'Erro no servidor: ' . $e->getMessage();
 }
 ?>
 <!DOCTYPE html>

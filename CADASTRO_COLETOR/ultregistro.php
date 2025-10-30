@@ -27,7 +27,6 @@ if ($tipo === "pessoa_juridica") {
 if (!empty($_POST)) {
   // Salva os dados da última etapa na sessão
   $endereco = $_POST['endereco'];
-  // Exemplo: "Rua das Flores, 123, apto 45"
   $partes = explode(',', $endereco);
   $rua = trim($partes[1] ?? '');
   $numero = trim($partes[0] ?? '');
@@ -47,12 +46,11 @@ if (!empty($_POST)) {
 
   include_once('../BANCO/conexao.php');
 
-  // Recupera todos os dados do cadastro
   $dados = $_SESSION['cadastro'];
 
   try {
     if ($conn) {
-      // 1. Insere endereço na tabela 'enderecos' (PDO)
+      // 1. Insere endereço
       $stmt_endereco = $conn->prepare("INSERT INTO enderecos (
                 rua, numero, complemento, cidade, cep, estado, bairro
                 ) VALUES (
@@ -68,7 +66,7 @@ if (!empty($_POST)) {
       $stmt_endereco->execute();
       $id_endereco = $conn->lastInsertId();
 
-      // 2. Insere coletor na tabela 'coletores', relacionando com o endereço
+      // 2. Insere coletor
       $stmt = $conn->prepare("INSERT INTO coletores (
                   email, senha, tipo_coletor, nome_completo, cpf_cnpj, telefone, 
                   data_nasc, genero, id_endereco, meio_transporte,
@@ -79,13 +77,11 @@ if (!empty($_POST)) {
                   'pendente', 5
                 )");
       
-      // Hash da senha antes de salvar
       $senha_hash = password_hash($dados['senha'], PASSWORD_DEFAULT);
       
       $stmt->bindParam(':email', $dados['email']);
       $stmt->bindParam(':senha', $senha_hash);
-      // Converte o tipo de pessoa para o formato esperado pelo banco
-      $tipo_coletor = ($dados['tipo'] === 'pessoa_fisica') ? 'individual' : 'empresa';
+      $tipo_coletor = ($dados['tipo'] === 'pessoa_fisica') ? 'pessoa_fisica' : 'pessoa_juridica';
       $stmt->bindParam(':tipo_coletor', $tipo_coletor);
       $stmt->bindParam(':nome_completo', $dados['nome']);
       $stmt->bindParam(':cpf_cnpj', $dados['cpf']);
@@ -94,10 +90,11 @@ if (!empty($_POST)) {
       $stmt->bindParam(':genero', $dados['genero']);
       $stmt->bindParam(':meio_transporte', $dados['transporte']);
       $stmt->bindParam(':id_endereco', $id_endereco, PDO::PARAM_INT);
+      
       if ($stmt->execute()) {
         $id_coletor = $conn->lastInsertId();
         
-        // 3. Insere a disponibilidade do coletor
+        // 3. Insere disponibilidade
         if (isset($dados['disponibilidade']) && is_array($dados['disponibilidade'])) {
           $stmt_disponibilidade = $conn->prepare("INSERT INTO disponibilidade_coletores 
             (id_coletor, dia_semana, hora_inicio, hora_fim) 
@@ -112,7 +109,7 @@ if (!empty($_POST)) {
           }
         }
         
-        // 4. Se houver upload de foto, processa
+        // 4. Processa upload de foto
         if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
           $uploadDir = '../uploads/profile_photos/';
           if (!file_exists($uploadDir)) {
@@ -127,7 +124,6 @@ if (!empty($_POST)) {
             $uploadFile = $uploadDir . $newFileName;
             
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
-              // Atualiza o caminho da foto no banco
               $stmt_foto = $conn->prepare("UPDATE coletores SET foto_perfil = :foto WHERE id = :id");
               $stmt_foto->bindParam(':foto', $newFileName);
               $stmt_foto->bindParam(':id', $id_coletor);
@@ -136,7 +132,22 @@ if (!empty($_POST)) {
           }
         }
         
+        // ============================================
+        // NOVO CÓDIGO: Configura a sessão do usuário
+        // ============================================
+        $_SESSION['id_usuario'] = $id_coletor;
+        $_SESSION['tipo_usuario'] = 'coletor';
+        $_SESSION['nome_usuario'] = $dados['nome'];
+        $_SESSION['email'] = $dados['email'];
+        $_SESSION['telefone'] = $dados['celular'];
+        $_SESSION['cadastro_completo'] = true;
+        
+        // Limpar dados temporários do cadastro
+        unset($_SESSION['cadastro']);
+        // ============================================
+        
         header("Location: final.php");
+        exit;
       }
     }
   } catch (PDOException $e) {
@@ -156,9 +167,6 @@ if (!empty($_POST)) {
   <link rel="stylesheet" href="../CSS/ultregistro.css">
   <link rel="stylesheet" href="../CSS/global.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-
-  </style>
 </head>
 
 <body>
@@ -177,7 +185,6 @@ if (!empty($_POST)) {
   <!-- ========== CONTEÚDO PRINCIPAL ========== -->
   <main>
     <div class="form-container">
-      <!-- Header do Formulário -->
       <div class="form-header">
         <a href="#" class="back-link" onclick="goBack(event)">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -188,8 +195,9 @@ if (!empty($_POST)) {
         <h1 class="form-title">Últimos passos para virar coletor</h1>
       </div>
 
-      <!-- Corpo do Formulário -->
-      <form action="#" method="POST" class="form" id="finalRegistrationForm">
+      
+      
+      <form action="#" method="POST" class="form" id="finalRegistrationForm" enctype="multipart/form-data">
         <div class="form-body">
           <div class="form-fields">
             <div class="form-row full">
@@ -213,7 +221,7 @@ if (!empty($_POST)) {
               <div class="form-group">
                 <label for="estado">Estado <span class="required">*</span></label>
                 <select id="estado" name="estado" required>
-                  <option value="" disabled>Selecione seu estado</option>
+                  <option value="" disabled selected>Selecione seu estado</option>
                   <option value="AC">AC</option>
                   <option value="AL">AL</option>
                   <option value="AP">AP</option>
@@ -257,7 +265,7 @@ if (!empty($_POST)) {
               <div class='form-group'>
                 <label for='genero'>Gênero</label>
                 <select id='gender' name='genero'>
-                  <option value='>Prefiro não informar</option>
+                  <option value=''>Prefiro não informar</option>
                   <option value='M'>Masculino</option>
                   <option value='F'>Feminino</option>
                   <option value='O'>Outro</option>
@@ -276,7 +284,7 @@ if (!empty($_POST)) {
               <div class="form-group">
                 <label for="disponibilidade">Disponibilidade <span class="required">*</span></label>
                 <select id="availability" name="disponibilidade" required>
-                  <option value="" disabled>Selecione sua disponibilidade</option>
+                  <option value="" disabled selected>Selecione sua disponibilidade</option>
                   <option value="manha">Manhã</option>
                   <option value="tarde">Tarde</option>
                   <option value="noite">Noite</option>
@@ -287,7 +295,7 @@ if (!empty($_POST)) {
               <div class="form-group">
                 <label for="transporte">Meio de Transporte <span class="required">*</span></label>
                 <select id="transport" name="transporte" required>
-                  <option value="" disabled>Selecione seu transporte</option>
+                  <option value="" disabled selected>Selecione seu transporte</option>
                   <option value="bicicleta">Bicicleta</option>
                   <option value="motocicleta">Motocicleta</option>
                   <option value="carro">Carro</option>
@@ -296,40 +304,38 @@ if (!empty($_POST)) {
                 </select>
               </div>
             </div>
+            
             <div class="form-actions">
-              <button type="submit" class="btn btn-submit" id="submitBtn" disabled>Finalizar Cadastro</button>
+              <button type="submit" class="btn btn-submit" id="submitBtn">Finalizar Cadastro</button>
             </div>
-      </form>
-    </div>
+          </div>
 
-    <!-- Seção de Foto -->
-    <div class="photo-section">
-      <div class="photo-upload" onclick="selectPhoto()" id="photoUploadArea">
-        <input type="file"
-          id="photoInput"
-          name="photo"
-          accept="image/jpeg,image/png"
-          style="display: none;"
-          onchange="previewPhoto(this)">
-        <img id="photoPreview" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-        <div id="uploadIcon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L19 5C18.8 4.8 18.5 4.8 18.3 5L16.9 6.4L17.6 7.1L21 9ZM19 17V19C19 20.1 18.1 21 17 21H5C3.9 21 3 20.1 3 19V17L8.5 12.5L11 15L14.5 11.5L19 17ZM17 3H5C3.9 3 3 3.9 3 5V15L6.8 11.2C7.2 10.8 7.8 10.8 8.2 11.2L12 15L15.8 11.2C16.2 10.8 16.8 10.8 17.2 11.2L19 13V5C19 3.9 18.1 3 17 3Z" />
-          </svg>
-          <div class="photo-upload-text">
-            Clique para adicionar<br>sua foto
+          <!-- Seção de Foto ao Lado -->
+          <div class="photo-section">
+            <div class="photo-upload" onclick="selectPhoto()" id="photoUploadArea">
+              <input type="file"
+                id="photoInput"
+                name="photo"
+                accept="image/jpeg,image/png"
+                style="display: none;"
+                onchange="previewPhoto(this)">
+              <img id="photoPreview" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+              <div id="uploadIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
+                  <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L19 5C18.8 4.8 18.5 4.8 18.3 5L16.9 6.4L17.6 7.1L21 9ZM19 17V19C19 20.1 18.1 21 17 21H5C3.9 21 3 20.1 3 19V17L8.5 12.5L11 15L14.5 11.5L19 17ZM17 3H5C3.9 3 3 3.9 3 5V15L6.8 11.2C7.2 10.8 7.8 10.8 8.2 11.2L12 15L15.8 11.2C16.2 10.8 16.8 10.8 17.2 11.2L19 13V5C19 3.9 18.1 3 17 3Z" fill="#223e2a"/>
+                </svg>
+                <div class="photo-upload-text">Adicionar foto de perfil</div>
+              </div>
+            </div>
+            <div class="photo-requirements">
+              <?= $desc_img ?>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="photo-requirements">
-        <?= $desc_img ?>
-      </div>
-    </div>
-    </div>
+      </form>
     </div>
   </main>
 
-  <!-- Botão de Acessibilidade -->
   <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
       <title>accessibility</title>
