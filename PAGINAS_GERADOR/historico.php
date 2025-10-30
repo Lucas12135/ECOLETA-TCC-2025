@@ -1,93 +1,268 @@
 <?php
 session_start();
-if (!isset($_SESSION['id_usuario'])) {
-    header("Location: ../login.php");
-    exit();
-}
-
-include '../BANCO/conexao.php';
-
-// Buscar histórico de coletas do usuário
-$id_usuario = $_SESSION['id_usuario'];
-$sql = "SELECT c.*, cl.nome as nome_coletor, cl.telefone as telefone_coletor 
-        FROM coletas c 
-        LEFT JOIN coletores cl ON c.id_coletor = cl.id 
-        WHERE c.id_gerador = ? 
-        ORDER BY c.data_solicitacao DESC";
-
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id_usuario);
-$stmt->execute();
-$result = $stmt->get_result();
 ?>
-
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Histórico de Coletas - Ecoleta</title>
-    <link rel="stylesheet" href="../CSS/global.css">
+    <title>Histórico - Gerador</title>
+    <link rel="icon" href="../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../CSS/gerador-historico.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Biblioteca de ícones -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
-<body>
-    <header>
-        <nav>
-            <a href="home.php">
-                <img src="../img/logo.png" alt="Logo Ecoleta">
-            </a>
-            <ul>
-                <li><a href="home.php">Home</a></li>
-                <li><a href="solicitar_coleta.php">Solicitar Coleta</a></li>
-                <li><a href="historico.php" class="active">Histórico</a></li>
-                <li><a href="configuracoes.php">Configurações</a></li>
-                <li><a href="perfil.php">Perfil</a></li>
-                <li><a href="../login.php?logout=1">Sair</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <main>
-        <h1>Histórico de Coletas</h1>
-        
-        <div class="historico-container">
-            <?php if ($result->num_rows > 0): ?>
-                <?php while($coleta = $result->fetch_assoc()): ?>
-                    <div class="coleta-card">
-                        <div class="coleta-header">
-                            <span class="material-icons">recycling</span>
-                            <h3>Coleta #<?php echo $coleta['id']; ?></h3>
-                            <span class="status <?php echo strtolower($coleta['status']); ?>">
-                                <?php echo $coleta['status']; ?>
-                            </span>
-                        </div>
-                        <div class="coleta-info">
-                            <p><strong>Data da Solicitação:</strong> <?php echo date('d/m/Y H:i', strtotime($coleta['data_solicitacao'])); ?></p>
-                            <p><strong>Tipo de Material:</strong> <?php echo $coleta['tipo_material']; ?></p>
-                            <p><strong>Quantidade:</strong> <?php echo $coleta['quantidade']; ?> kg</p>
-                            <?php if($coleta['status'] != 'PENDENTE'): ?>
-                                <p><strong>Coletor:</strong> <?php echo $coleta['nome_coletor']; ?></p>
-                                <p><strong>Telefone do Coletor:</strong> <?php echo $coleta['telefone_coletor']; ?></p>
-                            <?php endif; ?>
-                            <?php if($coleta['data_coleta']): ?>
-                                <p><strong>Data da Coleta:</strong> <?php echo date('d/m/Y H:i', strtotime($coleta['data_coleta'])); ?></p>
-                            <?php endif; ?>
+<body>
+    <div class="container">
+        <!-- Barra Lateral -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-placeholder">
+                    <img src="../img/logo.png" alt="Logo Ecoleta" class="logo">
+                </div>
+                <span class="logo-text">Ecoleta</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li>
+                        <a href="home.php" class="nav-link">
+                            <i class="ri-home-4-line"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="perfil.php" class="nav-link">
+                            <i class="ri-user-line"></i>
+                            <span>Perfil</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="solicitar_coleta.php" class="nav-link">
+                            <i class="ri-oil-line"></i>
+                            <span>Solicitar Coleta</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="historico.php" class="nav-link">
+                            <i class="ri-history-line"></i>
+                            <span>Histórico</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="configuracoes.php" class="nav-link">
+                            <i class="ri-settings-3-line"></i>
+                            <span>Configurações</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="suporte.php" class="nav-link">
+                            <i class="ri-customer-service-2-line"></i>
+                            <span>Suporte</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <header class="content-header">
+                <div class="welcome-message">
+                    <h1>Histórico de Solicitações</h1>
+                    <p>Acompanhe suas solicitações de coleta</p>
+                </div>
+                <div class="header-actions">
+                    <div class="action-buttons">
+                        <button class="notification-btn" title="Notificações">
+                            <i class="ri-notification-3-line"></i>
+                            <span class="notification-badge">2</span>
+                        </button>
+                        <!-- Popup de Notificações -->
+                        <div class="notifications-popup">
+                            <div class="notifications-header">
+                                <h3>Notificações</h3>
+                                <button class="mark-all-read">Marcar todas como lidas</button>
+                            </div>
+                            <div class="notification-list">
+                                <div class="notification-item unread">
+                                    <div class="notification-content">
+                                        <span class="notification-title">Coleta Confirmada</span>
+                                        <p>Sua solicitação #12345 foi aceita e será coletada em breve.</p>
+                                        <span class="notification-time">Há 1 hora</span>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-content">
+                                        <span class="notification-title">Coleta Realizada</span>
+                                        <p>A coleta #12344 foi concluída com sucesso!</p>
+                                        <span class="notification-time">Há 2 dias</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div class="no-records">
-                    <span class="material-icons">inbox</span>
-                    <p>Você ainda não possui histórico de coletas.</p>
-                    <a href="solicitar_coleta.php" class="btn">Solicitar uma Coleta</a>
                 </div>
-            <?php endif; ?>
-        </div>
-    </main>
+            </header>
 
-    <footer>
-        <p>&copy; 2025 Ecoleta. Todos os direitos reservados.</p>
-    </footer>
+            <!-- Lista de Histórico -->
+            <div class="history-list">
+                <!-- Item de Histórico -->
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-main-info">
+                            <span class="collection-id">ID: #12345</span>
+                            <span class="collection-quantity">5 litros</span>
+                            <span class="collection-date">28/10/2025</span>
+                        </div>
+                        <div class="history-actions">
+                            <span class="collection-status status-pendente">Pendente</span>
+                            <button class="expand-button">
+                                <i class="ri-arrow-down-s-line"></i>
+                                Detalhes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="history-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Coletor:</span>
+                            <span class="detail-value">Aguardando confirmação</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Local de Coleta:</span>
+                            <span class="detail-value">Rua das Flores, 123 - Jardim Primavera</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Data da solicitação:</span>
+                            <span class="detail-value">28/10/2025</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Observações:</span>
+                            <span class="detail-value">Óleo armazenado em garrafas PET</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item de Histórico -->
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-main-info">
+                            <span class="collection-id">ID: #12344</span>
+                            <span class="collection-quantity">3 litros</span>
+                            <span class="collection-date">25/10/2025</span>
+                        </div>
+                        <div class="history-actions">
+                            <span class="collection-status status-concluida">Concluída</span>
+                            <button class="expand-button">
+                                <i class="ri-arrow-down-s-line"></i>
+                                Detalhes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="history-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Coletor:</span>
+                            <span class="detail-value">João Silva</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Local de Coleta:</span>
+                            <span class="detail-value">Rua das Flores, 123 - Jardim Primavera</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Data da solicitação:</span>
+                            <span class="detail-value">24/10/2025</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Data da coleta:</span>
+                            <span class="detail-value">25/10/2025</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Observações:</span>
+                            <span class="detail-value">Coleta realizada com sucesso</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item de Histórico -->
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-main-info">
+                            <span class="collection-id">ID: #12343</span>
+                            <span class="collection-quantity">7 litros</span>
+                            <span class="collection-date">20/10/2025</span>
+                        </div>
+                        <div class="history-actions">
+                            <span class="collection-status status-cancelada">Cancelada</span>
+                            <button class="expand-button">
+                                <i class="ri-arrow-down-s-line"></i>
+                                Detalhes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="history-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Motivo do Cancelamento:</span>
+                            <span class="detail-value">Cancelado pelo gerador</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Local de Coleta:</span>
+                            <span class="detail-value">Rua das Flores, 123 - Jardim Primavera</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Data da solicitação:</span>
+                            <span class="detail-value">20/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gerenciar expansão dos itens do histórico
+            const historyItems = document.querySelectorAll('.history-item');
+
+            historyItems.forEach(item => {
+                const expandButton = item.querySelector('.expand-button');
+
+                expandButton.addEventListener('click', () => {
+                    item.classList.toggle('expanded');
+                });
+            });
+
+            // Gerenciar notificações
+            const notificationBtn = document.querySelector('.notification-btn');
+            const notificationsPopup = document.querySelector('.notifications-popup');
+            const markAllReadBtn = document.querySelector('.mark-all-read');
+
+            document.addEventListener('click', function(event) {
+                const isClickInsidePopup = notificationsPopup.contains(event.target);
+                const isClickOnButton = notificationBtn.contains(event.target);
+
+                if (!isClickInsidePopup && !isClickOnButton) {
+                    notificationsPopup.classList.remove('show');
+                }
+            });
+
+            notificationBtn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                notificationsPopup.classList.toggle('show');
+            });
+
+            markAllReadBtn.addEventListener('click', function() {
+                const unreadNotifications = document.querySelectorAll('.notification-item.unread');
+                unreadNotifications.forEach(notification => {
+                    notification.classList.remove('unread');
+                });
+                const badge = document.querySelector('.notification-badge');
+                badge.style.display = 'none';
+            });
+        });
+    </script>
 </body>
+
 </html>
