@@ -9,9 +9,21 @@ if (!isset($_SESSION['cadastro'])) {
 }
 
 if (!empty($_POST)) {
+    include_once('../BANCO/conexao.php');
     if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Digite um email válido.';
+    $errors['email'] = 'Digite um email válido.';
+  } else {
+    $email = trim($_POST['email']);
+
+    // Verifica se o e-mail já existe no banco (usando PDO)
+    $stmt = $conn->prepare("SELECT id FROM geradores WHERE email = :email LIMIT 1");
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->execute();
+
+    if ($stmt->fetch()) {
+      $errors['email'] = 'Este email já está em uso.';
     }
+  }
     if (empty($_POST['senha'])) {
         $errors['senha'] = 'Digite uma senha.';
     } else {

@@ -1,5 +1,255 @@
 <?php
 session_start();
+
+// Verificar se o usuário está logado
+if (!isset($_SESSION['usuario_id'])) {
+    header('Location: ../login.php');
+    exit();
+}
+
+// Verificar se é uma requisição POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: solicitar_coleta.php');
+    exit();
+}
+
+// Incluir conexão com banco de dados
+require_once('../config/database.php');
+
+// Capturar dados do formulário
+$usuario_id = $_SESSION['usuario_id'];
+$volume = floatval($_POST['volume']);
+$tipo_coleta = $_POST['tipo_coleta']; // 'automatico' ou 'especifico'
+$coletor_id = isset($_POST['coletor_id']) ? intval($_POST['coletor_id']) : null;
+
+// Endereço
+$cep = preg_replace('/[^0-9]/', '', $_POST['cep']);
+$rua = $_POST['rua'];
+$numero = $_POST['numero'];
+$complemento = $_POST['complemento'] ?? null;
+$bairro = $_POST['bairro'];
+$cidade = $_POST['cidade'];
+$latitude = floatval($_POST['latitude']);
+$longitude = floatval($_POST['longitude']);
+
+// Data e período
+$data_preferencial = $_POST['data'];
+$periodo = $_POST['periodo'];
+
+// Observações
+$observacoes = $_POST['observacoes'] ?? null;
+
+// Validações básicas
+$erros = [];
+
+if ($volume < 1) {
+    $erros[] = "Volume deve ser maior que 0 litros.";
+}
+
+if (strlen($cep) !== 8) {
+    $erros[] = "CEP inválido.";
+}
+
+if (empty($rua) || empty($numero) || empty($bairro) || empty($cidade)) {
+    $erros[] = "Preencha todos os campos de endereço obrigatórios.";
+}
+
+if (strtotime($data_preferencial) < strtotime(date('Y-m-d'))) {
+    $erros[] = "Data não pode ser no passado.";
+}
+
+if (!in_array($periodo, ['manha', 'tarde'])) {
+    $erros[] = "Período inválido.";
+}
+
+if ($tipo_coleta === 'especifico' && empty($coletor_id)) {
+    $erros[] = "Selecione um coletor.";
+}
+
+// Se houver erros, redirecionar com mensagem
+if (!empty($erros)) {
+    $_SESSION['erro'] = implode('<br>', $erros);
+    header('Location: solicitar_coleta.php');
+    exit();
+}
+
+try {
+    // Iniciar transação
+    $pdo->beginTransaction();
+    
+    // Inserir solicitação de coleta
+    $sql = "INSERT INTO solicitacoes_coleta (
+        usuario_id, 
+        volume, 
+        tipo_coleta,
+        coletor_id,
+        cep, 
+        rua, 
+        numero, 
+        complemento, 
+        bairro, 
+        cidade, 
+        latitude, 
+        longitude,
+        data_preferencial,
+        periodo,
+        observacoes,
+        status,
+        data_solicitacao
+    ) VALUES (
+        :usuario_id, 
+        :volume, 
+        :tipo_coleta,
+        :coletor_id,
+        :cep, 
+        :rua, 
+        :numero, 
+        :complemento, 
+        :bairro, 
+        :cidade, 
+        :latitude, 
+        :longitude,
+        :data_preferencial,
+        :periodo,
+        :observacoes,
+        :status,
+        NOW()
+    )";
+    
+    $stmt = $pdo->prepare($sql);
+    
+    // Definir status inicial
+    $status_inicial = ($tipo_coleta === 'especifico') ? 'aguardando_confirmacao' : 'aguardando_coletor';
+    
+    $stmt->execute([
+        ':usuario_id' => $usuario_id,
+        ':volume' => $volume,
+        ':tipo_coleta' => $tipo_coleta,
+        ':coletor_id' => $coletor_id,
+        ':cep' => $cep,
+        ':rua' => $rua,
+        ':numero' => $numero,
+        ':complemento' => $complemento,
+        ':bairro' => $bairro,
+        ':cidade' => $cidade,
+        ':latitude' => $latitude,
+        ':longitude' => $longitude,
+        ':data_preferencial' => $data_preferencial,
+        ':periodo' => $periodo,
+        ':observacoes' => $observacoes,
+        ':status' => $status_inicial
+    ]);
+    
+    $solicitacao_id = $pdo->lastInsertId();
+    
+    // Se for coleta específica, notificar o coletor selecionado
+    if ($tipo_coleta === 'especifico' && $coletor_id) {
+        $sql_notificacao = "INSERT INTO notificacoes (
+            usuario_id,
+            tipo,
+            titulo,
+            mensagem,
+            referencia_id,
+            data_criacao
+        ) VALUES (
+            :coletor_id,
+            'nova_solicitacao',
+            'Nova Solicitação de Coleta',
+            'Você foi selecionado para uma nova coleta de :volume litros',
+            :solicitacao_id,
+            NOW()
+        )";
+        
+        $stmt_notificacao = $pdo->prepare($sql_notificacao);
+        $stmt_notificacao->execute([
+            ':coletor_id' => $coletor_id,
+            ':volume' => $volume,
+            ':solicitacao_id' => $solicitacao_id
+        ]);
+    }
+    
+    // Se for coleta automática, notificar coletores próximos
+    if ($tipo_coleta === 'automatico') {
+        // Buscar coletores em um raio de 10km
+        $sql_coletores = "SELECT 
+            c.id,
+            c.usuario_id,
+            (6371 * acos(
+                cos(radians(:latitude)) * 
+                cos(radians(c.latitude)) * 
+                cos(radians(c.longitude) - radians(:longitude)) + 
+                sin(radians(:latitude)) * 
+                sin(radians(c.latitude))
+            )) AS distancia
+        FROM coletores c
+        WHERE c.ativo = 1
+        AND c.disponivel = 1
+        HAVING distancia <= 10
+        ORDER BY distancia
+        LIMIT 5";
+        
+        $stmt_coletores = $pdo->prepare($sql_coletores);
+        $stmt_coletores->execute([
+            ':latitude' => $latitude,
+            ':longitude' => $longitude
+        ]);
+        
+        $coletores_proximos = $stmt_coletores->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Notificar cada coletor próximo
+        foreach ($coletores_proximos as $coletor) {
+            $sql_notificacao = "INSERT INTO notificacoes (
+                usuario_id,
+                tipo,
+                titulo,
+                mensagem,
+                referencia_id,
+                data_criacao
+            ) VALUES (
+                :coletor_id,
+                'nova_solicitacao_area',
+                'Nova Coleta Disponível',
+                'Nova coleta de :volume litros disponível a :distancia km de você',
+                :solicitacao_id,
+                NOW()
+            )";
+            
+            $stmt_notificacao = $pdo->prepare($sql_notificacao);
+            $stmt_notificacao->execute([
+                ':coletor_id' => $coletor['usuario_id'],
+                ':volume' => $volume,
+                ':distancia' => round($coletor['distancia'], 1),
+                ':solicitacao_id' => $solicitacao_id
+            ]);
+        }
+    }
+    
+    // Confirmar transação
+    $pdo->commit();
+    
+    // Redirecionar com mensagem de sucesso
+    $_SESSION['sucesso'] = "Solicitação de coleta realizada com sucesso!";
+    
+    if ($tipo_coleta === 'especifico') {
+        $_SESSION['sucesso'] .= " O coletor selecionado foi notificado.";
+    } else {
+        $_SESSION['sucesso'] .= " Coletores próximos foram notificados.";
+    }
+    
+    header('Location: historico.php');
+    exit();
+    
+} catch (PDOException $e) {
+    // Reverter transação em caso de erro
+    $pdo->rollBack();
+    
+    // Log do erro (em produção, usar um sistema de logs adequado)
+    error_log("Erro ao processar solicitação: " . $e->getMessage());
+    
+    $_SESSION['erro'] = "Erro ao processar solicitação. Tente novamente.";
+    header('Location: solicitar_coleta.php');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -27,6 +277,12 @@ session_start();
 
             <nav class="sidebar-nav">
                 <ul>
+                    <li class="nav-link">
+                        <a href="../index.php" class="nav-link">
+                            <i class="ri-arrow-left-line"></i>
+                            <span>Voltar</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="home.php" class="nav-link">
                             <i class="ri-home-4-line"></i>

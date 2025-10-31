@@ -36,6 +36,12 @@ session_start();
 
             <nav class="sidebar-nav">
                 <ul>
+                    <li class="nav-link">
+                        <a href="../index.php" class="nav-link">
+                            <i class="ri-arrow-left-line"></i>
+                            <span>Voltar</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="home.php" class="nav-link">
                             <i class="ri-home-4-line"></i>
@@ -93,6 +99,46 @@ session_start();
                             <input type="number" id="volume" name="volume" min="1" step="0.5" required>
                             <span class="unit">L</span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Tipo de Coleta -->
+                <div class="form-section">
+                    <h2>Tipo de Coleta</h2>
+                    <div class="collection-type-options">
+                        <label class="radio-card">
+                            <input type="radio" name="tipo_coleta" value="automatico" checked>
+                            <div class="radio-card-content">
+                                <i class="ri-map-pin-user-line"></i>
+                                <h3>Coletor Próximo</h3>
+                                <p>Um coletor disponível na sua região irá aceitar a coleta</p>
+                            </div>
+                        </label>
+
+                        <label class="radio-card">
+                            <input type="radio" name="tipo_coleta" value="especifico">
+                            <div class="radio-card-content">
+                                <i class="ri-user-search-line"></i>
+                                <h3>Escolher Coletor</h3>
+                                <p>Selecione um coletor específico para realizar a coleta</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Seleção de Coletor (oculto inicialmente) -->
+                <div class="form-section" id="coletor-selection" style="display: none;">
+                    <h2>Selecionar Coletor</h2>
+                    <div class="form-group">
+                        <label for="coletor">Escolha o coletor</label>
+                        <select id="coletor" name="coletor_id">
+                            <option value="">Carregando coletores...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Lista de Coletores -->
+                    <div id="coletores-list" class="coletores-grid">
+                        <!-- Será preenchido dinamicamente via JavaScript -->
                     </div>
                 </div>
 

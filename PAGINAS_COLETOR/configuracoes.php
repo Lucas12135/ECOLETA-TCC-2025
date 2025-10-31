@@ -25,7 +25,6 @@ session_start();
                 </div>
                 <span class="logo-text">Ecoleta</span>
             </div>
-
             <nav class="sidebar-nav">
                 <ul>
                     <li class="nav-link">
