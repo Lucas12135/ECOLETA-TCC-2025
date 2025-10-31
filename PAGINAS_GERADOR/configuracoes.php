@@ -10,6 +10,7 @@ session_start();
     <title>Configurações - Gerador</title>
     <link rel="icon" href="../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../CSS/gerador-configuracoes.css">
+    <link rel="stylesheet" href="../CSS/navbar.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Biblioteca de ícones -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
@@ -18,13 +19,17 @@ session_start();
 <body>
     <div class="container">
         <!-- Barra Lateral -->
-        <aside class="sidebar">
+        <header class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-placeholder">
                     <img src="../img/logo.png" alt="Logo Ecoleta" class="logo">
                 </div>
                 <span class="logo-text">Ecoleta</span>
             </div>
+
+            <button class="menu-mobile-button" onclick="toggleMobileMenu()">
+                <i class="ri-menu-line"></i>
+            </button>
 
             <nav class="sidebar-nav">
                 <ul>
@@ -41,7 +46,7 @@ session_start();
                         </a>
                     </li>
                     <li>
-                        <a href="solicitar-coleta.php" class="nav-link">
+                        <a href="solicitar_coleta.php" class="nav-link">
                             <i class="ri-add-circle-line"></i>
                             <span>Solicitar Coleta</span>
                         </a>
@@ -66,7 +71,7 @@ session_start();
                     </li>
                 </ul>
             </nav>
-        </aside>
+        </header>
 
         <!-- Conteúdo Principal -->
         <main class="main-content">
@@ -379,6 +384,7 @@ session_start();
             });
         });
     </script>
+    <script src="../JS/navbar.js"></script>
 </body>
 
 </html>

@@ -41,7 +41,6 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-  width: 280px;
   background-color: var(--background);
   padding: 1.5rem;
   border-radius: 16px;
@@ -51,7 +50,6 @@ body {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 2rem;
 }
 
 .sidebar-header .logo {

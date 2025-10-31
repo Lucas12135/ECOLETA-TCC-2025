@@ -137,6 +137,11 @@
   transform: translateY(-2px);
 }
 
+.btn-recusar:hover {
+  background-color: #cc0000;
+  transform: translateY(-2px);
+}
+
 .btn-cancelar {
   background-color: #fff1f1;
   color: var(--status-cancelado);

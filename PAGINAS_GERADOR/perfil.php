@@ -10,20 +10,25 @@ session_start();
     <title>Perfil - Ecoleta</title>
     <link rel="icon" href="../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../CSS/gerador-perfil.css">
+    <link rel="stylesheet" href="../CSS/navbar.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 
 <body>
     <div class="container">
-        <!-- Barra Lateral -->
-        <aside class="sidebar">
+        <!-- Navbar -->
+        <header class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-placeholder">
                     <img src="../img/logo.png" alt="Logo Ecoleta" class="logo">
                 </div>
                 <span class="logo-text">Ecoleta</span>
             </div>
+
+            <button class="menu-mobile-button" onclick="toggleMobileMenu()">
+                <i class="ri-menu-line"></i>
+            </button>
 
             <nav class="sidebar-nav">
                 <ul>
@@ -41,7 +46,7 @@ session_start();
                     </li>
                     <li>
                         <a href="solicitar_coleta.php" class="nav-link">
-                            <i class="ri-oil-line"></i>
+                            <i class="ri-add-circle-line"></i>
                             <span>Solicitar Coleta</span>
                         </a>
                     </li>
@@ -65,7 +70,7 @@ session_start();
                     </li>
                 </ul>
             </nav>
-        </aside>
+        </header>
 
         <!-- Conteúdo Principal -->
         <main class="main-content">
@@ -191,6 +196,7 @@ session_start();
         </main>
     </div>
 
+    <script src="../JS/navbar.js"></script>
     <script src="../JS/perfil.js"></script>
 </body>
 

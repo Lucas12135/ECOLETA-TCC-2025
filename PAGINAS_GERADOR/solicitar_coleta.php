@@ -10,9 +10,10 @@ session_start();
     <title>Solicitar Coleta - Ecoleta</title>
     <link rel="icon" href="../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../CSS/solicitar-coleta.css">
+    <link rel="stylesheet" href="../CSS/navbar.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
+
     <!-- VLibras -->
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
@@ -25,14 +26,18 @@ session_start();
 
 <body>
     <div class="container">
-        <!-- Barra Lateral -->
-        <aside class="sidebar">
+        <!-- Navbar -->
+        <header class="sidebar">
             <div class="sidebar-header">
                 <div class="logo-placeholder">
                     <img src="../img/logo.png" alt="Logo Ecoleta" class="logo">
                 </div>
                 <span class="logo-text">Ecoleta</span>
             </div>
+
+            <button class="menu-mobile-button" onclick="toggleMobileMenu()">
+                <i class="ri-menu-line"></i>
+            </button>
 
             <nav class="sidebar-nav">
                 <ul>
@@ -50,7 +55,7 @@ session_start();
                     </li>
                     <li class="active">
                         <a href="#" class="nav-link">
-                            <i class="ri-oil-line"></i>
+                            <i class="ri-add-circle-line"></i>
                             <span>Solicitar Coleta</span>
                         </a>
                     </li>
@@ -74,7 +79,7 @@ session_start();
                     </li>
                 </ul>
             </nav>
-        </aside>
+        </header>
 
         <!-- Conteúdo Principal -->
         <main class="main-content">
@@ -161,7 +166,7 @@ session_start();
                     <h2>Observações</h2>
                     <div class="form-group">
                         <label for="observacoes">Informações adicionais (opcional)</label>
-                        <textarea id="observacoes" name="observacoes" rows="3" 
+                        <textarea id="observacoes" name="observacoes" rows="3"
                             placeholder="Ex.: O óleo está armazenado em garrafas PET, portão azul, etc."></textarea>
                     </div>
                 </div>
@@ -177,6 +182,7 @@ session_start();
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places"></script>
     <script src="../JS/solicitar-coleta.js"></script>
+    <script src="../JS/navbar.js"></script>
 </body>
 
 </html>
