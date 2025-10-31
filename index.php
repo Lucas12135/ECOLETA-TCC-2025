@@ -37,16 +37,16 @@ $nomeUsuario = $_SESSION['nome_usuario'] ?? 'Usuário';
                     <div class="user-menu">
                         <span class="welcome-text">Olá, <?php echo htmlspecialchars($nomeUsuario); ?>!</span>
                         <?php if ($tipoUsuario === 'coletor'): ?>
-                            <a href="PAGINAS_COLETOR/home.php" class="btn-filled">Ver Perfil</a>
+                            <a href="PAGINAS_COLETOR/home.php" class="btn-filled">Ver Dashboard</a>
                         <?php elseif ($tipoUsuario === 'gerador'): ?>
-                            <a href="PAGINAS_GERADOR/home.php" class="btn-filled">Ver Perfil</a>
+                            <a href="PAGINAS_GERADOR/home.php" class="btn-filled">Ver Dashboard</a>
                         <?php endif; ?>
                         <a href="logout.php" class="btn-outline">Sair</a>
                     </div>
                 <?php else: ?>
                     <!-- Usuário Não Logado -->
                     <a href="cadastros.php" class="btn-outline">Criar Conta</a>
-                    <a href="login.php" class="btn-filled">Entrar</a>
+                    <a href="logins.php" class="btn-filled">Entrar</a>
                 <?php endif; ?>
             </nav>
         </div>

@@ -30,9 +30,14 @@ session_start();
             <button class="menu-mobile-button" onclick="toggleMobileMenu()">
                 <i class="ri-menu-line"></i>
             </button>
-
             <nav class="sidebar-nav">
                 <ul>
+                    <li class="nav-link">
+                        <a href="../index.php" class="nav-link">
+                            <i class="ri-arrow-left-line"></i>
+                            <span>Voltar</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="home.php" class="nav-link">
                             <i class="ri-home-4-line"></i>

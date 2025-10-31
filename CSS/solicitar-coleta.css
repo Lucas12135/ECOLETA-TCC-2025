@@ -38,7 +38,7 @@ body {
     gap: 20px;
 }
 
-/* Sidebar Styles - Mantido consistente com home-gerador.css */
+/* Sidebar Styles */
 .sidebar {
     width: 280px;
     background-color: var(--background);
@@ -215,6 +215,180 @@ textarea {
     min-height: 100px;
 }
 
+/* Tipo de Coleta - Radio Cards */
+.collection-type-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.radio-card {
+    position: relative;
+    cursor: pointer;
+}
+
+.radio-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.radio-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+    border: 2px solid var(--cor-borda);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background-color: var(--cor-branco);
+}
+
+.radio-card-content i {
+    font-size: 3rem;
+    color: var(--verde-escuro);
+    margin-bottom: 1rem;
+}
+
+.radio-card-content h3 {
+    color: var(--verde-escuro);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.radio-card-content p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.radio-card input[type="radio"]:checked + .radio-card-content {
+    border-color: var(--cor-secondaria);
+    background-color: rgba(255, 206, 70, 0.1);
+    box-shadow: 0 4px 12px rgba(255, 206, 70, 0.3);
+}
+
+.radio-card:hover .radio-card-content {
+    border-color: var(--cor-secondaria);
+    transform: translateY(-2px);
+}
+
+/* Coletores Grid */
+.coletores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.coletor-card {
+    border: 2px solid var(--cor-borda);
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--cor-branco);
+}
+
+.coletor-card:hover {
+    border-color: var(--cor-secondaria);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.coletor-card.selected {
+    border-color: var(--cor-secondaria);
+    background-color: rgba(255, 206, 70, 0.1);
+    box-shadow: 0 4px 12px rgba(255, 206, 70, 0.3);
+}
+
+.coletor-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.coletor-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--cor-primaria);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cor-branco);
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.coletor-info h4 {
+    color: var(--verde-escuro);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.coletor-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--cor-amarelo-escuro);
+    font-size: 0.875rem;
+}
+
+.coletor-rating i {
+    font-size: 0.875rem;
+}
+
+.coletor-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.coletor-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.coletor-detail i {
+    color: var(--verde-escuro);
+    font-size: 1rem;
+}
+
+.coletor-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Map Container */
+.map-container {
+    margin-top: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 300px;
+    border: 1px solid var(--cor-borda);
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+}
+
 /* Botões */
 .form-actions {
     display: flex;
@@ -253,6 +427,29 @@ textarea {
     transform: translateY(-2px);
 }
 
+/* Loading State */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.loading i {
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .container {
@@ -273,6 +470,14 @@ textarea {
     }
 
     .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .collection-type-options {
+        grid-template-columns: 1fr;
+    }
+
+    .coletores-grid {
         grid-template-columns: 1fr;
     }
 

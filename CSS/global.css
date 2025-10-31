@@ -23,7 +23,6 @@ header {
   justify-content: center;
   padding: 30px 20px;
   position: relative;
-  margin-bottom: 100px;
 }
 
 .header-container {
@@ -36,7 +35,7 @@ header {
   align-items: center;
   justify-content: space-between;
   height: 70px;
-  position: fixed;
+  position: relative;
   overflow: visible;
   z-index: 1001;
   border: 1px solid var(--cor-borda);

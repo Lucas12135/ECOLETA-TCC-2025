@@ -1,88 +1,34 @@
-<?php
-session_start();
-
-$errors = [];
-
-// Inicializa somente se NÃO existir
-if (!isset($_SESSION['cadastro'])) {
-    $_SESSION['cadastro'] = [];
-}
-
-if (!empty($_POST)) {
-    include_once('../BANCO/conexao.php');
-    if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-    $errors['email'] = 'Digite um email válido.';
-  } else {
-    $email = trim($_POST['email']);
-
-    // Verifica se o e-mail já existe no banco (usando PDO)
-    $stmt = $conn->prepare("SELECT id FROM geradores WHERE email = :email LIMIT 1");
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-    $stmt->execute();
-
-    if ($stmt->fetch()) {
-      $errors['email'] = 'Este email já está em uso.';
-    }
-  }
-    if (empty($_POST['senha'])) {
-        $errors['senha'] = 'Digite uma senha.';
-    } else {
-        $senha = $_POST['senha'];
-        if (
-            strlen($senha) < 8 ||
-            !preg_match('/[A-Z]/', $senha) ||
-            !preg_match('/[a-z]/', $senha) ||
-            !preg_match('/[0-9]/', $senha) ||
-            !preg_match('/[^A-Za-z0-9]/', $senha)
-        ) {
-            $errors['senha'] = '* A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.';
-        }
-    }
-
-    if (empty($errors)) {
-        // grava na sessão
-        $_SESSION['cadastro']['email'] = $_POST['email'];
-        $_SESSION['cadastro']['senha'] = $_POST['senha'];
-
-        // redireciona para registro.php
-        header('Location: registro.php');
-        exit;
-    }
-}
-?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de cadastro - Gerador</title>
-    <link rel="icon" href="../img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../CSS/login.css">
-    <link rel="stylesheet" href="../CSS/global.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Cadastro - Escolha o tipo</title>
+    <link rel="icon" href="img/logo.png" type="image/png">
+    <link rel="stylesheet" href="CSS/index.css">
+    <link rel="stylesheet" href="CSS/login.css">
+    <link rel="stylesheet" href="CSS/cadastros.css">
 </head>
 
 <body>
-    <!-- ========== ESTRUTURA DO HEADER ========== -->
     <header>
         <div class="header-container">
             <div class="logo">
                 <div class="logo-placeholder">
-                    <img src="../img/logo.png" alt="Logo Portal de cadastro - Gerador">
+                    <img src="img/logo.png" alt="Logo" />
                 </div>
-                <span class="logo-text">Portal de cadastro - Gerador</span>
+                <span class="logo-text">Portal de Cadastro</span>
             </div>
             <nav>
-                <a href="../index.php" class="btn-outline">Home</a>
-                <a href="../login.php" class="btn-filled">Entrar</a>
+                <a href="cadastros.php" class="btn-outline">Cadastrar</a>
+                <a href="index.php" class="btn-filled">Home</a>
                 <div class="menu-icon" onclick="toggleMenu()" id="menuIcon">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
             </nav>
-
             <div class="mobile-menu" id="mobileMenu">
                 <div class="mobile-menu-item">
                     <div class="mobile-menu-emoji">
@@ -140,69 +86,43 @@ if (!empty($_POST)) {
         </div>
     </header>
 
-    <div class="menu-overlay" id="menuOverlay"></div>
-
-    <!-- ========== CONTEUDO INICIAL ========== -->
-    <main>
-        <div class="left">
-            <div class="linha1">Torne a coleta de óleo <br>
-                uma conveniência na sua rotina</div>
-            <div class="linha2">Torne-se um Gerador</div>
-            <div class="linha3">
-                <div class="icon-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="200" height="200" fill="white">
-                        <path d="M5.68623 0H10.3138L12.178 3.27835L13.9282 2.26789L14.4282 3.13392L13.3301 7.232L9.23203 6.13392L8.73203 5.26789L10.4459 4.27837L9.15033 2L6.84966 2L6.29552 2.97447L4.56343 1.97445L5.68623 0Z" fill="white" />
-                        <path d="M13.1649 9.05964L13.7039 10.0076L12.6055 12H9.99998L9.99998 9.99995H8.99998L5.99998 12.9999L8.99998 15.9999H9.99998L9.99998 14H13.7868L15.996 9.99242L14.8969 8.05962L13.1649 9.05964Z" fill="white" />
-                        <path d="M3.39445 12H4.49998V14H2.21325L0.00390625 9.99242L1.8446 6.75554L0.0717772 5.732L0.571776 4.86598L4.66986 3.7679L5.76793 7.86598L5.26793 8.732L3.57669 7.75556L2.29605 10.0076L3.39445 12Z" fill="white" />
-                    </svg>
-                </div>
-                <div class="linha3-texto">E ajude sua região</div>
-            </div>
+    <main class="cadastros-page">
+        <div class="cadastros-header">
+            <h1>Entrar na conta</h1>
+            <p>Escolha o tipo de conta que deseja acessar:</p>
         </div>
 
-        <div class="right">
-            <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-                    <title>accessibility</title>
-                    <g>
-                        <circle cx="24" cy="7" r="4" />
-                        <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-                    </g>
-                </svg>
-            </div>
+        <div class="cadastros-grid">
+            <article class="cadastro-card cadastro-gerador">
+                <div class="card-content">
+                    <h2>Gerador de Óleo</h2>
+                    <p>Sou um gerador de óleo e quero agendar coletas.</p>
+                </div>
+                <div class="card-actions">
+                    <a href="CADASTRO_GERADOR/login.php" class="card-cta">Cadastre-se</a>
+                </div>
+            </article>
 
-            <div class="form-box">
-                <h2>Cadastre-se como gerador</h2>
-                <form method="POST" action="#">
-                    <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
-                    <?php if (isset($errors['email'])): ?>
-                        <div class="input-error"><?= $errors['email'] ?></div>
-                    <?php endif; ?>
-                    <input type="password" id="senha" name="senha" placeholder="Insira a sua melhor senha" required>
-                    <?php if (isset($errors['senha'])): ?>
-                        <div class="input-error"><?= $errors['senha'] ?></div>
-                    <?php endif; ?>
-                    <label>
-                        <input type="checkbox" required>
-                        <span>Aceito os <a href="#">Termos de Uso</a> e condições da Ecoleta</span>
-                    </label>
-                    <button type="submit">Cadastrar agora</button>
-                </form>
-                <p>
-                    Ao continuar, você concorda em receber comunicações da Ecoleta.
-                    Confira nossa <a href="#">Declaração de Privacidade</a>.
-                </p>
-            </div>
+            <article class="cadastro-card cadastro-coletor">
+                <div class="card-content">
+                    <h2>Coletor</h2>
+                    <p>Quero me cadastrar como coletor afiliado para recolher óleo de geradores.</p>
+                </div>
+                <div class="card-actions">
+                    <a href="LOGINS/login-coletor/login.php" class="card-cta">Cadastre-se</a>
+                </div>
+            </article>
         </div>
     </main>
+
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div vw-plugin-wrapper>
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
+    <script src="JS/login.js"></script>
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script src="../JS/login.js"></script>
 </body>
 
 </html>

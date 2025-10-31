@@ -2,6 +2,7 @@
 session_start();
 
 $errors = [];
+include_once '../BANCO/conexao.php'; // deve fornecer a variável $conn como PDO
 
 // Inicializa somente se NÃO existir
 if (!isset($_SESSION['cadastro'])) {
@@ -9,10 +10,23 @@ if (!isset($_SESSION['cadastro'])) {
 }
 
 if (!empty($_POST)) {
-  // Validação dos campos (mesma lógica sua)
+  // === Validação do e-mail ===
   if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
     $errors['email'] = 'Digite um email válido.';
+  } else {
+    $email = trim($_POST['email']);
+
+    // Verifica se o e-mail já existe no banco (usando PDO)
+    $stmt = $conn->prepare("SELECT id FROM coletores WHERE email = :email LIMIT 1");
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->execute();
+
+    if ($stmt->fetch()) {
+      $errors['email'] = 'Este email já está em uso.';
+    }
   }
+
+  // === Validação da senha ===
   if (empty($_POST['senha'])) {
     $errors['senha'] = 'Digite uma senha.';
   } else {
@@ -27,22 +41,25 @@ if (!empty($_POST)) {
       $errors['senha'] = '* A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.';
     }
   }
+
+  // === Validação do tipo ===
   if (empty($_POST['tipo'])) {
     $errors['tipo'] = 'Selecione o tipo de coletor.';
   }
 
+  // === Se não houver erros, prossegue ===
   if (empty($errors)) {
-    // grava na sessão
     $_SESSION['cadastro']['email'] = $_POST['email'];
     $_SESSION['cadastro']['tipo'] = $_POST['tipo'];
     $_SESSION['cadastro']['senha'] = $_POST['senha'];
 
-    // redireciona para registro.php
     header('Location: registro.php');
     exit;
   }
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 

@@ -1,203 +1,232 @@
-// Libras
-document.addEventListener('DOMContentLoaded', function() {
-    new window.VLibras.Widget('https://vlibras.gov.br/app');
-});
+// Inicialização do VLibras
+new window.VLibras.Widget('https://vlibras.gov.br/app');
 
-function toggleAccessibility(event) {
-    if (event) event.stopPropagation();
-    const vlibrasButton = document.querySelector("div[vw-access-button]");
-    if (vlibrasButton) {
-        vlibrasButton.click();
-    }
-}
+// Variáveis globais
+let map;
+let marker;
+let selectedColetorId = null;
 
-// Funções para o CEP
-document.addEventListener('DOMContentLoaded', function() {
-    const cepInput = document.getElementById('cep');
-    if (cepInput) {
-        cepInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 8) value = value.slice(0, 8);
-            value = value.replace(/^(\d{5})(\d)/, '$1-$2');
-            e.target.value = value;
-
-            if (value.length === 8) {
-                buscarCep(value);
-            }
-        });
-
-        // Adicionar evento de blur para buscar CEP quando o campo perde o foco
-        cepInput.addEventListener('blur', function(e) {
-            const cep = e.target.value.replace(/\D/g, '');
-            if (cep.length === 8) {
-                buscarCep(cep);
-            }
-        });
-    }
-});
-
-function limpa_formulario_cep() {
-    document.getElementById("rua").value = "";
-    document.getElementById("bairro").value = "";
-    document.getElementById("cidade").value = "";
+// Coletores fictícios (em produção, seria carregado do banco de dados)
+// Inicialização do mapa
+function initMap() {
+    const defaultLocation = { lat: -24.0089, lng: -46.4130 }; // Praia Grande, SP
     
-    // Habilita os campos para edição
-    ["rua", "bairro", "cidade"].forEach(campo => {
-        const elemento = document.getElementById(campo);
-        elemento.readOnly = false;
-        elemento.classList.remove("preenchido-cep");
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: defaultLocation,
+        zoom: 15,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false
+    });
+
+    marker = new google.maps.Marker({
+        map: map,
+        position: defaultLocation,
+        draggable: true,
+        animation: google.maps.Animation.DROP
+    });
+
+    // Atualizar coordenadas quando o marcador for movido
+    marker.addListener('dragend', function() {
+        const position = marker.getPosition();
+        document.getElementById('latitude').value = position.lat();
+        document.getElementById('longitude').value = position.lng();
     });
 }
 
-function preencheCampos(endereco) {
-    if (!endereco) return;
+// Buscar endereço por CEP
+document.getElementById('cep').addEventListener('blur', function() {
+    const cep = this.value.replace(/\D/g, '');
+    
+    if (cep.length === 8) {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (!data.erro) {
+                    document.getElementById('rua').value = data.logradouro;
+                    document.getElementById('bairro').value = data.bairro;
+                    document.getElementById('cidade').value = data.localidade;
+                    
+                    // Geocodificar o endereço
+                    const endereco = `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
+                    geocodeAddress(endereco);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao buscar CEP:', error);
+            });
+    }
+});
 
-    const campos = {
-        rua: endereco.logradouro,
-        bairro: endereco.bairro,
-        cidade: endereco.localidade
-    };
-
-    // Preenche os campos e ajusta suas propriedades
-    Object.entries(campos).forEach(([campo, valor]) => {
-        const elemento = document.getElementById(campo);
-        if (elemento) {
-            elemento.value = valor;
-            if (valor) {
-                elemento.readOnly = true;
-                elemento.classList.add("preenchido-cep");
-            } else {
-                elemento.readOnly = false;
-                elemento.classList.remove("preenchido-cep");
-            }
+// Geocodificar endereço
+function geocodeAddress(address) {
+    const geocoder = new google.maps.Geocoder();
+    
+    geocoder.geocode({ address: address }, function(results, status) {
+        if (status === 'OK') {
+            const location = results[0].geometry.location;
+            map.setCenter(location);
+            marker.setPosition(location);
+            document.getElementById('latitude').value = location.lat();
+            document.getElementById('longitude').value = location.lng();
         }
     });
-
-    // Foca no campo número após preenchimento
-    const numeroInput = document.getElementById("numero");
-    if (numeroInput) numeroInput.focus();
 }
 
-function buscarCep(cep) {
-    // Remove qualquer caracter não numérico
-    cep = cep.replace(/\D/g, '');
+// Gerenciar tipo de coleta
+const tipoColetaInputs = document.querySelectorAll('input[name="tipo_coleta"]');
+const coletorSelection = document.getElementById('coletor-selection');
 
-    if (cep.length !== 8) {
-        limpa_formulario_cep();
-        return;
-    }
-
-    // Cria e mostra o indicador de carregamento
-    const loadingIndicator = document.createElement("div");
-    loadingIndicator.className = "loading-indicator";
-    loadingIndicator.innerHTML = "Buscando CEP...";
-    const addressContainer = document.querySelector(".address-container");
-    if (addressContainer) {
-        addressContainer.insertBefore(loadingIndicator, addressContainer.firstChild);
-    }
-
-    // Faz a requisição para a API do ViaCEP
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na requisição do CEP');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.erro) {
-                throw new Error('CEP não encontrado');
-            }
-            preencheCampos(data);
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            limpa_formulario_cep();
-            alert("CEP não encontrado ou erro na busca. Por favor, verifique o CEP informado.");
-        })
-        .finally(() => {
-            // Remove o indicador de carregamento
-            if (loadingIndicator && loadingIndicator.parentNode) {
-                loadingIndicator.remove();
-            }
-        });
-}
-
-// Validação da Data
-document.getElementById("data").addEventListener("input", function(e) {
-    const selectedDate = new Date(e.target.value);
-    const today = new Date();
-    const maxDate = new Date();
-    maxDate.setDate(today.getDate() + 30); // Permite agendamento até 30 dias no futuro
-
-    // Remove as horas para comparação apenas das datas
-    today.setHours(0, 0, 0, 0);
-    selectedDate.setHours(0, 0, 0, 0);
-
-    if (selectedDate < today) {
-        alert("Por favor, selecione uma data futura.");
-        e.target.value = "";
-    } else if (selectedDate > maxDate) {
-        alert("Por favor, selecione uma data dentro dos próximos 30 dias.");
-        e.target.value = "";
-    }
-});
-
-// Validação do Volume
-document.getElementById("volume").addEventListener("input", function(e) {
-    const value = parseFloat(e.target.value);
-    if (value < 1) {
-        alert("O volume mínimo para coleta é de 1 litro.");
-        e.target.value = "1";
-    } else if (value > 100) {
-        alert("Para volumes maiores que 100 litros, entre em contato com o suporte.");
-        e.target.value = "100";
-    }
-});
-
-// Validação do formulário completo
-function validateForm() {
-    const requiredFields = document.querySelectorAll("[required]");
-    const submitBtn = document.querySelector("button[type='submit']");
-    let allValid = true;
-
-    requiredFields.forEach((field) => {
-        if (!field.value.trim()) {
-            allValid = false;
+tipoColetaInputs.forEach(input => {
+    input.addEventListener('change', function() {
+        if (this.value === 'especifico') {
+            coletorSelection.style.display = 'block';
+            carregarColetores();
+        } else {
+            coletorSelection.style.display = 'none';
+            selectedColetorId = null;
         }
     });
+});
 
-    submitBtn.disabled = !allValid;
-    return allValid;
+// Carregar coletores disponíveis
+function carregarColetores() {
+    const coletoresList = document.getElementById('coletores-list');
+    const coletorSelect = document.getElementById('coletor');
+    
+    // Limpar lista
+    coletoresList.innerHTML = '<div class="loading"><i class="ri-loader-4-line"></i> Carregando coletores...</div>';
+    
+    // Simular carregamento
+    setTimeout(() => {
+        coletoresList.innerHTML = '';
+        
+        // Atualizar select
+        coletorSelect.innerHTML = '<option value="">Selecione um coletor</option>';
+        
+        coletoresDisponiveis.forEach(coletor => {
+            // Adicionar ao select
+            const option = document.createElement('option');
+            option.value = coletor.id;
+            option.textContent = `${coletor.nome} - ${coletor.distancia}`;
+            coletorSelect.appendChild(option);
+            
+            // Criar card do coletor
+            const card = criarColetorCard(coletor);
+            coletoresList.appendChild(card);
+        });
+    }, 500);
 }
 
-// Adiciona validação em tempo real para todos os campos
-document.querySelectorAll("input, select, textarea").forEach((field) => {
-    field.addEventListener("input", validateForm);
-    field.addEventListener("change", validateForm);
-});
-
-// Manipulação do envio do formulário
-document.querySelector(".collection-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    if (!validateForm()) {
-        alert("Por favor, preencha todos os campos obrigatórios.");
-        return;
-    }
-
-    // Aqui você pode adicionar a lógica para enviar os dados para o servidor
-    const formData = new FormData(this);
+// Criar card de coletor
+function criarColetorCard(coletor) {
+    const card = document.createElement('div');
+    card.className = 'coletor-card';
+    card.dataset.coletorId = coletor.id;
     
-    // Exemplo de como você pode processar os dados
-    const data = {};
-    formData.forEach((value, key) => {
-        data[key] = value;
+    const stars = '★'.repeat(Math.floor(coletor.rating)) + '☆'.repeat(5 - Math.floor(coletor.rating));
+    
+    card.innerHTML = `
+        <div class="coletor-header">
+            <div class="coletor-avatar">${coletor.avatar}</div>
+            <div class="coletor-info">
+                <h4>${coletor.nome}</h4>
+                <div class="coletor-rating">
+                    <span>${stars}</span>
+                    <span>${coletor.rating}</span>
+                </div>
+            </div>
+        </div>
+        <div class="coletor-details">
+            <div class="coletor-detail">
+                <i class="ri-map-pin-line"></i>
+                <span>${coletor.distancia} de distância</span>
+            </div>
+            <div class="coletor-detail">
+                <i class="ri-checkbox-circle-line"></i>
+                <span>${coletor.coletas} coletas realizadas</span>
+            </div>
+            <div class="coletor-detail">
+                <i class="ri-truck-line"></i>
+                <span>${coletor.veiculos.join(', ')}</span>
+            </div>
+            ${coletor.disponivel ? '<span class="coletor-badge"><i class="ri-check-line"></i> Disponível</span>' : ''}
+        </div>
+    `;
+    
+    // Adicionar evento de clique
+    card.addEventListener('click', function() {
+        selecionarColetor(coletor.id);
     });
+    
+    return card;
+}
 
-    // Log dos dados (para debug)
-    console.log("Dados da solicitação:", data);
+// Selecionar coletor
+function selecionarColetor(coletorId) {
+    // Remover seleção anterior
+    document.querySelectorAll('.coletor-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    
+    // Adicionar nova seleção
+    const selectedCard = document.querySelector(`.coletor-card[data-coletor-id="${coletorId}"]`);
+    if (selectedCard) {
+        selectedCard.classList.add('selected');
+        selectedColetorId = coletorId;
+        
+        // Atualizar select
+        document.getElementById('coletor').value = coletorId;
+    }
+}
 
-    // Aqui você pode adicionar a chamada AJAX para enviar os dados
-    this.submit();
+// Sincronizar select com cards
+document.getElementById('coletor').addEventListener('change', function() {
+    if (this.value) {
+        selecionarColetor(parseInt(this.value));
+    } else {
+        document.querySelectorAll('.coletor-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        selectedColetorId = null;
+    }
 });
+
+// Validação de data mínima (não permitir datas passadas)
+const dataInput = document.getElementById('data');
+const hoje = new Date().toISOString().split('T')[0];
+dataInput.setAttribute('min', hoje);
+
+// Formatação de CEP
+document.getElementById('cep').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 5) {
+        value = value.substring(0, 5) + '-' + value.substring(5, 8);
+    }
+    e.target.value = value;
+});
+
+// Validação do formulário antes do envio
+document.querySelector('.collection-form').addEventListener('submit', function(e) {
+    const tipoColeta = document.querySelector('input[name="tipo_coleta"]:checked').value;
+    
+    if (tipoColeta === 'especifico' && !selectedColetorId) {
+        e.preventDefault();
+        alert('Por favor, selecione um coletor para realizar a coleta.');
+        return false;
+    }
+    
+    // Adicionar coletor_id ao formulário se selecionado
+    if (selectedColetorId) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'coletor_id';
+        input.value = selectedColetorId;
+        this.appendChild(input);
+    }
+    
+    return true;
+});
+
+// Inicializar mapa quando a página carregar
+window.addEventListener('load', initMap);

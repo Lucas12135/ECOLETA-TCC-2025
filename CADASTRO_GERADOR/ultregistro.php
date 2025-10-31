@@ -2,7 +2,7 @@
 session_start();
 
 if (!empty($_POST)) {
-    /*
+    
     // Processa o upload da foto se existir
     if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = '../uploads/profile_photos/';
@@ -26,7 +26,7 @@ if (!empty($_POST)) {
             $_SESSION['cadastro']['foto'] = $newFileName;
         }
     }
-    */
+    
     // Salva os dados da última etapa na sessão
     $endereco = $_POST['endereco'];
     // Exemplo: "Rua das Flores, 123, apto 45"
@@ -43,9 +43,6 @@ if (!empty($_POST)) {
     $_SESSION['cadastro']['bairro'] = $_POST['bairro'];
     $_SESSION['cadastro']['data_nasc'] = $_POST['data_nasc'];
     $_SESSION['cadastro']['genero'] = $_POST['genero'];
-    $_SESSION['cadastro']['experiencia'] = $_POST['experiencia'];
-    $_SESSION['cadastro']['disponibilidade'] = $_POST['disponibilidade'];
-    $_SESSION['cadastro']['transporte'] = $_POST['transporte'];
 
     include_once('../BANCO/conexao.php');
 
@@ -70,21 +67,19 @@ if (!empty($_POST)) {
             $stmt_endereco->execute();
             $id_endereco = $conn->lastInsertId();
 
-            // 2. Insere coletor na tabela 'coletores', relacionando com o endereço
-            $stmt = $conn->prepare("INSERT INTO coletores (
-                  email, senha, tipo_coletor, nome_identificacao, cpf_cnpj, telefone, data_nasc, genero, id_endereco, meio_transporte
+            // 2. Insere coletor na tabela 'geradores', relacionando com o endereço
+            $stmt = $conn->prepare("INSERT INTO geradores (
+                  email, senha, nome_completo, cpf, telefone, data_nasc, genero, id_endereco
                 ) VALUES (
-                  :email, :senha, :tipo_coletor, :nome_identificacao, :cpf_cnpj, :telefone, :data_nasc, :genero, :id_endereco, :meio_transporte
+                  :email, :senha, :nome_completo, :cpf, :telefone, :data_nasc, :genero, :id_endereco
                 )");
             $stmt->bindParam(':email', $dados['email']);
             $stmt->bindParam(':senha', $dados['senha']);
-            $stmt->bindParam(':tipo_coletor', $dados['tipo']);
-            $stmt->bindParam(':nome_identificacao', $dados['nome']);
-            $stmt->bindParam(':cpf_cnpj', $dados['cpf']);
+            $stmt->bindParam(':nome_completo', $dados['nome']);
+            $stmt->bindParam(':cpf', $dados['cpf']);
             $stmt->bindParam(':telefone', $dados['celular']);
             $stmt->bindParam(':data_nasc', $dados['data_nasc']);
             $stmt->bindParam(':genero', $dados['genero']);
-            $stmt->bindParam(':meio_transporte', $dados['transporte']);
             $stmt->bindParam(':id_endereco', $id_endereco, PDO::PARAM_INT);
             $stmt->execute();
         }
