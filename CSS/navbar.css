@@ -36,18 +36,19 @@
 /* Style the scrollbar track */
 ::-webkit-scrollbar-track {
   background: var(--cor-branco);
-  border-radius: 5px;
+  border-radius: 16px;
 }
 
 /* Style the scrollbar thumb */
 ::-webkit-scrollbar-thumb {
   background: var(--cor-quaternaria);
-  border-radius: 5px;
+  border-radius: 16px;
 }
 
 /* Style the scrollbar thumb on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: var(--verde-escuro);
+  transition: 0.3s linear;
 }
 /* Convertendo a sidebar em uma navbar horizontal */
 .sidebar {

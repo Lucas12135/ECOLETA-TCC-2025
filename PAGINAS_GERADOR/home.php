@@ -141,14 +141,18 @@ session_start();
                 <div class="card quick-actions">
                     <h3>Ações Rápidas</h3>
                     <div class="card-content">
+                        <a href="solicitar_coleta.php">
                         <button class="action-btn request-collection">
                             <i class="ri-oil-line"></i>
                             Nova Solicitação
                         </button>
+                        </a>
+                        <a href="historico.php">
                         <button class="action-btn view-history">
                             <i class="ri-history-line"></i>
                             Ver Histórico
                         </button>
+                        </a>
                     </div>
                 </div>
             </div>
