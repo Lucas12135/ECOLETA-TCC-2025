@@ -1,3 +1,16 @@
+<?php
+session_start();
+
+// Verifica se há dados de cadastro na sessão
+if (!isset($_SESSION['cadastro_completo'])) {
+    // Se não há confirmação de cadastro, redireciona para login
+    header('Location: ../CADASTRO_GERADOR/login.php');
+    exit;
+}
+
+// Limpa o flag de cadastro completo
+unset($_SESSION['cadastro_completo']);
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -39,7 +52,7 @@
 
     <script>
         document.getElementById('visitProfileBtn').addEventListener('click', function() {
-            window.location.href = "../PAGINAS_GERADOR/home.php";
+            window.location.href = "../index.php";
         });
     </script>
 </body>

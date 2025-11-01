@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="CSS/index.css">
     <link rel="stylesheet" href="CSS/login.css">
     <link rel="stylesheet" href="CSS/cadastros.css">
+    <link rel="stylesheet" href="CSS/libras.css">
 </head>
 
 <body>
@@ -21,8 +22,8 @@
                 <span class="logo-text">Portal de Cadastro</span>
             </div>
             <nav>
-                <a href="index.php" class="btn-outline">Home</a>
-                <a href="logins.php" class="btn-filled">Entrar</a>
+                <a href="logins.php" class="btn-outline">Entrar</a>
+                <a href="index.php" class="btn-filled">Home</a>
                 <div class="menu-icon" onclick="toggleMenu()" id="menuIcon">
                     <span></span>
                     <span></span>
@@ -114,6 +115,16 @@
             </article>
         </div>
     </main>
+    <div class="right">
+      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+          <title>accessibility</title>
+          <g>
+            <circle cx="24" cy="7" r="4" />
+            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+          </g>
+        </svg>
+      </div>
 
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
@@ -121,8 +132,9 @@
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
-    <script src="JS/login.js"></script>
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script src="JS/libras.js"></script>
+    
 </body>
 
 </html>

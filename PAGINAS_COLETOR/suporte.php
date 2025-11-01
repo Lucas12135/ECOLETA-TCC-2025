@@ -11,6 +11,7 @@ session_start();
     <link rel="icon" href="../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../CSS/coletor-suporte.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="stylesheet" href="../CSS/libras.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Biblioteca de ícones -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
@@ -238,7 +239,25 @@ session_start();
             </div>
         </main>
     </div>
+    <div class="right">
+      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+          <title>accessibility</title>
+          <g>
+            <circle cx="24" cy="7" r="4" />
+            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+          </g>
+        </svg>
+      </div>
+<div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
 
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>
         // Script para o FAQ
         document.querySelectorAll('.faq-question').forEach(question => {
@@ -251,6 +270,7 @@ session_start();
     <script src="../JS/navbar.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
     <script src="../JS/home-coletor.js"></script>
+    <script src="../JS/libras.js"></script>
 </body>
 
 </html>

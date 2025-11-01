@@ -1,0 +1,40 @@
+.right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.accessibility-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #ffce46;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 206, 70, 0.4);
+  transition: all 0.3s ease;
+  z-index: 1002;
+  border: 3px solid white;
+  overflow: hidden;
+}
+
+.accessibility-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 206, 70, 0.6);
+}
+
+.accessibility-button svg {
+  width: 25px;
+  height: 25px;
+  fill: white;
+}
+
+div[vw-access-button] {
+  display: none !important;
+}

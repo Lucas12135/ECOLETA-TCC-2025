@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="CSS/index.css">
     <link rel="stylesheet" href="CSS/login.css">
     <link rel="stylesheet" href="CSS/cadastros.css">
+    <link rel="stylesheet" href="CSS/libras.css">
 </head>
 
 <body>
@@ -96,25 +97,34 @@
             <article class="cadastro-card cadastro-gerador">
                 <div class="card-content">
                     <h2>Gerador de Óleo</h2>
-                    <p>Sou um gerador de óleo e quero agendar coletas.</p>
+                    <p>Sou um gerador de óleo e quero acessar minha conta.</p>
                 </div>
                 <div class="card-actions">
-                    <a href="CADASTRO_GERADOR/login.php" class="card-cta">Cadastre-se</a>
+                    <a href="LOGINS/login-gerador/login.php" class="card-cta">Entrar</a>
                 </div>
             </article>
 
             <article class="cadastro-card cadastro-coletor">
                 <div class="card-content">
                     <h2>Coletor</h2>
-                    <p>Quero me cadastrar como coletor afiliado para recolher óleo de geradores.</p>
+                    <p>Sou um coletor e quero acessar meu painel de coletas.</p>
                 </div>
                 <div class="card-actions">
-                    <a href="LOGINS/login-coletor/login.php" class="card-cta">Cadastre-se</a>
+                    <a href="LOGINS/login-coletor/login.php" class="card-cta">Entrar</a>
                 </div>
             </article>
         </div>
     </main>
-
+<div class="right">
+      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+          <title>accessibility</title>
+          <g>
+            <circle cx="24" cy="7" r="4" />
+            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+          </g>
+        </svg>
+      </div>
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div vw-plugin-wrapper>
@@ -123,6 +133,7 @@
     </div>
     <script src="JS/login.js"></script>
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script src="JS/libras.js"></script>
 </body>
 
 </html>

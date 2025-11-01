@@ -240,7 +240,7 @@ nav .btn-filled {
   right: 20px;
   width: 60px;
   height: 60px;
-  background-color: var(--cor-secondaria);
+  background-color: #ffce46;
   border-radius: 50%;
   display: flex;
   align-items: center;

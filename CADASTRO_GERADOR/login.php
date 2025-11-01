@@ -3,27 +3,27 @@ session_start();
 
 $errors = [];
 
-// Inicializa somente se NÃO existir
 if (!isset($_SESSION['cadastro'])) {
     $_SESSION['cadastro'] = [];
 }
 
 if (!empty($_POST)) {
     include_once('../BANCO/conexao.php');
+
     if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-    $errors['email'] = 'Digite um email válido.';
-  } else {
-    $email = trim($_POST['email']);
+        $errors['email'] = 'Digite um email válido.';
+    } else {
+        $email = trim($_POST['email']);
 
-    // Verifica se o e-mail já existe no banco (usando PDO)
-    $stmt = $conn->prepare("SELECT id FROM geradores WHERE email = :email LIMIT 1");
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-    $stmt->execute();
+        $stmt = $conn->prepare("SELECT id FROM geradores WHERE email = :email LIMIT 1");
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
 
-    if ($stmt->fetch()) {
-      $errors['email'] = 'Este email já está em uso.';
+        if ($stmt->fetch()) {
+            $errors['email'] = 'Este email já está em uso.';
+        }
     }
-  }
+
     if (empty($_POST['senha'])) {
         $errors['senha'] = 'Digite uma senha.';
     } else {
@@ -39,12 +39,16 @@ if (!empty($_POST)) {
         }
     }
 
+    if (empty($_POST['confirmar_senha'])) {
+        $errors['confirmar_senha'] = 'Por favor, confirme sua senha.';
+    } elseif (!empty($_POST['senha']) && $_POST['senha'] !== $_POST['confirmar_senha']) {
+        $errors['confirmar_senha'] = 'As senhas não coincidem.';
+    }
+
     if (empty($errors)) {
-        // grava na sessão
         $_SESSION['cadastro']['email'] = $_POST['email'];
         $_SESSION['cadastro']['senha'] = $_POST['senha'];
 
-        // redireciona para registro.php
         header('Location: registro.php');
         exit;
     }
@@ -61,10 +65,78 @@ if (!empty($_POST)) {
     <link rel="stylesheet" href="../CSS/login.css">
     <link rel="stylesheet" href="../CSS/global.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        .form-box .password-field {
+            position: relative;
+            width: 100%;
+        }
+        .form-box .password-field input {
+            width: 100%;
+            padding: 12px;
+            padding-right: 2.75rem;
+            margin-bottom: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-box .password-field input[type="password"],
+        .form-box .password-field input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            padding-right: 2.75rem;
+            margin-bottom: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: "Poppins", sans-serif;
+            color: #223e2a;
+            background-color: #fff;
+            transition: all 0.3s ease;
+            line-height: normal;
+            letter-spacing: normal;
+        }
+        
+        .form-box .password-field input[type="password"]:focus,
+        .form-box .password-field input[type="text"]:focus {
+            outline: none;
+            border-color: #ffce46;
+            box-shadow: 0 0 0 3px rgba(255, 206, 70, 0.2);
+        }
+
+        .form-box .pw-toggle {
+            all: unset;
+            position: absolute;
+            right: .6rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: inline-flex;
+            width: 1.9rem;
+            height: 1.9rem;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #6b7280;
+            border-radius: .5rem;
+        }
+        .form-box .pw-toggle:hover { background: #f3f4f6; color: #374151; }
+        .form-box .pw-toggle:active { transform: translateY(-50%) scale(0.98); }
+        .form-box .pw-toggle:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+
+        .form-box .pw-toggle svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            display: block;
+        }
+
+        .form-box button[type="submit"] {
+        }
+    </style>
 </head>
 
 <body>
-    <!-- ========== ESTRUTURA DO HEADER ========== -->
     <header>
         <div class="header-container">
             <div class="logo">
@@ -77,9 +149,7 @@ if (!empty($_POST)) {
                 <a href="../index.php" class="btn-outline">Home</a>
                 <a href="../login.php" class="btn-filled">Entrar</a>
                 <div class="menu-icon" onclick="toggleMenu()" id="menuIcon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span></span><span></span><span></span>
                 </div>
             </nav>
 
@@ -142,18 +212,16 @@ if (!empty($_POST)) {
 
     <div class="menu-overlay" id="menuOverlay"></div>
 
-    <!-- ========== CONTEUDO INICIAL ========== -->
     <main>
         <div class="left">
-            <div class="linha1">Torne a coleta de óleo <br>
-                uma conveniência na sua rotina</div>
+            <div class="linha1">Torne a coleta de óleo <br>uma conveniência na sua rotina</div>
             <div class="linha2">Torne-se um Gerador</div>
             <div class="linha3">
                 <div class="icon-box">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="200" height="200" fill="white">
-                        <path d="M5.68623 0H10.3138L12.178 3.27835L13.9282 2.26789L14.4282 3.13392L13.3301 7.232L9.23203 6.13392L8.73203 5.26789L10.4459 4.27837L9.15033 2L6.84966 2L6.29552 2.97447L4.56343 1.97445L5.68623 0Z" fill="white" />
-                        <path d="M13.1649 9.05964L13.7039 10.0076L12.6055 12H9.99998L9.99998 9.99995H8.99998L5.99998 12.9999L8.99998 15.9999H9.99998L9.99998 14H13.7868L15.996 9.99242L14.8969 8.05962L13.1649 9.05964Z" fill="white" />
-                        <path d="M3.39445 12H4.49998V14H2.21325L0.00390625 9.99242L1.8446 6.75554L0.0717772 5.732L0.571776 4.86598L4.66986 3.7679L5.76793 7.86598L5.26793 8.732L3.57669 7.75556L2.29605 10.0076L3.39445 12Z" fill="white" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="200" height="200" fill="white" aria-hidden="true">
+                        <path d="M5.68623 0H10.3138L12.178 3.27835L13.9282 2.26789L14.4282 3.13392L13.3301 7.232L9.23203 6.13392L8.73203 5.26789L10.4459 4.27837L9.15033 2L6.84966 2L6.29552 2.97447L4.56343 1.97445L5.68623 0Z" />
+                        <path d="M13.1649 9.05964L13.7039 10.0076L12.6055 12H9.99998L9.99998 9.99995H8.99998L5.99998 12.9999L8.99998 15.9999H9.99998L9.99998 14H13.7868L15.996 9.99242L14.8969 8.05962L13.1649 9.05964Z" />
+                        <path d="M3.39445 12H4.49998V14H2.21325L0.00390625 9.99242L1.8446 6.75554L0.0717772 5.732L0.571776 4.86598L4.66986 3.7679L5.76793 7.86598L5.26793 8.732L3.57669 7.75556L2.29605 10.0076L3.39445 12Z" />
                     </svg>
                 </div>
                 <div class="linha3-texto">E ajude sua região</div>
@@ -162,8 +230,7 @@ if (!empty($_POST)) {
 
         <div class="right">
             <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-                    <title>accessibility</title>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white" aria-hidden="true">
                     <g>
                         <circle cx="24" cy="7" r="4" />
                         <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
@@ -173,21 +240,47 @@ if (!empty($_POST)) {
 
             <div class="form-box">
                 <h2>Cadastre-se como gerador</h2>
+
                 <form method="POST" action="#">
-                    <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
+                    <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required
+                           value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
                     <?php if (isset($errors['email'])): ?>
                         <div class="input-error"><?= $errors['email'] ?></div>
                     <?php endif; ?>
-                    <input type="password" id="senha" name="senha" placeholder="Insira a sua melhor senha" required>
+
+                    <div class="password-field">
+                        <input type="password" id="senha" name="senha" placeholder="Insira a sua melhor senha" required
+                               value="<?= isset($_POST['senha']) ? htmlspecialchars($_POST['senha']) : '' ?>">
+                        <button type="button" class="pw-toggle" aria-label="Mostrar senha"
+                                aria-pressed="false" data-target="senha" title="Mostrar/ocultar senha">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"></svg>
+                        </button>
+                    </div>
                     <?php if (isset($errors['senha'])): ?>
                         <div class="input-error"><?= $errors['senha'] ?></div>
                     <?php endif; ?>
+
+                    <!-- Confirmar Senha -->
+                    <div class="password-field">
+                        <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme sua senha" required
+                               value="<?= isset($_POST['confirmar_senha']) ? htmlspecialchars($_POST['confirmar_senha']) : '' ?>">
+                        <button type="button" class="pw-toggle" aria-label="Mostrar senha"
+                                aria-pressed="false" data-target="confirmar_senha" title="Mostrar/ocultar senha">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"></svg>
+                        </button>
+                    </div>
+                    <?php if (isset($errors['confirmar_senha'])): ?>
+                        <div class="input-error"><?= $errors['confirmar_senha'] ?></div>
+                    <?php endif; ?>
+
                     <label>
                         <input type="checkbox" required>
                         <span>Aceito os <a href="#">Termos de Uso</a> e condições da Ecoleta</span>
                     </label>
+
                     <button type="submit">Cadastrar agora</button>
                 </form>
+
                 <p>
                     Ao continuar, você concorda em receber comunicações da Ecoleta.
                     Confira nossa <a href="#">Declaração de Privacidade</a>.
@@ -195,14 +288,75 @@ if (!empty($_POST)) {
             </div>
         </div>
     </main>
+
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
-        </div>
+        <div class="vw-plugin-top-wrapper"></div>
     </div>
+
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="../JS/login.js"></script>
-</body>
 
+    <script>
+    (function () {
+      const ICON_EYE = `
+        <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
+      `;
+      const ICON_EYE_OFF = `
+        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.78 21.78 0 0 1 5.06-6.04M9.9 4.24A10.78 10.78 0 0 1 12 4c7 0 11 8 11 8a21.8 21.8 0 0 1-4.35 5.94" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M1 1l22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      `;
+
+      function setIcon(btn, visible) {
+        const svg = btn.querySelector('svg');
+        svg.innerHTML = visible ? ICON_EYE : ICON_EYE_OFF;
+      }
+
+      function toggleVisibility(input, btn) {
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        setIcon(btn, show);
+        btn.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+        btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+      }
+
+      document.querySelectorAll('.pw-toggle').forEach(btn => {
+        const input = document.getElementById(btn.dataset.target);
+        if (!input) return;
+
+        setIcon(btn, false);
+        btn.setAttribute('aria-pressed', 'false');
+
+        btn.addEventListener('click', () => toggleVisibility(input, btn));
+
+        let holdTimer = null, wasPassword = true;
+
+        const pressStart = () => {
+          wasPassword = (input.type === 'password');
+          if (wasPassword) {
+            holdTimer = setTimeout(() => {
+              input.type = 'text';
+              setIcon(btn, true);
+              btn.setAttribute('aria-label', 'Ocultar senha');
+            }, 150);
+          }
+        };
+        const pressEnd = () => {
+          if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+          if (wasPassword && input.type === 'text') {
+            input.type = 'password';
+            setIcon(btn, false);
+            btn.setAttribute('aria-label', 'Mostrar senha');
+            btn.setAttribute('aria-pressed', 'false');
+          }
+        };
+
+        btn.addEventListener('mousedown', pressStart);
+        btn.addEventListener('touchstart', pressStart, { passive: true });
+        ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt => btn.addEventListener(evt, pressEnd));
+      });
+    })();
+    </script>
+</body>
 </html>

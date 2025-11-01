@@ -61,6 +61,7 @@ try {
     <title>Login - Ecoleta</title>
     <link rel="icon" href="../../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../../CSS/login.css">
+    <link rel="stylesheet" href="../../CSS/libras.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
@@ -74,8 +75,8 @@ try {
                 <span class="logo-text">Ecoleta</span>
             </div>
             <nav>
-                <a href="index.php" class="btn-outline">Home</a>
-                <a href="cadastros.php" class="btn-outline">Criar Conta</a>
+                <a href="../../cadastros.php" class="btn-outline">Criar Conta</a>
+                <a href="../../index.php" class="btn-outline">Home</a>
             </nav>
         </div>
     </header>
@@ -99,15 +100,32 @@ try {
                 </form>
 
                 <div class="form-footer">
-                    <p>Não tem uma conta? <a href="cadastros.php">Criar conta</a></p>
+                    <p>Não tem uma conta? <a href="../../cadastros.php">Criar conta</a></p>
                     <p><a href="#">Esqueceu sua senha?</a></p>
                 </div>
             </div>
         </div>
     </main>
+    <div class="right">
+      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+          <title>accessibility</title>
+          <g>
+            <circle cx="24" cy="7" r="4" />
+            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+          </g>
+        </svg>
+      </div>
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="JS/login.js"></script>
+    <script src="../../JS/libras.js"></script>
 </body>
 
 </html>

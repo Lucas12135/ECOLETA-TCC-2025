@@ -51,6 +51,7 @@ if (!empty($_POST)) {
 
     try {
         if ($conn) {
+            $id_gerador = $conn->lastInsertId();
             // 1. Insere endereço na tabela 'enderecos' (PDO)
             $stmt_endereco = $conn->prepare("INSERT INTO enderecos (
                 rua, numero, complemento, cidade, cep, estado, bairro
@@ -73,8 +74,10 @@ if (!empty($_POST)) {
                 ) VALUES (
                   :email, :senha, :nome_completo, :cpf, :telefone, :data_nasc, :genero, :id_endereco
                 )");
+
+                $senha_hash = password_hash($dados['senha'], PASSWORD_DEFAULT);
             $stmt->bindParam(':email', $dados['email']);
-            $stmt->bindParam(':senha', $dados['senha']);
+            $stmt->bindParam(':senha', $senha_hash);
             $stmt->bindParam(':nome_completo', $dados['nome']);
             $stmt->bindParam(':cpf', $dados['cpf']);
             $stmt->bindParam(':telefone', $dados['celular']);
@@ -86,6 +89,16 @@ if (!empty($_POST)) {
     } catch (PDOException $e) {
         echo "<div style='color:red'>Erro ao cadastrar: " . $e->getMessage() . "</div>";
     }
+
+        $_SESSION['id_usuario'] = $id_gerador;
+        $_SESSION['tipo_usuario'] = 'gerador';
+        $_SESSION['nome_usuario'] = $dados['nome'];
+        $_SESSION['email'] = $dados['email'];
+        $_SESSION['telefone'] = $dados['celular'];
+        $_SESSION['cadastro_completo'] = true;
+        
+        // Limpar dados temporários do cadastro
+        unset($_SESSION['cadastro']);
     header("Location: final.php");
     $conn = null;
 }

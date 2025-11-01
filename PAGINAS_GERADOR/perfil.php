@@ -1,259 +1,126 @@
 <?php
 session_start();
 
-// Verificar se o usuário está logado
+/* ==============================================
+   1) Normalização das variáveis de sessão
+   ============================================== */
+if (isset($_SESSION['id_usuario']) && !isset($_SESSION['usuario_id'])) {
+    $_SESSION['usuario_id'] = $_SESSION['id_usuario'];
+}
+if (isset($_SESSION['nome_usuario']) && !isset($_SESSION['nome'])) {
+    $_SESSION['nome'] = $_SESSION['nome_usuario'];
+}
+if (isset($_SESSION['tipo_usuario']) && $_SESSION['tipo_usuario'] !== 'gerador') {
+    // Opcional: bloquear acesso se não for gerador
+    // header('Location: ../index.php'); exit();
+}
+
+/* ==============================================
+   2) Verificação de login
+   ============================================== */
 if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ../login.php');
+    header('Location: ../LOGINS/login-gerador/login.php');
     exit();
 }
 
-// Verificar se é uma requisição POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: solicitar_coleta.php');
-    exit();
-}
+$usuarioId = (int) $_SESSION['usuario_id'];
 
-// Incluir conexão com banco de dados
-require_once('../config/database.php');
-
-// Capturar dados do formulário
-$usuario_id = $_SESSION['usuario_id'];
-$volume = floatval($_POST['volume']);
-$tipo_coleta = $_POST['tipo_coleta']; // 'automatico' ou 'especifico'
-$coletor_id = isset($_POST['coletor_id']) ? intval($_POST['coletor_id']) : null;
-
-// Endereço
-$cep = preg_replace('/[^0-9]/', '', $_POST['cep']);
-$rua = $_POST['rua'];
-$numero = $_POST['numero'];
-$complemento = $_POST['complemento'] ?? null;
-$bairro = $_POST['bairro'];
-$cidade = $_POST['cidade'];
-$latitude = floatval($_POST['latitude']);
-$longitude = floatval($_POST['longitude']);
-
-// Data e período
-$data_preferencial = $_POST['data'];
-$periodo = $_POST['periodo'];
-
-// Observações
-$observacoes = $_POST['observacoes'] ?? null;
-
-// Validações básicas
-$erros = [];
-
-if ($volume < 1) {
-    $erros[] = "Volume deve ser maior que 0 litros.";
-}
-
-if (strlen($cep) !== 8) {
-    $erros[] = "CEP inválido.";
-}
-
-if (empty($rua) || empty($numero) || empty($bairro) || empty($cidade)) {
-    $erros[] = "Preencha todos os campos de endereço obrigatórios.";
-}
-
-if (strtotime($data_preferencial) < strtotime(date('Y-m-d'))) {
-    $erros[] = "Data não pode ser no passado.";
-}
-
-if (!in_array($periodo, ['manha', 'tarde'])) {
-    $erros[] = "Período inválido.";
-}
-
-if ($tipo_coleta === 'especifico' && empty($coletor_id)) {
-    $erros[] = "Selecione um coletor.";
-}
-
-// Se houver erros, redirecionar com mensagem
-if (!empty($erros)) {
-    $_SESSION['erro'] = implode('<br>', $erros);
-    header('Location: solicitar_coleta.php');
-    exit();
-}
-
+/* ==============================================
+   3) Conexão com o banco
+   ============================================== */
+$db = null;
 try {
-    // Iniciar transação
-    $pdo->beginTransaction();
-    
-    // Inserir solicitação de coleta
-    $sql = "INSERT INTO solicitacoes_coleta (
-        usuario_id, 
-        volume, 
-        tipo_coleta,
-        coletor_id,
-        cep, 
-        rua, 
-        numero, 
-        complemento, 
-        bairro, 
-        cidade, 
-        latitude, 
-        longitude,
-        data_preferencial,
-        periodo,
-        observacoes,
-        status,
-        data_solicitacao
-    ) VALUES (
-        :usuario_id, 
-        :volume, 
-        :tipo_coleta,
-        :coletor_id,
-        :cep, 
-        :rua, 
-        :numero, 
-        :complemento, 
-        :bairro, 
-        :cidade, 
-        :latitude, 
-        :longitude,
-        :data_preferencial,
-        :periodo,
-        :observacoes,
-        :status,
-        NOW()
-    )";
-    
-    $stmt = $pdo->prepare($sql);
-    
-    // Definir status inicial
-    $status_inicial = ($tipo_coleta === 'especifico') ? 'aguardando_confirmacao' : 'aguardando_coletor';
-    
-    $stmt->execute([
-        ':usuario_id' => $usuario_id,
-        ':volume' => $volume,
-        ':tipo_coleta' => $tipo_coleta,
-        ':coletor_id' => $coletor_id,
-        ':cep' => $cep,
-        ':rua' => $rua,
-        ':numero' => $numero,
-        ':complemento' => $complemento,
-        ':bairro' => $bairro,
-        ':cidade' => $cidade,
-        ':latitude' => $latitude,
-        ':longitude' => $longitude,
-        ':data_preferencial' => $data_preferencial,
-        ':periodo' => $periodo,
-        ':observacoes' => $observacoes,
-        ':status' => $status_inicial
-    ]);
-    
-    $solicitacao_id = $pdo->lastInsertId();
-    
-    // Se for coleta específica, notificar o coletor selecionado
-    if ($tipo_coleta === 'especifico' && $coletor_id) {
-        $sql_notificacao = "INSERT INTO notificacoes (
-            usuario_id,
-            tipo,
-            titulo,
-            mensagem,
-            referencia_id,
-            data_criacao
-        ) VALUES (
-            :coletor_id,
-            'nova_solicitacao',
-            'Nova Solicitação de Coleta',
-            'Você foi selecionado para uma nova coleta de :volume litros',
-            :solicitacao_id,
-            NOW()
-        )";
-        
-        $stmt_notificacao = $pdo->prepare($sql_notificacao);
-        $stmt_notificacao->execute([
-            ':coletor_id' => $coletor_id,
-            ':volume' => $volume,
-            ':solicitacao_id' => $solicitacao_id
-        ]);
-    }
-    
-    // Se for coleta automática, notificar coletores próximos
-    if ($tipo_coleta === 'automatico') {
-        // Buscar coletores em um raio de 10km
-        $sql_coletores = "SELECT 
-            c.id,
-            c.usuario_id,
-            (6371 * acos(
-                cos(radians(:latitude)) * 
-                cos(radians(c.latitude)) * 
-                cos(radians(c.longitude) - radians(:longitude)) + 
-                sin(radians(:latitude)) * 
-                sin(radians(c.latitude))
-            )) AS distancia
-        FROM coletores c
-        WHERE c.ativo = 1
-        AND c.disponivel = 1
-        HAVING distancia <= 10
-        ORDER BY distancia
-        LIMIT 5";
-        
-        $stmt_coletores = $pdo->prepare($sql_coletores);
-        $stmt_coletores->execute([
-            ':latitude' => $latitude,
-            ':longitude' => $longitude
-        ]);
-        
-        $coletores_proximos = $stmt_coletores->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Notificar cada coletor próximo
-        foreach ($coletores_proximos as $coletor) {
-            $sql_notificacao = "INSERT INTO notificacoes (
-                usuario_id,
-                tipo,
-                titulo,
-                mensagem,
-                referencia_id,
-                data_criacao
-            ) VALUES (
-                :coletor_id,
-                'nova_solicitacao_area',
-                'Nova Coleta Disponível',
-                'Nova coleta de :volume litros disponível a :distancia km de você',
-                :solicitacao_id,
-                NOW()
-            )";
-            
-            $stmt_notificacao = $pdo->prepare($sql_notificacao);
-            $stmt_notificacao->execute([
-                ':coletor_id' => $coletor['usuario_id'],
-                ':volume' => $volume,
-                ':distancia' => round($coletor['distancia'], 1),
-                ':solicitacao_id' => $solicitacao_id
-            ]);
+    // Tente primeiro a conexão usada nos logins
+    if (file_exists('../BANCO/conexao.php')) {
+        include_once('../BANCO/conexao.php'); // deve definir $conn (PDO)
+        if (isset($conn) && $conn instanceof PDO) {
+            $db = $conn;
         }
     }
-    
-    // Confirmar transação
-    $pdo->commit();
-    
-    // Redirecionar com mensagem de sucesso
-    $_SESSION['sucesso'] = "Solicitação de coleta realizada com sucesso!";
-    
-    if ($tipo_coleta === 'especifico') {
-        $_SESSION['sucesso'] .= " O coletor selecionado foi notificado.";
-    } else {
-        $_SESSION['sucesso'] .= " Coletores próximos foram notificados.";
+
+    // Alternativa: conexão em outro caminho/padrão
+    if (!$db && file_exists('../config/database.php')) {
+        include_once('../config/database.php'); // deve definir $pdo (PDO)
+        if (isset($pdo) && $pdo instanceof PDO) {
+            $db = $pdo;
+        }
     }
-    
-    header('Location: historico.php');
-    exit();
-    
-} catch (PDOException $e) {
-    // Reverter transação em caso de erro
-    $pdo->rollBack();
-    
-    // Log do erro (em produção, usar um sistema de logs adequado)
-    error_log("Erro ao processar solicitação: " . $e->getMessage());
-    
-    $_SESSION['erro'] = "Erro ao processar solicitação. Tente novamente.";
-    header('Location: solicitar_coleta.php');
-    exit();
+
+    if (!$db) {
+        throw new Exception('Conexão com o banco não encontrada.');
+    }
+
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    /* ==============================================
+       4) Carregar dados do gerador no banco
+       Campos comuns: id, nome_completo, email, telefone, cpf,
+       endereço(s) se houver no mesmo registro (ajuste conforme schema)
+       ============================================== */
+    $stmt = $db->prepare("
+        SELECT 
+            id,
+            nome_completo,
+            email,
+            telefone,
+            cpf,
+            rua,
+            numero,
+            complemento,
+            bairro,
+            cidade,
+            foto_perfil
+        FROM geradores
+        WHERE id = :id
+        LIMIT 1
+    ");
+    $stmt->bindValue(':id', $usuarioId, PDO::PARAM_INT);
+    $stmt->execute();
+    $gerador = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$gerador) {
+        // fallback mínimo para não explodir a tela
+        $gerador = [
+            'id'            => $usuarioId,
+            'nome_completo' => $_SESSION['nome'] ?? 'Nome do Usuário',
+            'email'         => $_SESSION['email'] ?? '',
+            'telefone'      => $_SESSION['telefone'] ?? '',
+            'cpf'           => $_SESSION['cpf'] ?? '',
+            'cep'           => '',
+            'rua'           => '',
+            'numero'        => '',
+            'complemento'   => '',
+            'bairro'        => '',
+            'cidade'        => '',
+            'foto_perfil'   => null,
+        ];
+    }
+
+} catch (Throwable $e) {
+    // Em produção, logue o erro
+    // error_log($e->getMessage());
+    //$erroConexao = $e->getMessage();
+    // fallback para evitar white screen
+    $gerador = [
+        'id'            => $usuarioId,
+        'nome_completo' => $_SESSION['nome'] ?? 'Nome do Usuário',
+        'email'         => $_SESSION['email'] ?? '',
+        'telefone'      => $_SESSION['telefone'] ?? '',
+        'cpf'           => $_SESSION['cpf'] ?? '',
+        'cep'           => '',
+        'rua'           => '',
+        'numero'        => '',
+        'complemento'   => '',
+        'bairro'        => '',
+        'cidade'        => '',
+        'foto_perfil'   => null,
+    ];
 }
+
+function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); } 
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -261,6 +128,7 @@ try {
     <link rel="icon" href="../img/logo.png" type="image/png">
     <link rel="stylesheet" href="../CSS/gerador-perfil.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="stylesheet" href="../CSS/libras.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 </head>
@@ -324,6 +192,7 @@ try {
                             <span>Suporte</span>
                         </a>
                     </li>
+                
                 </ul>
             </nav>
         </header>
@@ -334,7 +203,10 @@ try {
             <div class="profile-header">
                 <div class="profile-cover">
                     <div class="profile-photo-container">
-                        <img src="../img/profile-placeholder.jpg" alt="Foto de Perfil" id="profilePhoto" class="profile-photo">
+                        <?php
+                          $foto = $gerador['foto_perfil'] ? '../uploads/'.$gerador['foto_perfil'] : '../img/profile-placeholder.jpg';
+                        ?>
+                        <img src="<?= e($foto) ?>" alt="Foto de Perfil" id="profilePhoto" class="profile-photo">
                         <button class="change-photo-btn" onclick="document.getElementById('photoInput').click()">
                             <i class="ri-camera-line"></i>
                         </button>
@@ -342,80 +214,83 @@ try {
                     </div>
                 </div>
                 <div class="profile-info">
-                    <h1><?php echo isset($_SESSION['nome']) ? $_SESSION['nome'] : 'Nome do Usuário'; ?></h1>
+                    <h1><?= e($gerador['nome_completo'] ?? 'Nome do Usuário') ?></h1>
                     <p class="user-type">Gerador de Óleo</p>
+                    <?php if (!empty($erroConexao ?? '')): ?>
+                        <div class="input-error" style="margin-top:.5rem;"><?= e($erroConexao) ?></div>
+                    <?php endif; ?>
                 </div>
             </div>
 
             <!-- Seções do Perfil -->
             <div class="profile-sections">
-                <!-- Informações Pessoais -->
+                <!-- Informações Pessoais (somente visualização por enquanto) -->
                 <section class="profile-section">
                     <h2>Informações Pessoais</h2>
-                    <form class="profile-form" id="personalInfoForm">
+                    <form class="profile-form" id="personalInfoForm" onsubmit="return false;">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="nome">Nome Completo</label>
-                                <input type="text" id="nome" name="nome" value="<?php echo isset($_SESSION['nome']) ? $_SESSION['nome'] : ''; ?>" required>
+                                <input type="text" id="nome" name="nome" value="<?= e($gerador['nome_completo']) ?>" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="email">E-mail</label>
-                                <input type="email" id="email" name="email" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" required>
+                                <input type="email" id="email" name="email" value="<?= e($gerador['email']) ?>" readonly>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="telefone">Telefone</label>
-                                <input type="tel" id="telefone" name="telefone" value="<?php echo isset($_SESSION['telefone']) ? $_SESSION['telefone'] : ''; ?>" required>
+                                <input type="tel" id="telefone" name="telefone" value="<?= e($gerador['telefone']) ?>" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="cpf">CPF</label>
-                                <input type="text" id="cpf" name="cpf" value="<?php echo isset($_SESSION['cpf']) ? $_SESSION['cpf'] : ''; ?>" required readonly>
+                                <input type="text" id="cpf" name="cpf" value="<?= e($gerador['cpf']) ?>" readonly>
                             </div>
                         </div>
                     </form>
                 </section>
 
-                <!-- Endereço Padrão -->
+                <!-- Endereço Padrão (somente visualização por enquanto) -->
                 <section class="profile-section">
                     <h2>Endereço Padrão</h2>
-                    <form class="profile-form" id="addressForm">
+                    <form class="profile-form" id="addressForm" onsubmit="return false;">
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="cep">CEP</label>
-                                <input type="text" id="cep" name="cep" required>
+                                <input type="text" id="cep" name="cep" value="<?= e($gerador['cep']) ?>" readonly>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="rua">Rua</label>
-                                <input type="text" id="rua" name="rua" required>
+                                <input type="text" id="rua" name="rua" value="<?= e($gerador['rua']) ?>" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="numero">Número</label>
-                                <input type="text" id="numero" name="numero" required>
+                                <input type="text" id="numero" name="numero" value="<?= e($gerador['numero']) ?>" readonly>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="complemento">Complemento</label>
-                                <input type="text" id="complemento" name="complemento">
+                                <input type="text" id="complemento" name="complemento" value="<?= e($gerador['complemento']) ?>" readonly>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="bairro">Bairro</label>
-                                <input type="text" id="bairro" name="bairro" required>
+                                <input type="text" id="bairro" name="bairro" value="<?= e($gerador['bairro']) ?>" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="cidade">Cidade</label>
-                                <input type="text" id="cidade" name="cidade" required>
+                                <input type="text" id="cidade" name="cidade" value="<?= e($gerador['cidade']) ?>" readonly>
                             </div>
                         </div>
                     </form>
                 </section>
 
-                <!-- Estatísticas -->
+                <!-- Estatísticas (placeholder estático) -->
                 <section class="profile-section">
                     <h2>Suas Estatísticas</h2>
                     <div class="statistics-grid">
@@ -436,24 +311,54 @@ try {
                         <div class="stat-card">
                             <i class="ri-water-flash-line"></i>
                             <div class="stat-info">
-                                <span class="stat-value">500mil L</span>
+                                <span class="stat-value">500 mil L</span>
                                 <span class="stat-label">Água Preservada</span>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- Botões de Ação -->
+                <!-- Ações -->
                 <div class="profile-actions">
-                    <button type="button" class="btn btn-secondary" onclick="resetForms()">Cancelar</button>
-                    <button type="button" class="btn btn-primary" onclick="saveProfile()">Salvar Alterações</button>
+                    <!-- No modo de visualização, apenas botões utilitários -->
+                    <a href="configuracoes.php" class="btn btn-primary">Editar Perfil</a>
+                    <a href="../logout.php" class="btn btn-secondary">Sair</a>
                 </div>
             </div>
         </main>
     </div>
+    <div class="right">
+      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+          <title>accessibility</title>
+          <g>
+            <circle cx="24" cy="7" r="4" />
+            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+          </g>
+        </svg>
+      </div>
+<div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
 
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+    // Stubs dos seus scripts
+    function toggleMobileMenu(){ document.body.classList.toggle('menu-open'); }
+    function updateProfilePhoto(input){
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = e => { document.getElementById('profilePhoto').src = e.target.result; };
+        reader.readAsDataURL(input.files[0]);
+        // Obs.: upload real deve ser feito via form + PHP
+    }
+    </script>
     <script src="../JS/navbar.js"></script>
     <script src="../JS/perfil.js"></script>
+    <script src="../JS/libras.js"></script>
 </body>
-
 </html>

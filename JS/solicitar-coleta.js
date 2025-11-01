@@ -90,32 +90,43 @@ tipoColetaInputs.forEach(input => {
 });
 
 // Carregar coletores disponíveis
-function carregarColetores() {
+async function carregarColetores() {
     const coletoresList = document.getElementById('coletores-list');
     const coletorSelect = document.getElementById('coletor');
     
-    // Limpar lista
+    // Limpar lista e mostrar loading
     coletoresList.innerHTML = '<div class="loading"><i class="ri-loader-4-line"></i> Carregando coletores...</div>';
+    coletorSelect.innerHTML = '<option value="">Carregando coletores...</option>';
     
-    // Simular carregamento
-    setTimeout(() => {
-        coletoresList.innerHTML = '';
+    try {
+        const response = await fetch('buscar_coletores.php');
+        const data = await response.json();
         
-        // Atualizar select
-        coletorSelect.innerHTML = '<option value="">Selecione um coletor</option>';
-        
-        coletoresDisponiveis.forEach(coletor => {
-            // Adicionar ao select
-            const option = document.createElement('option');
-            option.value = coletor.id;
-            option.textContent = `${coletor.nome} - ${coletor.distancia}`;
-            coletorSelect.appendChild(option);
+        if (data.status === 'success') {
+            // Limpar e atualizar select
+            coletorSelect.innerHTML = '<option value="">Selecione um coletor</option>';
+            coletoresList.innerHTML = '';
             
-            // Criar card do coletor
-            const card = criarColetorCard(coletor);
-            coletoresList.appendChild(card);
-        });
-    }, 500);
+            // Renderizar coletores
+            data.coletores.forEach(coletor => {
+                // Adicionar ao select
+                const option = document.createElement('option');
+                option.value = coletor.id;
+                option.textContent = coletor.nome;
+                coletorSelect.appendChild(option);
+                
+                // Criar e adicionar card
+                const card = criarColetorCard(coletor);
+                coletoresList.appendChild(card);
+            });
+        } else {
+            coletoresList.innerHTML = '<div class="error">Erro ao carregar coletores</div>';
+            console.error('Erro:', data.message);
+        }
+    } catch (error) {
+        coletoresList.innerHTML = '<div class="error">Erro ao carregar coletores</div>';
+        console.error('Erro:', error);
+    }
 }
 
 // Criar card de coletor
