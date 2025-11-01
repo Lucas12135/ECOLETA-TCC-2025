@@ -84,7 +84,7 @@ if (!empty($_POST)) {
       $tipo_coletor = ($dados['tipo'] === 'pessoa_fisica') ? 'pessoa_fisica' : 'pessoa_juridica';
       $stmt->bindParam(':tipo_coletor', $tipo_coletor);
       $stmt->bindParam(':nome_completo', $dados['nome']);
-      $stmt->bindParam(':cpf_cnpj', $dados['cpf']);
+      $stmt->bindParam(':cpf_cnpj', $dados['cpf_cnpj']);
       $stmt->bindParam(':telefone', $dados['celular']);
       $stmt->bindParam(':data_nasc', $dados['data_nasc']);
       $stmt->bindParam(':genero', $dados['genero']);
