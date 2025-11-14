@@ -122,6 +122,7 @@ if (!empty($_POST)) {
     </div>
   </div>
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script src="../JS/libras.js"></script>
   <script src="../JS/registro.js"></script>
 </body>
 
