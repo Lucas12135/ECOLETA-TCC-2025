@@ -24,7 +24,7 @@ if (!empty($_POST)) {
   // Use nomes corretos de campos: se for cnpj/ cpf, adapte
   $_SESSION['cadastro']['nome'] = $_POST['nome'] ?? '';
   // padroniza cpf/cnpj removendo não dígitos
-  $_SESSION['cadastro']['cpf_cnpj'] = preg_replace('/\D/', '', $_POST['cpf_cnpj'] ?? '');
+  $_SESSION['cadastro']['cpf_cnpj'] = preg_replace('/\D/', '', $_POST[$campo] ?? '');
   $_SESSION['cadastro']['celular'] = preg_replace('/\D/', '', $_POST['celular'] ?? '');
   header('Location: ultregistro.php');
   exit;
@@ -87,7 +87,7 @@ if (!empty($_POST)) {
 
           <div class="form-group">
             <label for="<?= $campo ?>" class="field-label"><?= strtoupper($campo) ?> *</label>
-            <input type="text" id="cpf_cnpj" name="cpf_cnpj" placeholder="<?= $placeholder_cnpfj ?>" maxlength="<?= $tamanho_campo ?>" required>
+            <input type="text" id="<?= $campo ?>" name="<?= $campo ?>" placeholder="<?= $placeholder_cnpfj ?>" maxlength="<?= $tamanho_campo ?>" required>
             <div class="error-message">Por favor, digite um <?= strtoupper($campo) ?> válido</div>
           </div>
 

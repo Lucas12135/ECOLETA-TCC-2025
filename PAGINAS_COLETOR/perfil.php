@@ -143,7 +143,7 @@ session_start();
                                 <img src="../img/profile-placeholder.jpg" alt="Foto do perfil">
                             </div>
                             <div class="profile-text">
-                                <h2 class="profile-name"><?php echo isset($_SESSION['nome']) ? $_SESSION['nome'] : 'Nome do Coletor'; ?></h2>
+                                <h2 class="profile-name"><?php echo isset($_SESSION['nome_usuario']) ? $_SESSION['nome_usuario'] : 'Nome do Coletor'; ?></h2>
                                 <div class="rating">
                                     <i class="ri-star-fill star"></i>
                                     <i class="ri-star-fill star"></i>

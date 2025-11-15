@@ -28,8 +28,8 @@ if (!empty($_POST)) {
   // Salva os dados da última etapa na sessão
   $endereco = $_POST['endereco'];
   $partes = explode(',', $endereco);
-  $rua = trim($partes[1] ?? '');
-  $numero = trim($partes[0] ?? '');
+  $rua = trim($partes[0] ?? '');
+  $numero = trim($partes[1] ?? '');
   $complemento = trim($partes[2] ?? '');
   $_SESSION['cadastro']['rua'] = $rua;
   $_SESSION['cadastro']['numero'] = $numero;
@@ -202,7 +202,7 @@ if (!empty($_POST)) {
           <div class="form-fields">
             <div class="form-row full">
               <div class="form-group">
-                <label for="endereco">Endereço Completo <span class="required">*</span></label>
+                <label for="endereco">Endereço <span class="required">*</span></label>
                 <input type="text" id="endereco" name="endereco" placeholder="Rua, número, complemento" required>
               </div>
             </div>
@@ -287,9 +287,7 @@ if (!empty($_POST)) {
                   <option value="" disabled selected>Selecione sua disponibilidade</option>
                   <option value="manha">Manhã</option>
                   <option value="tarde">Tarde</option>
-                  <option value="noite">Noite</option>
                   <option value="integral">Período integral</option>
-                  <option value="fins_de_semana">Fins de semana</option>
                 </select>
               </div>
               <div class="form-group">

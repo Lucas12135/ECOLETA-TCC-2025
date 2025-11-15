@@ -84,7 +84,7 @@ session_start();
         <main class="main-content">
             <header class="content-header">
                 <div class="welcome-message">
-                    <h1>Olá, <?php echo isset($_SESSION['nome']) ? $_SESSION['nome'] : 'Coletor'; ?>!</h1>
+                    <h1>Olá, <?php echo isset($_SESSION['nome_usuario']) ? $_SESSION['nome_usuario'] : 'Coletor'; ?>!</h1>
                     <p>Confira suas coletas e atualizações de hoje</p>
                 </div>
                 <div class="header-actions">
@@ -244,27 +244,27 @@ session_start();
         </main>
     </div>
     <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-<div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
         </div>
-    </div>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
 
 
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
-    <script src="../JS/home-coletor.js"></script>
-    <script src="../JS/libras.js"></script>
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
+        <script src="../JS/home-coletor.js"></script>
+        <script src="../JS/libras.js"></script>
 </body>
 
 </html>
