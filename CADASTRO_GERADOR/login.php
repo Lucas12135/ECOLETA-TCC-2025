@@ -3,6 +3,7 @@ session_start();
 
 $errors = [];
 
+// Garante estrutura de sessão para o fluxo de cadastro
 if (!isset($_SESSION['cadastro'])) {
     $_SESSION['cadastro'] = [];
 }
@@ -10,47 +11,99 @@ if (!isset($_SESSION['cadastro'])) {
 if (!empty($_POST)) {
     include_once('../BANCO/conexao.php');
 
-    if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Digite um email válido.';
+    if (!isset($conn) || !$conn) {
+        $errors['db'] = 'Não foi possível conectar ao banco de dados.';
     } else {
-        $email = trim($_POST['email']);
 
-        $stmt = $conn->prepare("SELECT id FROM geradores WHERE email = :email LIMIT 1");
-        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-        $stmt->execute();
+        // ===========================
+        // VALIDAÇÃO DE E-MAIL
+        // ===========================
+        if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Digite um email válido.';
+        } else {
+            $email = trim($_POST['email']);
 
-        if ($stmt->fetch()) {
-            $errors['email'] = 'Este email já está em uso.';
+            // Verifica se já existe um gerador com este e-mail
+            $stmt = $conn->prepare("SELECT id FROM geradores WHERE email = :email LIMIT 1");
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $stmt->execute();
+
+            if ($stmt->fetch()) {
+                // aqui é tela de CADASTRO, então email já usado é erro
+                $errors['email'] = 'Este email já está em uso.';
+            }
         }
-    }
 
-    if (empty($_POST['senha'])) {
-        $errors['senha'] = 'Digite uma senha.';
-    } else {
-        $senha = $_POST['senha'];
-        if (
-            strlen($senha) < 8 ||
-            !preg_match('/[A-Z]/', $senha) ||
-            !preg_match('/[a-z]/', $senha) ||
-            !preg_match('/[0-9]/', $senha) ||
-            !preg_match('/[^A-Za-z0-9]/', $senha)
-        ) {
-            $errors['senha'] = '* A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.';
+        // ===========================
+        // VALIDAÇÃO DE SENHA
+        // ===========================
+        if (empty($_POST['senha'])) {
+            $errors['senha'] = 'Digite uma senha.';
+        } else {
+            $senha = $_POST['senha'];
+
+            if (
+                strlen($senha) < 8 ||
+                !preg_match('/[A-Z]/', $senha) ||
+                !preg_match('/[a-z]/', $senha) ||
+                !preg_match('/[0-9]/', $senha) ||
+                !preg_match('/[^A-Za-z0-9]/', $senha)
+            ) {
+                $errors['senha'] = '* A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.';
+            }
         }
-    }
 
-    if (empty($_POST['confirmar_senha'])) {
-        $errors['confirmar_senha'] = 'Por favor, confirme sua senha.';
-    } elseif (!empty($_POST['senha']) && $_POST['senha'] !== $_POST['confirmar_senha']) {
-        $errors['confirmar_senha'] = 'As senhas não coincidem.';
-    }
+        // ===========================
+        // VALIDAÇÃO CONFIRMAÇÃO
+        // ===========================
+        if (empty($_POST['confirmar_senha'])) {
+            $errors['confirmar_senha'] = 'Por favor, confirme sua senha.';
+        } elseif (!empty($_POST['senha']) && $_POST['senha'] !== $_POST['confirmar_senha']) {
+            $errors['confirmar_senha'] = 'As senhas não coincidem.';
+        }
 
-    if (empty($errors)) {
-        $_SESSION['cadastro']['email'] = $_POST['email'];
-        $_SESSION['cadastro']['senha'] = $_POST['senha'];
+        // ===========================
+        // SE NÃO HOUVE ERROS:
+        //  1) guarda e-mail/senha na sessão
+        //  2) dispara OTP para o e-mail
+        //  3) redireciona para tela de inserir código
+        // ===========================
+        if (empty($errors)) {
 
-        header('Location: registro.php');
-        exit;
+            // Garante que $email e $senha existam
+            $email = trim($_POST['email']);
+            $senha = $_POST['senha'];
+
+            // Guarda no "wizard" de cadastro
+            $_SESSION['cadastro']['email'] = $email;
+            $_SESSION['cadastro']['senha'] = $senha;
+
+            // Guarda dados para fluxo de OTP
+            $_SESSION['otp_email']   = $email;
+            $_SESSION['otp_purpose'] = 'cadastro_gerador';
+
+            // Disparo do OTP via endpoint HTTP
+            $otpUrl   = 'http://localhost/ECOLETA-TCC-2025-main/auth/request_otp.php';
+            $postData = http_build_query([
+                'email'   => $email,
+                'purpose' => 'cadastro_gerador'
+            ]);
+
+            $context = stream_context_create([
+                'http' => [
+                    'method'  => 'POST',
+                    'header'  => "Content-Type: application/x-www-form-urlencoded\r\n" .
+                                 "Content-Length: " . strlen($postData) . "\r\n",
+                    'content' => $postData,
+                    'timeout' => 5
+                ]
+            ]);
+
+            @file_get_contents($otpUrl, false, $context);
+
+            header('Location: ../auth/view/otp_verify_gerador.php?email=' . urlencode($email) . '&origin=cadastro_gerador');
+            exit;
+        }
     }
 }
 ?>
@@ -68,71 +121,80 @@ if (!empty($_POST)) {
 
     <style>
         .form-box .password-field {
-            position: relative;
-            width: 100%;
-        }
-        .form-box .password-field input {
-            width: 100%;
-            padding: 12px;
-            padding-right: 2.75rem;
-            margin-bottom: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .form-box .password-field input[type="password"],
-        .form-box .password-field input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            padding-right: 2.75rem;
-            margin-bottom: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: "Poppins", sans-serif;
-            color: #223e2a;
-            background-color: #fff;
-            transition: all 0.3s ease;
-            line-height: normal;
-            letter-spacing: normal;
-        }
-        
-        .form-box .password-field input[type="password"]:focus,
-        .form-box .password-field input[type="text"]:focus {
-            outline: none;
-            border-color: #ffce46;
-            box-shadow: 0 0 0 3px rgba(255, 206, 70, 0.2);
-        }
+    position: relative;
+    width: 100%;
+}
 
-        .form-box .pw-toggle {
-            all: unset;
-            position: absolute;
-            right: .6rem;
-            top: 50%;
-            transform: translateY(-50%);
-            display: inline-flex;
-            width: 1.9rem;
-            height: 1.9rem;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #6b7280;
-            border-radius: .5rem;
-        }
-        .form-box .pw-toggle:hover { background: #f3f4f6; color: #374151; }
-        .form-box .pw-toggle:active { transform: translateY(-50%) scale(0.98); }
-        .form-box .pw-toggle:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+/* input com espaço pro ícone à direita */
+.form-box .password-field input[type="password"],
+.form-box .password-field input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    padding-right: 2.75rem; /* espaço pro botão */
+    margin-bottom: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: "Poppins", sans-serif;
+    color: #223e2a;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    line-height: normal;
+    letter-spacing: normal;
+}
 
-        .form-box .pw-toggle svg {
-            width: 1.25rem;
-            height: 1.25rem;
-            display: block;
-        }
+.form-box .password-field input[type="password"]:focus,
+.form-box .password-field input[type="text"]:focus {
+    outline: none;
+    border-color: #ffce46;
+    box-shadow: 0 0 0 3px rgba(255, 206, 70, 0.2);
+}
 
-        .form-box button[type="submit"] {
-        }
+/* BOTÃO FIXO – não se mexe em hover/click */
+.form-box .pw-toggle {
+    all: unset;
+    position: absolute;
+    right: .6rem;
+    top: 50%;
+    transform: translateY(-50%); /* central fixo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    cursor: pointer;
+    color: #6b7280;
+    border-radius: .5rem;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.form-box .pw-toggle:hover {
+    background: #f3f4f6;
+    color: #374151;
+    transform: translateY(-50%); /* continua no mesmo lugar */
+}
+
+.form-box .pw-toggle:active {
+    /* sem “pulinho” ao clicar */
+    transform: translateY(-50%);
+}
+
+.form-box .pw-toggle:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.form-box .pw-toggle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: block;
+}
+
+/* se quiser manter, pode deixar vazio mesmo */
+.form-box button[type="submit"] {
+}
+
     </style>
 </head>
 
@@ -147,7 +209,7 @@ if (!empty($_POST)) {
             </div>
             <nav>
                 <a href="../index.php" class="btn-outline">Home</a>
-                <a href="../login.php" class="btn-filled">Entrar</a>
+                <a href="../logins.php" class="btn-filled">Entrar</a>
                 <div class="menu-icon" onclick="toggleMenu()" id="menuIcon">
                     <span></span><span></span><span></span>
                 </div>
@@ -241,6 +303,10 @@ if (!empty($_POST)) {
             <div class="form-box">
                 <h2>Cadastre-se como gerador</h2>
 
+                <?php if (isset($errors['db'])): ?>
+                    <div class="input-error"><?= htmlspecialchars($errors['db']) ?></div>
+                <?php endif; ?>
+
                 <form method="POST" action="#">
                     <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required
                            value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
@@ -260,7 +326,6 @@ if (!empty($_POST)) {
                         <div class="input-error"><?= $errors['senha'] ?></div>
                     <?php endif; ?>
 
-                    <!-- Confirmar Senha -->
                     <div class="password-field">
                         <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme sua senha" required
                                value="<?= isset($_POST['confirmar_senha']) ? htmlspecialchars($_POST['confirmar_senha']) : '' ?>">
@@ -288,6 +353,7 @@ if (!empty($_POST)) {
             </div>
         </div>
     </main>
+    
     <div class="right">
       <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
@@ -298,7 +364,6 @@ if (!empty($_POST)) {
           </g>
         </svg>
       </div>
-
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
         <div class="vw-plugin-top-wrapper"></div>

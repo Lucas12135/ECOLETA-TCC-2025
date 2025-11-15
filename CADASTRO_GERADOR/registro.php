@@ -1,12 +1,119 @@
-<?php
+<?php 
 session_start();
+
+$errors = [];
+
+/**
+ * Valida CPF (11 dígitos) usando o algoritmo oficial
+ */
+function validar_cpf(string $cpf): bool
+{
+    // tem que ter 11 dígitos
+    if (strlen($cpf) != 11) {
+        return false;
+    }
+
+    // rejeita CPFs com todos os dígitos iguais (000..., 111..., etc)
+    if (preg_match('/^(\d)\1{10}$/', $cpf)) {
+        return false;
+    }
+
+    // calcula os dois dígitos verificadores
+    for ($t = 9; $t < 11; $t++) {
+        $d = 0;
+        for ($c = 0; $c < $t; $c++) {
+            $d += $cpf[$c] * (($t + 1) - $c);
+        }
+        $d = ((10 * $d) % 11) % 10;
+
+        if ((int)$cpf[$t] !== $d) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 if (!empty($_POST)) {
-  $_SESSION['cadastro']['nome'] = $_POST['nome'] ?? '';
-  // padroniza cpf/cnpj removendo não dígitos
-  $_SESSION['cadastro']['cpf'] = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
-  $_SESSION['cadastro']['celular'] = preg_replace('/\D/', '', $_POST['celular'] ?? '');
-  header('Location: ultregistro.php');
-  exit;
+    require_once('../BANCO/conexao.php');
+
+    // normalização dos dados digitados
+    $nome = trim($_POST['nome'] ?? '');
+    $cpf  = preg_replace('/\D/', '', $_POST['cpf'] ?? '');      // só dígitos
+    $cel  = preg_replace('/\D/', '', $_POST['celular'] ?? '');  // só dígitos
+    $dataConsent = $_POST['dataConsent'] ?? '';
+
+    $cpfValido = false; // flag
+
+    // ---------- VALIDAÇÕES BÁSICAS ----------
+
+    // Nome
+    if ($nome === '') {
+        $errors['nome'] = 'Por favor, digite o seu nome completo.';
+    }
+
+    // CPF obrigatório + formato
+    if ($cpf === '') {
+        $errors['cpf'] = 'Informe o CPF.';
+    } elseif (!validar_cpf($cpf)) {
+        $errors['cpf'] = 'CPF inválido. Verifique se digitou corretamente.';
+    } else {
+        $cpfValido = true; // só é true se passou pelo algoritmo
+    }
+
+    // Telefone
+    if ($cel === '') {
+        $errors['celular'] = 'Informe um telefone.';
+    } elseif (strlen($cel) < 10) {
+        $errors['celular'] = 'Telefone muito curto. Verifique DDD e número.';
+    }
+
+    // Consentimento LGPD
+    if ($dataConsent !== '1') {
+        $errors['dataConsent'] = 'Você precisa concordar com o uso dos dados para continuar o cadastro.';
+    }
+
+    // ---------- CHECAGEM DE DUPLICIDADE NO BANCO ----------
+    // IMPORTANTE: só roda se o CPF for válido
+    if ($cpfValido) {
+        try {
+            $stmt = $conn->prepare("
+                SELECT cpf, telefone
+                FROM geradores
+                WHERE cpf IS NOT NULL OR telefone IS NOT NULL
+            ");
+            $stmt->execute();
+
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $cpfBanco = preg_replace('/\D/', '', $row['cpf'] ?? '');
+                $telBanco = preg_replace('/\D/', '', $row['telefone'] ?? '');
+
+                if ($cpfBanco !== '' && $cpfBanco === $cpf) {
+                    $errors['cpf'] = 'Este CPF já está em uso na Ecoleta.';
+                }
+
+                if ($telBanco !== '' && $telBanco === $cel) {
+                    $errors['celular'] = 'Este telefone já está em uso em outro cadastro.';
+                }
+
+                if (isset($errors['cpf']) && isset($errors['celular'])) {
+                    break;
+                }
+            }
+        } catch (PDOException $e) {
+            $errors['db'] = 'Erro ao verificar CPF/telefone no banco de dados.';
+        }
+    }
+
+    // ---------- SE NÃO TIVER ERRO, SALVA NA SESSÃO E VAI PRA PRÓXIMA ETAPA ----------
+    if (empty($errors)) {
+        $_SESSION['cadastro']['nome']    = $nome;
+        $_SESSION['cadastro']['cpf']     = $cpf;   // sem máscara
+        $_SESSION['cadastro']['celular'] = $cel;   // sem máscara
+
+        header('Location: ultregistro.php');
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -20,11 +127,9 @@ if (!empty($_POST)) {
   <link rel="stylesheet" href="../CSS/registro.css">
   <link rel="stylesheet" href="../CSS/global.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
 </head>
 
 <body>
-  <!-- ========== ESTRUTURA DO HEADER AUMENTADO ========== -->
   <header>
     <div class="header-container">
       <div class="logo">
@@ -36,7 +141,6 @@ if (!empty($_POST)) {
     </div>
   </header>
 
-  <!-- ========== CONTEUDO PRINCIPAL ========== -->
   <main>
     <div class="left">
       <div class="image-container">
@@ -57,33 +161,83 @@ if (!empty($_POST)) {
 
       <div class="form-box">
         <h2>Primeiros passos</h2>
+
+        <?php if (isset($errors['db'])): ?>
+          <div class="error-message"><?= htmlspecialchars($errors['db']) ?></div>
+        <?php endif; ?>
+
         <form method="POST" action="#" id="registrationForm" novalidate>
+          <!-- NOME -->
           <div class="form-group">
-            <label for="nome" class="field-label">Nome *</label>
-            <input type="text" id="fullName" name="nome" placeholder="Digite seu nome completo" required>
-            <div class="error-message">Por favor, digite o seu nome</div>
+            <label for="fullName" class="field-label">Nome *</label>
+            <input
+              type="text"
+              id="fullName"
+              name="nome"
+              placeholder="Digite seu nome completo"
+              required
+              value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>"
+            >
+            <?php if (isset($errors['nome'])): ?>
+              <div class="error-message"><?= htmlspecialchars($errors['nome']) ?></div>
+            <?php endif; ?>
           </div>
 
+          <!-- CPF -->
           <div class="form-group">
             <label for="cpf" class="field-label">CPF *</label>
-            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
-            <div class="error-message">Por favor, digite um CPF válido</div>
+            <input
+              type="text"
+              id="cpf"
+              name="cpf"
+              placeholder="000.000.000-00"
+              maxlength="14"
+              required
+              value="<?= htmlspecialchars($_POST['cpf'] ?? '') ?>"
+            >
+            <?php if (isset($errors['cpf'])): ?>
+              <div class="error-message"><?= htmlspecialchars($errors['cpf']) ?></div>
+            <?php endif; ?>
           </div>
 
+          <!-- TELEFONE -->
           <div class="form-group">
-            <label for="celular" class="field-label">Telefone *</label>
-            <input type="tel" id="phone" name="celular" placeholder="(00) 00000-0000" maxlength="15" required>
-            <div class="error-message">Por favor, digite um telefone válido</div>
+            <label for="phone" class="field-label">Telefone *</label>
+            <input
+              type="tel"
+              id="phone"
+              name="celular"
+              placeholder="(00) 00000-0000"
+              maxlength="15"
+              required
+              value="<?= htmlspecialchars($_POST['celular'] ?? '') ?>"
+            >
+            <?php if (isset($errors['celular'])): ?>
+              <div class="error-message"><?= htmlspecialchars($errors['celular']) ?></div>
+            <?php endif; ?>
           </div>
 
+          <!-- CONSENTIMENTO -->
           <label class="checkbox-label">
-            <input type="checkbox" id="dataConsent" required>
+            <input
+              type="checkbox"
+              id="dataConsent"
+              name="dataConsent"
+              value="1"
+              <?= isset($_POST['dataConsent']) ? 'checked' : '' ?>
+              required
+            >
             <span>Concordo em fornecer meus dados pessoais para o processo de cadastro na Ecoleta</span>
           </label>
+          <?php if (isset($errors['dataConsent'])): ?>
+            <div class="error-message" style="margin-top:4px;">
+              <?= htmlspecialchars($errors['dataConsent']) ?>
+            </div>
+          <?php endif; ?>
 
           <div class="button-group">
             <button type="button" class="btn-back" onclick="goBack()">Voltar</button>
-            <button type="submit" class="btn-continue" href="ultregistro.html">Continuar Cadastro</button>
+            <button type="submit" class="btn-continue">Continuar Cadastro</button>
           </div>
         </form>
 
