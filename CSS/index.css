@@ -15,8 +15,8 @@
   --background: #f8f4e7;
   --verde-escuro: #223e2a;
   --cor-footer-verde: #386641;
-  --cor-amarelo-escuro: #F59E0B;
-  --cor-borda: #E0E0E0;
+  --cor-amarelo-escuro: #f59e0b;
+  --cor-borda: #e0e0e0;
   --cor-branco: #fff;
 }
 
@@ -173,7 +173,7 @@ header {
 .hero-text p {
   font-size: 1.125rem;
   font-style: italic;
-  color: #4F4F4F;
+  color: #4f4f4f;
 }
 
 @media (min-width: 768px) {
@@ -302,7 +302,7 @@ header {
   transition: all 0.3s ease-in-out;
   cursor: pointer;
   margin-right: 10rem;
-  margin-top: 1.4rem
+  margin-top: 1.4rem;
 }
 
 .card-button:hover {
@@ -449,11 +449,15 @@ header {
   background-color: #fefcf5;
   border-radius: 2rem;
   width: 100%;
-  max-width: 500px;
+  max-width: 900px;
   text-align: center;
   position: relative;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.modal-body {
+  padding: 2rem;
 }
 
 .close-btn {
@@ -464,6 +468,16 @@ header {
   font-size: 2rem;
   font-weight: bold;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
+  z-index: 1000;
+  transition: color 0.2s ease;
+}
+
+.close-btn:before {
+  content: "×";
 }
 
 .close-btn:hover {
@@ -507,6 +521,18 @@ header {
   width: 1.25rem;
   height: 1.25rem;
   color: #9ca3af;
+}
+
+#map-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+#map {
+  width: 100%;
+  height: 400px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Seção de Vantagens */
@@ -731,157 +757,157 @@ header {
 }
 
 .layout-grid {
-    background-color: var(--cor-secondaria);
-    display: grid;
-    grid-template-columns: 45% 50%;
-    gap: 55px;
-    align-items: flex-start;
-    margin-top: 40px;
-    margin-bottom: 40px;
-    padding: 20px;
+  background-color: var(--cor-secondaria);
+  display: grid;
+  grid-template-columns: 45% 50%;
+  gap: 55px;
+  align-items: flex-start;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  padding: 20px;
 }
 
 .coluna-esquerda {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
 .hero-section {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .hero-logo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  flex-shrink: 0;
 }
 
 .hero-texto h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    color: var(--cor-texto);
-    line-height: 1.1;
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--cor-texto);
+  line-height: 1.1;
 }
 
 .hero-texto h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--cor-texto);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--cor-texto);
 }
 
 .coluna-direita {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
 .feature-card {
-    background-color: var(--cor-branco);
-    padding: 25px;
-    border-radius: 12px;
-    border: 1px solid var(--cor-borda);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  background-color: var(--cor-branco);
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid var(--cor-borda);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
 }
 
 .feature-card h3 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--cor-texto);
-    margin-bottom: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cor-texto);
+  margin-bottom: 10px;
 }
 
 .feature-card p {
-    font-size: 1rem;
-    color: #555;
+  font-size: 1rem;
+  color: #555;
 }
 
 @media (max-width: 900px) {
-    .layout-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .hero-section {
-        flex-direction: column;
-        text-align: center;
-    }
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-section {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 
 @media (max-width: 600px) {
-    .hero-texto h1 {
-        font-size: 2.5rem;
-    }
-    
-    .hero-texto h2 {
-        font-size: 1.5rem;
-    }
+  .hero-texto h1 {
+    font-size: 2.5rem;
+  }
 
-    .feature-card h3 {
-        font-size: 1.25rem;
-    }
+  .hero-texto h2 {
+    font-size: 1.5rem;
+  }
+
+  .feature-card h3 {
+    font-size: 1.25rem;
+  }
 }
 
 /* Estilos para o menu de usuário logado */
 .user-menu {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .welcome-text {
-    color: #223e2a;
-    font-weight: 500;
-    font-size: 0.95rem;
-    padding: 0.5rem 0;
+  color: #223e2a;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 0;
 }
 
 /* Ajustes responsivos para o menu de usuário */
 @media (max-width: 768px) {
-    .user-menu {
-        flex-direction: column;
-        gap: 0.5rem;
-        align-items: flex-end;
-    }
+  .user-menu {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+  }
 
-    .welcome-text {
-        font-size: 0.85rem;
-        text-align: right;
-    }
+  .welcome-text {
+    font-size: 0.85rem;
+    text-align: right;
+  }
 
-    .user-menu .btn-filled,
-    .user-menu .btn-outline {
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-    }
+  .user-menu .btn-filled,
+  .user-menu .btn-outline {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
 }
 
 @media (max-width: 480px) {
-    .header-container {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-    }
+  .header-container {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
 
-    .user-menu {
-        width: 100%;
-        align-items: center;
-    }
+  .user-menu {
+    width: 100%;
+    align-items: center;
+  }
 
-    .welcome-text {
-        text-align: center;
-        width: 100%;
-    }
+  .welcome-text {
+    text-align: center;
+    width: 100%;
+  }
 
-    .user-menu .btn-filled,
-    .user-menu .btn-outline {
-        width: 100%;
-        text-align: center;
-    }
+  .user-menu .btn-filled,
+  .user-menu .btn-outline {
+    width: 100%;
+    text-align: center;
+  }
 }
