@@ -1,0 +1,377 @@
+/* Herda os estilos básicos do home-gerador.css */
+@import url("home-gerador.css");
+
+/* Estilos específicos para configurações do gerador */
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.settings-section {
+  background-color: var(--cor-branco);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.settings-section h2 {
+  color: var(--verde-escuro);
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(34, 62, 42, 0.1);
+}
+
+/* Formulários */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group label {
+  color: var(--cor-texto-primaria);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.form-group input {
+  padding: 0.75rem;
+  border: 2px solid var(--cor-borda);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.form-group input:focus {
+  border-color: var(--cor-secondaria);
+  outline: none;
+}
+
+/* Preferências de Notificação */
+.notification-preferences {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.preference-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  background-color: var(--background);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.preference-item:hover {
+  background-color: #f0f4f1;
+}
+
+.preference-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.preference-info i {
+  font-size: 1.75rem;
+  color: var(--verde-escuro);
+}
+
+.preference-info h3 {
+  font-size: 1rem;
+  color: var(--verde-escuro);
+  margin-bottom: 0.25rem;
+}
+
+.preference-info p {
+  font-size: 0.85rem;
+  color: var(--cor-texto-secundaria);
+}
+
+/* Switch Toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 26px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: var(--cor-secondaria);
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+/* Horários Preferenciais */
+.schedule-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.day-schedule {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--background);
+  border-radius: 8px;
+}
+
+.day-name {
+  min-width: 120px;
+  color: var(--verde-escuro);
+  font-weight: 600;
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease;
+}
+
+.time-inputs span {
+  color: var(--cor-texto-secundaria);
+  font-size: 0.9rem;
+}
+
+.time-inputs input[type="time"] {
+  padding: 0.5rem;
+  border: 2px solid var(--cor-borda);
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.day-toggle {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* Quantidade de Óleo */
+.oil-quantity {
+  margin-top: 1rem;
+}
+
+.quantity-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.quantity-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 2px solid var(--cor-borda);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.quantity-option i {
+  font-size: 2.5rem;
+  color: var(--verde-escuro);
+}
+
+.quantity-option span {
+  font-weight: 500;
+  color: var(--cor-texto-primaria);
+}
+
+.quantity-option:hover {
+  border-color: var(--cor-secondaria);
+  background-color: rgba(253, 204, 74, 0.1);
+  transform: translateY(-2px);
+}
+
+.quantity-option.active {
+  border-color: var(--cor-secondaria);
+  background-color: var(--cor-secondaria);
+  color: var(--verde-escuro);
+}
+
+.quantity-option.active i {
+  color: var(--verde-escuro);
+}
+
+/* Botões de Ação */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.save-btn,
+.cancel-btn,
+.logout-btn {
+  padding: 0.875rem 1.75rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.save-btn {
+  background-color: var(--cor-secondaria);
+  color: var(--verde-escuro);
+}
+
+.save-btn:hover {
+  background-color: #e6b83d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(253, 204, 74, 0.3);
+}
+
+.cancel-btn {
+  background-color: #f8f4e7;
+  color: var(--cor-texto-primaria);
+}
+
+.cancel-btn:hover {
+  background-color: #efe9d8;
+}
+
+.logout-btn {
+  background-color: #ff4d4d;
+  color: var(--cor-branco);
+  margin-left: auto;
+}
+
+.logout-btn:hover {
+  background-color: #e63939;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 77, 77, 0.3);
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .quantity-options {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-content {
+    padding: 0.5rem;
+  }
+
+  .settings-section {
+    padding: 1rem;
+  }
+
+  .day-schedule {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .time-inputs {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .logout-btn {
+    margin-left: 0;
+  }
+
+  .preference-item {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .switch {
+    align-self: flex-end;
+  }
+
+  .quantity-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-section h2 {
+    font-size: 1.1rem;
+  }
+
+  .form-group input,
+  .time-inputs input[type="time"] {
+    font-size: 0.9rem;
+    padding: 0.65rem;
+  }
+
+  .day-name {
+    min-width: auto;
+    width: 100%;
+  }
+}

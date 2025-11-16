@@ -1,0 +1,300 @@
+<?php
+session_start();
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico - Gerador</title>
+    <link rel="icon" href="../img/logo.png" type="image/png">
+    <link rel="stylesheet" href="../CSS/gerador-historico.css">
+    <link rel="stylesheet" href="../CSS/navbar.css">
+    <link rel="stylesheet" href="../CSS/libras.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Biblioteca de ícones -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navbar -->
+        <header class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-placeholder">
+                    <img src="../img/logo.png" alt="Logo Ecoleta" class="logo">
+                </div>
+                <span class="logo-text">Ecoleta</span>
+            </div>
+
+            <button class="menu-mobile-button" onclick="toggleMobileMenu()">
+                <i class="ri-menu-line"></i>
+            </button>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-link">
+                        <a href="../index.php" class="nav-link">
+                            <i class="ri-arrow-left-line"></i>
+                            <span>Voltar</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="home.php" class="nav-link">
+                            <i class="ri-home-4-line"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="perfil.php" class="nav-link">
+                            <i class="ri-user-line"></i>
+                            <span>Perfil</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="solicitar_coleta.php" class="nav-link">
+                            <i class="ri-add-circle-line"></i>
+                            <span>Solicitar Coleta</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a href="historico.php" class="nav-link">
+                            <i class="ri-history-line"></i>
+                            <span>Histórico</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="configuracoes.php" class="nav-link">
+                            <i class="ri-settings-3-line"></i>
+                            <span>Configurações</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="suporte.php" class="nav-link">
+                            <i class="ri-customer-service-2-line"></i>
+                            <span>Suporte</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <header class="content-header">
+                <div class="welcome-message">
+                    <h1>Histórico de Solicitações</h1>
+                    <p>Acompanhe suas solicitações de coleta</p>
+                </div>
+                <div class="header-actions">
+                    <div class="action-buttons">
+                        <button class="notification-btn" title="Notificações">
+                            <i class="ri-notification-3-line"></i>
+                            <span class="notification-badge">2</span>
+                        </button>
+                        <!-- Popup de Notificações -->
+                        <div class="notifications-popup">
+                            <div class="notifications-header">
+                                <h3>Notificações</h3>
+                                <button class="mark-all-read">Marcar todas como lidas</button>
+                            </div>
+                            <div class="notification-list">
+                                <div class="notification-item unread">
+                                    <div class="notification-content">
+                                        <span class="notification-title">Coleta Confirmada</span>
+                                        <p>Sua solicitação #12345 foi aceita e será coletada em breve.</p>
+                                        <span class="notification-time">Há 1 hora</span>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <div class="notification-content">
+                                        <span class="notification-title">Coleta Realizada</span>
+                                        <p>A coleta #12344 foi concluída com sucesso!</p>
+                                        <span class="notification-time">Há 2 dias</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Lista de Histórico -->
+            <div class="history-list">
+                <!-- Item de Histórico -->
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-main-info">
+                            <span class="collection-id">ID: #12345</span>
+                            <span class="collection-quantity">5 litros</span>
+                            <span class="collection-date">28/10/2025</span>
+                        </div>
+                        <div class="history-actions">
+                            <span class="collection-status status-pendente">Pendente</span>
+                            <button class="expand-button">
+                                <i class="ri-arrow-down-s-line"></i>
+                                Detalhes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="history-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Coletor:</span>
+                            <span class="detail-value">Aguardando confirmação</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Local de Coleta:</span>
+                            <span class="detail-value">Rua das Flores, 123 - Jardim Primavera</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Data da solicitação:</span>
+                            <span class="detail-value">28/10/2025</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Observações:</span>
+                            <span class="detail-value">Óleo armazenado em garrafas PET</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item de Histórico -->
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-main-info">
+                            <span class="collection-id">ID: #12344</span>
+                            <span class="collection-quantity">3 litros</span>
+                            <span class="collection-date">25/10/2025</span>
+                        </div>
+                        <div class="history-actions">
+                            <span class="collection-status status-concluida">Concluída</span>
+                            <button class="expand-button">
+                                <i class="ri-arrow-down-s-line"></i>
+                                Detalhes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="history-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Coletor:</span>
+                            <span class="detail-value">João Silva</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Local de Coleta:</span>
+                            <span class="detail-value">Rua das Flores, 123 - Jardim Primavera</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Data da solicitação:</span>
+                            <span class="detail-value">24/10/2025</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Data da coleta:</span>
+                            <span class="detail-value">25/10/2025</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Observações:</span>
+                            <span class="detail-value">Coleta realizada com sucesso</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item de Histórico -->
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-main-info">
+                            <span class="collection-id">ID: #12343</span>
+                            <span class="collection-quantity">7 litros</span>
+                            <span class="collection-date">20/10/2025</span>
+                        </div>
+                        <div class="history-actions">
+                            <span class="collection-status status-cancelada">Cancelada</span>
+                            <button class="expand-button">
+                                <i class="ri-arrow-down-s-line"></i>
+                                Detalhes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="history-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Motivo do Cancelamento:</span>
+                            <span class="detail-value">Cancelado pelo gerador</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Local de Coleta:</span>
+                            <span class="detail-value">Rua das Flores, 123 - Jardim Primavera</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Data da solicitação:</span>
+                            <span class="detail-value">20/10/2025</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <div class="right">
+      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+          <title>accessibility</title>
+          <g>
+            <circle cx="24" cy="7" r="4" />
+            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+          </g>
+        </svg>
+      </div>
+<div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gerenciar expansão dos itens do histórico
+            const historyItems = document.querySelectorAll('.history-item');
+
+            historyItems.forEach(item => {
+                const expandButton = item.querySelector('.expand-button');
+
+                expandButton.addEventListener('click', () => {
+                    item.classList.toggle('expanded');
+                });
+            });
+
+            // Gerenciar notificações
+            const notificationBtn = document.querySelector('.notification-btn');
+            const notificationsPopup = document.querySelector('.notifications-popup');
+            const markAllReadBtn = document.querySelector('.mark-all-read');
+
+            document.addEventListener('click', function(event) {
+                const isClickInsidePopup = notificationsPopup.contains(event.target);
+                const isClickOnButton = notificationBtn.contains(event.target);
+
+                if (!isClickInsidePopup && !isClickOnButton) {
+                    notificationsPopup.classList.remove('show');
+                }
+            });
+
+            notificationBtn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                notificationsPopup.classList.toggle('show');
+            });
+
+            markAllReadBtn.addEventListener('click', function() {
+                const unreadNotifications = document.querySelectorAll('.notification-item.unread');
+                unreadNotifications.forEach(notification => {
+                    notification.classList.remove('unread');
+                });
+                const badge = document.querySelector('.notification-badge');
+                badge.style.display = 'none';
+            });
+        });
+    </script>
+    <script src="../JS/navbar.js"></script>
+    <script src="../JS/libras.js"></script>
+</body>
+
+</html>

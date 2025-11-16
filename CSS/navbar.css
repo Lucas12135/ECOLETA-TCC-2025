@@ -1,0 +1,257 @@
+:root {
+  --cor-primaria: linear-gradient(
+    to right,
+    #223e2a,
+    #2d5238,
+    #386043,
+    #386043,
+    #386043
+  );
+  --cor-secondaria: #ffce46;
+  --cor-quaternaria: #47704a;
+  --cor-texto-primaria: #4c4c4c;
+  --background: #f8f4e7;
+  --verde-escuro: #223e2a;
+  --cor-footer-verde: #386641;
+  --cor-amarelo-escuro: #f59e0b;
+  --cor-borda: #e0e0e0;
+  --cor-branco: #fff;
+  --status-pendente: #2196f3;
+  --status-concluido: #4caf50;
+  --status-cancelado: #f44336;
+}
+
+/* Resetando o layout do container principal */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Style the entire scrollbar */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+/* Style the scrollbar track */
+::-webkit-scrollbar-track {
+  background: var(--cor-branco);
+  border-radius: 16px;
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background: var(--cor-quaternaria);
+  border-radius: 16px;
+}
+
+/* Style the scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--verde-escuro);
+  transition: 0.3s linear;
+}
+/* Convertendo a sidebar em uma navbar horizontal */
+.sidebar {
+  margin-top: 10px;
+  justify-self: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 90%;
+  height: 70px;
+  background-color: var(--background);
+  padding: 0 2rem;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+.logo-placeholder {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.logo-text {
+  color: var(--verde-escuro);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 40px;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin-bottom: 0px;
+}
+
+/* Nova navegação horizontal */
+.sidebar-nav {
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sidebar-nav ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--cor-texto-primaria);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.nav-link i {
+  font-size: 1.2rem;
+  color: var(--verde-escuro);
+}
+.nav-link span {
+  text-wrap: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background-color: var(--background);
+}
+
+li.active .nav-link {
+  background-color: var(--cor-secondaria);
+  color: var(--verde-escuro);
+}
+
+/* Ajustando o conteúdo principal */
+.main-content {
+  margin-top: 70px;
+  padding: 2rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Header do conteúdo */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .sidebar {
+    padding: 0 1rem;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .sidebar-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    height: 60px;
+    background: linear-gradient(
+      135deg,
+      var(--verde-escuro) 0%,
+      var(--verde-claro) 100%
+    );
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar-nav ul {
+    height: 100%;
+    justify-content: space-around;
+    gap: 0;
+  }
+
+  .nav-link span {
+    display: none;
+  }
+
+  .nav-link {
+    padding: 0.5rem;
+  }
+
+  .nav-link i {
+    font-size: 1.5rem;
+  }
+
+  .main-content {
+    margin-bottom: 60px;
+  }
+}
+
+/* Menu móvel */
+.menu-mobile-button {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--verde-escuro);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .menu-mobile-button {
+    display: block;
+  }
+
+  .sidebar-nav {
+    display: none;
+  }
+
+  .sidebar-nav.active {
+    display: block;
+    position: fixed;
+    top: 70px;
+    bottom: auto;
+    left: 0;
+    width: 100%;
+    height: auto;
+    background-color: var(--cor-branco);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar-nav.active ul {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .sidebar-nav.active .nav-link span {
+    display: block;
+  }
+}

@@ -1,0 +1,186 @@
+/* Herda os estilos básicos do home-coletor.css */
+@import url("home-coletor.css");
+
+/* Estilos específicos para configurações */
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.settings-section {
+  background-color: var(--cor-branco);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.settings-section h2 {
+  color: var(--verde-escuro);
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(34, 62, 42, 0.1);
+}
+
+/* Status do Usuário */
+.status-toggle {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.status-option {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid var(--cor-borda);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.status-option.active {
+  border-color: var(--cor-secondaria);
+  background-color: var(--cor-secondaria);
+  color: var(--verde-escuro);
+}
+
+/* Raio de Atuação */
+.range-slider {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.range-slider input {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.range-value {
+  color: var(--verde-escuro);
+  font-weight: 600;
+}
+
+/* Formulários */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  color: var(--cor-texto-primaria);
+  font-weight: 500;
+}
+
+.form-group input {
+  padding: 0.75rem;
+  border: 2px solid var(--cor-borda);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--cor-secondaria);
+  outline: none;
+}
+
+/* Horários de Funcionamento */
+.schedule-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.day-schedule {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--background);
+  border-radius: 8px;
+}
+
+.day-name {
+  min-width: 120px;
+  color: var(--verde-escuro);
+  font-weight: 600;
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.time-inputs input[type="time"] {
+  padding: 0.5rem;
+  border: 2px solid var(--cor-borda);
+  border-radius: 6px;
+}
+
+.day-toggle {
+  margin-right: 1rem;
+}
+
+/* Botões de Ação */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.save-btn,
+.cancel-btn, .logout-btn{
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-btn {
+  background-color: var(--cor-secondaria);
+  color: var(--verde-escuro);
+}
+
+.save-btn:hover {
+  background-color: #e6b83d;
+}
+
+.cancel-btn {
+  background-color: #f8f4e7;
+  color: var(--cor-texto-primaria);
+}
+
+.cancel-btn:hover {
+  background-color: #efe9d8;
+}
+
+.logout-btn {
+  background-color: #ff4d4d;
+  color: var(--cor-branco);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .day-schedule {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .time-inputs {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
