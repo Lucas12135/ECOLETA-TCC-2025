@@ -28,7 +28,6 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
 }
 
 /* ========== ESTILOS DO HEADER AUMENTADO ========== */
@@ -344,15 +343,23 @@ div[vw-access-button] {
 }
 
 .error-message {
-  color: #e74c3c;
-  font-size: 11px;
-  margin-top: 4px;
-  display: none;
+  color: #d32f2f;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  padding-left: 12px;
+  background-color: #ffebee;
+  border-left: 3px solid #d32f2f;
+  border-radius: 3px;
+  display: block;
 }
 
 .form-group.error input {
-  border-color: #e74c3c;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+  border-color: #d32f2f;
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.2);
+  background-color: #fff5f5;
 }
 
 .form-group.error .error-message {

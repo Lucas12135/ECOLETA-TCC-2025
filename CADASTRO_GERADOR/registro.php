@@ -3,6 +3,11 @@ session_start();
 
 $errors = [];
 
+// Garante estrutura de sessão para o fluxo de cadastro
+if (!isset($_SESSION['cadastro'])) {
+    $_SESSION['cadastro'] = [];
+}
+
 /**
  * Valida CPF (11 dígitos) usando o algoritmo oficial
  */
@@ -163,7 +168,7 @@ if (!empty($_POST)) {
         <h2>Primeiros passos</h2>
 
         <?php if (isset($errors['db'])): ?>
-          <div class="error-message"><?= htmlspecialchars($errors['db']) ?></div>
+          <div class="error-message">⚠️ <?= htmlspecialchars($errors['db']) ?></div>
         <?php endif; ?>
 
         <form method="POST" action="#" id="registrationForm" novalidate>
@@ -179,7 +184,7 @@ if (!empty($_POST)) {
               value="<?= htmlspecialchars($_POST['nome'] ?? '') ?>"
             >
             <?php if (isset($errors['nome'])): ?>
-              <div class="error-message"><?= htmlspecialchars($errors['nome']) ?></div>
+              <div class="error-message">⚠️ <?= htmlspecialchars($errors['nome']) ?></div>
             <?php endif; ?>
           </div>
 
@@ -196,7 +201,7 @@ if (!empty($_POST)) {
               value="<?= htmlspecialchars($_POST['cpf'] ?? '') ?>"
             >
             <?php if (isset($errors['cpf'])): ?>
-              <div class="error-message"><?= htmlspecialchars($errors['cpf']) ?></div>
+              <div class="error-message">⚠️ <?= htmlspecialchars($errors['cpf']) ?></div>
             <?php endif; ?>
           </div>
 
@@ -213,7 +218,7 @@ if (!empty($_POST)) {
               value="<?= htmlspecialchars($_POST['celular'] ?? '') ?>"
             >
             <?php if (isset($errors['celular'])): ?>
-              <div class="error-message"><?= htmlspecialchars($errors['celular']) ?></div>
+              <div class="error-message">⚠️ <?= htmlspecialchars($errors['celular']) ?></div>
             <?php endif; ?>
           </div>
 
@@ -231,7 +236,7 @@ if (!empty($_POST)) {
           </label>
           <?php if (isset($errors['dataConsent'])): ?>
             <div class="error-message" style="margin-top:4px;">
-              <?= htmlspecialchars($errors['dataConsent']) ?>
+              ⚠️ <?= htmlspecialchars($errors['dataConsent']) ?>
             </div>
           <?php endif; ?>
 
@@ -257,6 +262,7 @@ if (!empty($_POST)) {
   <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
   <script src="../JS/libras.js"></script>
   <script src="../JS/registro.js"></script>
+  <script src="../JS/registro-validacao.js"></script>
 </body>
 
 </html>

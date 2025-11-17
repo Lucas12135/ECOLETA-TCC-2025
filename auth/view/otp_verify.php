@@ -19,19 +19,20 @@ $purpose = $_GET['purpose'] ?? 'cadastro';
   <h2>Digite o código</h2>
   <p class="muted">Enviamos um código de 6 dígitos para <strong><?=htmlspecialchars($email)?></strong>.</p>
 
-  <form method="POST" action="/auth/verify_otp.php">
+  <form method="POST" action="../verify_otp.php">
     <input type="hidden" name="email" value="<?=htmlspecialchars($email)?>">
     <input type="hidden" name="purpose" value="<?=htmlspecialchars($purpose)?>">
     <input type="text" name="code" inputmode="numeric" pattern="\d{6}" maxlength="6" placeholder="123456" required>
     <button type="submit">Confirmar</button>
   </form>
 
-  <form method="POST" action="/auth/resend_otp.php" style="margin-top:8px;">
+  <form method="POST" action="../mail/resend_otp.php" style="margin-top:8px;">
     <input type="hidden" name="email" value="<?=htmlspecialchars($email)?>">
     <input type="hidden" name="purpose" value="<?=htmlspecialchars($purpose)?>">
     <button type="submit">Reenviar código</button>
   </form>
 
-  <a class="link" href="/auth/view/otp_request.php?email=<?=urlencode($email)?>&purpose=<?=urlencode($purpose)?>">Trocar e-mail</a>
+  <a class="link" href="otp_request.php?email=<?=urlencode($email)?>&purpose=<?=urlencode($purpose)?>">Trocar e-mail</a>
+
 </div>
 </body></html>

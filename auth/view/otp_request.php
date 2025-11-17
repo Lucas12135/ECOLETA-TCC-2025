@@ -16,7 +16,7 @@ $purpose = $_GET['purpose'] ?? 'cadastro';
 <div class="card">
   <h2>Confirmar e-mail</h2>
   <p class="muted">Informe seu e-mail para receber um código de verificação.</p>
-  <form method="POST" action="/auth/request_otp.php">
+  <form method="POST" action="../request_otp.php">
     <input type="email" name="email" placeholder="seu@email.com" value="<?=htmlspecialchars($email)?>" required>
     <input type="hidden" name="purpose" value="<?=htmlspecialchars($purpose)?>">
     <button type="submit">Enviar código</button>

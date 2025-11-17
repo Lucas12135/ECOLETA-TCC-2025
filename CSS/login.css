@@ -504,11 +504,17 @@ main {
 }
 
 .input-error {
-  color: red;
-  font-size: 12px;
-  margin-bottom: 8px;
-  margin-top: -8px;
-  padding-left: 2px;
+  color: #d32f2f;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  margin-top: -6px;
+  padding: 8px 10px;
+  padding-left: 12px;
+  background-color: #ffebee;
+  border-left: 3px solid #d32f2f;
+  border-radius: 3px;
+  display: block;
 }
 
 /* ========== RESPONSIVIDADE ========== */

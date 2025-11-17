@@ -83,7 +83,7 @@ if (!empty($_POST)) {
             $_SESSION['otp_purpose'] = 'cadastro_gerador';
 
             // Disparo do OTP via endpoint HTTP
-            $otpUrl   = 'http://localhost/ECOLETA-TCC-2025-main/auth/request_otp.php';
+            $otpUrl   = 'http://localhost/Ecoleta/auth/request_otp.php';
             $postData = http_build_query([
                 'email'   => $email,
                 'purpose' => 'cadastro_gerador'
@@ -99,7 +99,11 @@ if (!empty($_POST)) {
                 ]
             ]);
 
-            @file_get_contents($otpUrl, false, $context);
+            // Tenta enviar o OTP
+            $response = @file_get_contents($otpUrl, false, $context);
+            
+            // Log opcional para debug (remove em produção):
+            // error_log("OTP Response: " . $response);
 
             header('Location: ../auth/view/otp_verify_gerador.php?email=' . urlencode($email) . '&origin=cadastro_gerador');
             exit;
@@ -307,11 +311,11 @@ if (!empty($_POST)) {
                     <div class="input-error"><?= htmlspecialchars($errors['db']) ?></div>
                 <?php endif; ?>
 
-                <form method="POST" action="#">
+                <form method="POST" action="#" novalidate>
                     <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required
                            value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
                     <?php if (isset($errors['email'])): ?>
-                        <div class="input-error"><?= $errors['email'] ?></div>
+                        <div class="input-error">⚠️ <?= htmlspecialchars($errors['email']) ?></div>
                     <?php endif; ?>
 
                     <div class="password-field">
@@ -323,7 +327,7 @@ if (!empty($_POST)) {
                         </button>
                     </div>
                     <?php if (isset($errors['senha'])): ?>
-                        <div class="input-error"><?= $errors['senha'] ?></div>
+                        <div class="input-error">⚠️ <?= htmlspecialchars($errors['senha']) ?></div>
                     <?php endif; ?>
 
                     <div class="password-field">
@@ -335,7 +339,7 @@ if (!empty($_POST)) {
                         </button>
                     </div>
                     <?php if (isset($errors['confirmar_senha'])): ?>
-                        <div class="input-error"><?= $errors['confirmar_senha'] ?></div>
+                        <div class="input-error">⚠️ <?= htmlspecialchars($errors['confirmar_senha']) ?></div>
                     <?php endif; ?>
 
                     <label>
@@ -372,6 +376,7 @@ if (!empty($_POST)) {
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="../JS/libras.js"></script>
     <script src="../JS/login.js"></script>
+    <script src="../JS/login-validacao.js"></script>
 
     <script>
     (function () {

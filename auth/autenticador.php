@@ -31,7 +31,7 @@ try {
     $mail->setFrom($config['from_email'], $config['from_name']);
 
     // 🔧 Troque este e-mail para o seu endereço real de teste:
-    $mail->addAddress('matheus.santossx@gmail.com', 'Teste Ecoleta');
+    $mail->addAddress('Ecoleta@gmail.com', 'Teste Ecoleta');
 
     // Conteúdo do e-mail
     $mail->isHTML(true);
