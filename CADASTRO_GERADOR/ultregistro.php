@@ -31,8 +31,8 @@ if (!empty($_POST)) {
     $endereco = $_POST['endereco'];
     // Exemplo: "Rua das Flores, 123, apto 45"
     $partes = explode(',', $endereco);
-    $rua = trim($partes[1] ?? '');
-    $numero = trim($partes[0] ?? '');
+    $rua = trim($partes[0] ?? '');
+    $numero = trim($partes[1] ?? '');
     $complemento = trim($partes[2] ?? '');
     $_SESSION['cadastro']['rua'] = $rua;
     $_SESSION['cadastro']['numero'] = $numero;
@@ -152,8 +152,8 @@ if (!empty($_POST)) {
                     <div class="form-fields">
                         <div class="form-row full">
                             <div class="form-group">
-                                <label for="endereco">Endereço Completo <span class="required">*</span></label>
-                                <input type="text" id="endereco" name="endereco" placeholder="Número, rua, complemento" required>
+                                <label for="endereco">Endereço <span class="required">*</span></label>
+                                <input type="text" id="endereco" name="endereco" placeholder="Rua, número, complemento" required>
                             </div>
                         </div>
 

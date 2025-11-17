@@ -337,9 +337,10 @@ $nomeUsuario = $_SESSION['nome_usuario'] ?? 'Usuário';
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="JS/index.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places&callback=initAutocomplete&loading=async" async defer></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places,marker&v=beta&callback=initAutocomplete&loading=async" async defer></script>
     <script>
-    // Inicializa o carousel do Bootstrap
+        // Inicializa o carousel do Bootstrap
         const benefitsCarousel = new bootstrap.Carousel(document.querySelector('#benefitsCarousel'), {
             interval: 3500,
             wrap: true
