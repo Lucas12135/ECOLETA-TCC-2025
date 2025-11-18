@@ -8,6 +8,7 @@ $sql = $pdo->query("
     SELECT 
         c.id,
         c.nome_completo,
+        c.created_at,
         e.rua,
         e.numero,
         e.complemento,

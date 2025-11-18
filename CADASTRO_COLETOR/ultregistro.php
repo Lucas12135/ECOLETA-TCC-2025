@@ -44,6 +44,24 @@ if (!empty($_POST)) {
   $_SESSION['cadastro']['disponibilidade'] = $_POST['disponibilidade'];
   $_SESSION['cadastro']['transporte'] = $_POST['transporte'];
 
+  switch ($_SESSION['cadastro']['disponibilidade']) {
+    case 'manha':
+      $hora_inicio = "08:00";
+      $hora_fim = "12:00";
+      break;
+
+    case 'tarde':
+      $hora_inicio = "13:00";
+      $hora_fim = "17:00";
+      break;
+
+    case 'integral':
+    default:
+      $hora_inicio = "08:00";
+      $hora_fim = "17:00";
+      break;
+  }
+
   include_once('../BANCO/conexao.php');
 
   $dados = $_SESSION['cadastro'];
@@ -69,16 +87,14 @@ if (!empty($_POST)) {
       // 2. Insere coletor
       $stmt = $conn->prepare("INSERT INTO coletores (
                   email, senha, tipo_coletor, nome_completo, cpf_cnpj, telefone, 
-                  data_nasc, genero, id_endereco, meio_transporte,
-                  status, raio_atuacao
+                  data_nasc, genero, id_endereco
                 ) VALUES (
                   :email, :senha, :tipo_coletor, :nome_completo, :cpf_cnpj, :telefone,
-                  :data_nasc, :genero, :id_endereco, :meio_transporte,
-                  'pendente', 5
+                  :data_nasc, :genero, :id_endereco
                 )");
-      
+
       $senha_hash = password_hash($dados['senha'], PASSWORD_DEFAULT);
-      
+
       $stmt->bindParam(':email', $dados['email']);
       $stmt->bindParam(':senha', $senha_hash);
       $tipo_coletor = ($dados['tipo'] === 'pessoa_fisica') ? 'pessoa_fisica' : 'pessoa_juridica';
@@ -88,41 +104,70 @@ if (!empty($_POST)) {
       $stmt->bindParam(':telefone', $dados['celular']);
       $stmt->bindParam(':data_nasc', $dados['data_nasc']);
       $stmt->bindParam(':genero', $dados['genero']);
-      $stmt->bindParam(':meio_transporte', $dados['transporte']);
       $stmt->bindParam(':id_endereco', $id_endereco, PDO::PARAM_INT);
-      
+
       if ($stmt->execute()) {
         $id_coletor = $conn->lastInsertId();
-        
-        // 3. Insere disponibilidade
-        if (isset($dados['disponibilidade']) && is_array($dados['disponibilidade'])) {
-          $stmt_disponibilidade = $conn->prepare("INSERT INTO disponibilidade_coletores 
-            (id_coletor, dia_semana, hora_inicio, hora_fim) 
-            VALUES (:id_coletor, :dia_semana, :hora_inicio, :hora_fim)");
 
-          foreach ($dados['disponibilidade'] as $disponibilidade) {
-            $stmt_disponibilidade->bindParam(':id_coletor', $id_coletor);
-            $stmt_disponibilidade->bindParam(':dia_semana', $disponibilidade['dia']);
-            $stmt_disponibilidade->bindParam(':hora_inicio', $disponibilidade['inicio']);
-            $stmt_disponibilidade->bindParam(':hora_fim', $disponibilidade['fim']);
-            $stmt_disponibilidade->execute();
+        $dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+
+        $stmt = $conn->prepare("
+    INSERT INTO horarios_funcionamento 
+    (id_coletor, dia_semana, ativo, hora_abertura, hora_fechamento)
+    VALUES (:id_coletor, :dia, :ativo, :abertura, :fechamento)
+");
+
+        foreach ($dias as $dia) {
+
+          // Segunda a sexta: ativo
+          if (in_array($dia, ['segunda', 'terca', 'quarta', 'quinta', 'sexta'])) {
+            $ativo = 1;
+            $abertura = $hora_inicio;
+            $fechamento = $hora_fim;
           }
+
+          // Sábado e domingo: inativo
+          else {
+            $ativo = 0;
+            $abertura = null;
+            $fechamento = null;
+          }
+
+          $stmt->execute([
+            ':id_coletor' => $id_coletor,
+            ':dia' => $dia,
+            ':ativo' => $ativo,
+            ':abertura' => $abertura,
+            ':fechamento' => $fechamento
+          ]);
         }
-        
+
+        $stmt_config = $conn->prepare("
+    INSERT INTO coletores_config
+        (id_coletor, meio_transporte)
+    VALUES (:id_coletor, :meio_transporte)
+");
+
+        $stmt_config->execute([
+          ':id_coletor' => $id_coletor,
+          ':meio_transporte' => $_POST['transporte']
+        ]);
+
+
         // 4. Processa upload de foto
-        if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
           $uploadDir = '../uploads/profile_photos/';
           if (!file_exists($uploadDir)) {
-              mkdir($uploadDir, 0777, true);
+            mkdir($uploadDir, 0777, true);
           }
-          
+
           $fileInfo = pathinfo($_FILES['photo']['name']);
           $extension = strtolower($fileInfo['extension']);
-          
+
           if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
             $newFileName = $id_coletor . '_' . uniqid() . '.' . $extension;
             $uploadFile = $uploadDir . $newFileName;
-            
+
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
               $stmt_foto = $conn->prepare("UPDATE coletores SET foto_perfil = :foto WHERE id = :id");
               $stmt_foto->bindParam(':foto', $newFileName);
@@ -131,7 +176,7 @@ if (!empty($_POST)) {
             }
           }
         }
-        
+
         // ============================================
         // NOVO CÓDIGO: Configura a sessão do usuário
         // ============================================
@@ -141,11 +186,11 @@ if (!empty($_POST)) {
         $_SESSION['email'] = $dados['email'];
         $_SESSION['telefone'] = $dados['celular'];
         $_SESSION['cadastro_completo'] = true;
-        
+
         // Limpar dados temporários do cadastro
         unset($_SESSION['cadastro']);
         // ============================================
-        
+
         header("Location: final.php");
         exit;
       }
@@ -195,8 +240,8 @@ if (!empty($_POST)) {
         <h1 class="form-title">Últimos passos para virar coletor</h1>
       </div>
 
-      
-      
+
+
       <form action="#" method="POST" class="form" id="finalRegistrationForm" enctype="multipart/form-data">
         <div class="form-body">
           <div class="form-fields">
@@ -302,7 +347,7 @@ if (!empty($_POST)) {
                 </select>
               </div>
             </div>
-            
+
             <div class="form-actions">
               <button type="submit" class="btn btn-submit" id="submitBtn">Finalizar Cadastro</button>
             </div>
@@ -320,7 +365,7 @@ if (!empty($_POST)) {
               <img id="photoPreview" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
               <div id="uploadIcon">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48">
-                  <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L19 5C18.8 4.8 18.5 4.8 18.3 5L16.9 6.4L17.6 7.1L21 9ZM19 17V19C19 20.1 18.1 21 17 21H5C3.9 21 3 20.1 3 19V17L8.5 12.5L11 15L14.5 11.5L19 17ZM17 3H5C3.9 3 3 3.9 3 5V15L6.8 11.2C7.2 10.8 7.8 10.8 8.2 11.2L12 15L15.8 11.2C16.2 10.8 16.8 10.8 17.2 11.2L19 13V5C19 3.9 18.1 3 17 3Z" fill="#223e2a"/>
+                  <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L19 5C18.8 4.8 18.5 4.8 18.3 5L16.9 6.4L17.6 7.1L21 9ZM19 17V19C19 20.1 18.1 21 17 21H5C3.9 21 3 20.1 3 19V17L8.5 12.5L11 15L14.5 11.5L19 17ZM17 3H5C3.9 3 3 3.9 3 5V15L6.8 11.2C7.2 10.8 7.8 10.8 8.2 11.2L12 15L15.8 11.2C16.2 10.8 16.8 10.8 17.2 11.2L19 13V5C19 3.9 18.1 3 17 3Z" fill="#223e2a" />
                 </svg>
                 <div class="photo-upload-text">Adicionar foto de perfil</div>
               </div>

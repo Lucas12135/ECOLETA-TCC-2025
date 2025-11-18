@@ -40,10 +40,37 @@ function createPin(color, glyph = "📍") {
   });
 }
 
+function calcularTempoDeAfiliacao(dataCadastro) {
+  if (!dataCadastro) return null;
+
+  const criado = new Date(dataCadastro);
+  const agora = new Date();
+
+  // diferença em ms
+  const diffMs = agora - criado;
+
+  // anos aproximados
+  const anos = diffMs / (1000 * 60 * 60 * 24 * 365);
+
+  if (anos >= 1) {
+    return `${Math.floor(anos)} ano${Math.floor(anos) > 1 ? "s" : ""}`;
+  }
+
+  // se for menos de 1 ano → mostrar meses
+  const meses = diffMs / (1000 * 60 * 60 * 24 * 30.44);
+  if (meses >= 1) {
+    return `${Math.floor(meses)} mês${Math.floor(meses) > 1 ? "es" : ""}`;
+  }
+
+  // se for menos de 1 mês → mostrar dias
+  const dias = diffMs / (1000 * 60 * 60 * 24);
+  return `${Math.floor(dias)} dia${Math.floor(dias) > 1 ? "s" : ""}`;
+}
+
 function createInfoWindowHTML(coletor) {
   // HTML simples para a InfoWindow (pode ser estilizado)
   const foto = coletor.foto ? coletor.foto : "img/default-user.png";
-  const tempo = coletor.tempo ? `${coletor.tempo} anos de atuação` : "Tempo não informado";
+  const tempo = coletor.created_at ? calcularTempoDeAfiliacao(coletor.created_at) + " de atuação" : "";
   const nome = coletor.nome_completo || coletor.nome || "Coletor";
 
   return `
@@ -124,56 +151,67 @@ async function loadColetores(userLat, userLng) {
 
     // geocodifica cada endereço (respeitando quotas com delay)
     await new Promise((resolve) => {
-      geocoder.geocode({ address: col.endereco_completo }, function (results, status) {
-        if (status === "OK" && results[0]) {
-          const loc = results[0].geometry.location;
-          col.lat = loc.lat();
-          col.lng = loc.lng();
+      geocoder.geocode(
+        { address: col.endereco_completo },
+        function (results, status) {
+          if (status === "OK" && results[0]) {
+            const loc = results[0].geometry.location;
+            col.lat = loc.lat();
+            col.lng = loc.lng();
 
-          // PIN VERDE
-          try {
-            const pinGreen = createPin("#2ecc71", "♻️");
+            // PIN VERDE
+            try {
+              const pinGreen = createPin("#2ecc71", "♻️");
 
-            const marker = new google.maps.marker.AdvancedMarkerElement({
-              map,
-              position: { lat: col.lat, lng: col.lng },
-              content: pinGreen.element,
-              title: col.nome_completo || ("Coletor " + (col.id || "")),
-            });
+              const marker = new google.maps.marker.AdvancedMarkerElement({
+                map,
+                position: { lat: col.lat, lng: col.lng },
+                content: pinGreen.element,
+                title: col.nome_completo || "Coletor " + (col.id || ""),
+              });
 
-            // InfoWindow padrão (usa google.maps.InfoWindow)
-            const info = new google.maps.InfoWindow({
-              content: createInfoWindowHTML(col),
-              maxWidth: 300,
-            });
+              // InfoWindow padrão (usa google.maps.InfoWindow)
+              const info = new google.maps.InfoWindow({
+                content: createInfoWindowHTML(col),
+                maxWidth: 300,
+              });
 
-            marker.addListener("click", () => {
-              info.open({ map, anchor: marker });
-            });
-          } catch (err) {
-            // se AdvancedMarkerElement não estiver disponível por algum motivo, cai para Marker normal
-            console.warn("Falha ao criar AdvancedMarker, usando Marker padrão:", err);
-            new google.maps.Marker({
-              map,
-              position: { lat: col.lat, lng: col.lng },
-              title: col.nome_completo || ("Coletor " + (col.id || "")),
-            });
+              marker.addListener("click", () => {
+                info.open({ map, anchor: marker });
+              });
+            } catch (err) {
+              // se AdvancedMarkerElement não estiver disponível por algum motivo, cai para Marker normal
+              console.warn(
+                "Falha ao criar AdvancedMarker, usando Marker padrão:",
+                err
+              );
+              new google.maps.Marker({
+                map,
+                position: { lat: col.lat, lng: col.lng },
+                title: col.nome_completo || "Coletor " + (col.id || ""),
+              });
+            }
+          } else {
+            col.lat = null;
+            col.lng = null;
           }
-        } else {
-          col.lat = null;
-          col.lng = null;
-        }
 
-        // pequeno delay para evitar spikes no geocoder
-        setTimeout(resolve, 150);
-      });
+          // pequeno delay para evitar spikes no geocoder
+          setTimeout(resolve, 150);
+        }
+      );
     });
   }
 
   // calcular distâncias
   coletores.forEach((c) => {
     if (c.lat && c.lng) {
-      c.dist = distanceInKm(userLat, userLng, parseFloat(c.lat), parseFloat(c.lng));
+      c.dist = distanceInKm(
+        userLat,
+        userLng,
+        parseFloat(c.lat),
+        parseFloat(c.lng)
+      );
     } else {
       c.dist = Infinity;
     }
@@ -219,7 +257,10 @@ function updateMapLocation(address) {
         });
       } catch (err) {
         // fallback para Marker padrão se AdvancedMarker falhar
-        console.warn("AdvancedMarker falhou ao criar marker do usuário, usando Marker padrão:", err);
+        console.warn(
+          "AdvancedMarker falhou ao criar marker do usuário, usando Marker padrão:",
+          err
+        );
         currentMarker = new google.maps.Marker({
           map,
           position: location,
@@ -242,9 +283,13 @@ function updateMapLocation(address) {
 window.initAutocomplete = function initAutocompleteCallback() {
   // Se DOM ainda não estiver pronto, espera e re-executa
   if (!document.querySelector(".search-input-container input")) {
-    document.addEventListener("DOMContentLoaded", () => {
-      window.initAutocomplete && window.initAutocomplete();
-    }, { once: true });
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        window.initAutocomplete && window.initAutocomplete();
+      },
+      { once: true }
+    );
     return;
   }
 
@@ -262,8 +307,14 @@ window.initAutocomplete = function initAutocompleteCallback() {
   };
 
   // Autocomplete (Places) - ok usar por enquanto
-  const searchAutocomplete = new google.maps.places.Autocomplete(searchInput, options);
-  const modalAutocomplete = new google.maps.places.Autocomplete(modalInput, options);
+  const searchAutocomplete = new google.maps.places.Autocomplete(
+    searchInput,
+    options
+  );
+  const modalAutocomplete = new google.maps.places.Autocomplete(
+    modalInput,
+    options
+  );
 
   // Quando escolher uma sugestão no input principal, atualiza o modalInput (não abre modal automaticamente)
   searchAutocomplete.addListener("place_changed", () => {
@@ -295,7 +346,10 @@ window.initAutocomplete = function initAutocompleteCallback() {
         const myModal = new bootstrap.Modal(modal);
         myModal.show();
       } catch (e) {
-        console.warn("Bootstrap Modal não abriu (verifique se o bootstrap está carregado):", e);
+        console.warn(
+          "Bootstrap Modal não abriu (verifique se o bootstrap está carregado):",
+          e
+        );
       }
 
       // inicializa mapa no modal e atualiza

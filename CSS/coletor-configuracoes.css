@@ -94,6 +94,23 @@
   outline: none;
 }
 
+.form-group select {
+  padding: 0.75rem;
+  border: 2px solid var(--cor-borda);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  color: var(--cor-texto-primaria);
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  font-family: "Poppins", sans-serif;
+}
+
+.form-group select:focus {
+  border-color: var(--cor-secondaria);
+  outline: none;
+}
+
 /* Horários de Funcionamento */
 .schedule-container {
   display: flex;
@@ -140,7 +157,8 @@
 }
 
 .save-btn,
-.cancel-btn, .logout-btn{
+.cancel-btn,
+.logout-btn {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;

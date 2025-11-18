@@ -133,7 +133,7 @@ session_start();
             <div class="settings-content">
                 <!-- Status do Usuário -->
                 <div class="settings-section">
-                    <h2>Status de Disponibilidade</h2>
+                    <h2>Disponibilidade</h2>
                     <div class="status-toggle">
                         <div class="status-option active">
                             <i class="ri-check-line"></i>
@@ -142,10 +142,6 @@ session_start();
                         <div class="status-option">
                             <i class="ri-time-line"></i>
                             Indisponível
-                        </div>
-                        <div class="status-option">
-                            <i class="ri-close-circle-line"></i>
-                            Offline
                         </div>
                     </div>
                 </div>
@@ -193,69 +189,122 @@ session_start();
                     <h2>Horários de Funcionamento</h2>
                     <div class="schedule-container">
                         <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="monday" checked>
+                            <input type="checkbox" class="day-toggle" name="days[segunda][active]" checked>
                             <span class="day-name">Segunda-feira</span>
                             <div class="time-inputs">
-                                <input type="time" value="08:00">
+                                <input type="time" name="days[segunda][open]" min="08:00" max="17:00" value="08:00">
                                 <span>até</span>
-                                <input type="time" value="18:00">
+                                <input type="time" name="days[segunda][close]" min="08:00" max="17:00" value="17:00">
                             </div>
                         </div>
                         <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="tuesday" checked>
+                            <input type="checkbox" class="day-toggle" name="days[terça][active]" checked>
                             <span class="day-name">Terça-feira</span>
                             <div class="time-inputs">
-                                <input type="time" value="08:00">
+                                <input type="time" name="days[terça][open]" min="08:00" max="17:00" value="08:00">
                                 <span>até</span>
-                                <input type="time" value="18:00">
+                                <input type="time" name="days[terça][close]" min="08:00" max="17:00" value="17:00">
                             </div>
                         </div>
                         <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="wednesday" checked>
+                            <input type="checkbox" class="day-toggle" name="days[quarta][active]" checked>
                             <span class="day-name">Quarta-feira</span>
                             <div class="time-inputs">
-                                <input type="time" value="08:00">
+                                <input type="time" name="days[quarta][open]" min="08:00" max="17:00" value="08:00">
                                 <span>até</span>
-                                <input type="time" value="18:00">
+                                <input type="time" name="days[quarta][close]" min="08:00" max="17:00" value="17:00">
                             </div>
                         </div>
                         <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="thursday" checked>
+                            <input type="checkbox" class="day-toggle" name="days[quinta][active]" checked>
                             <span class="day-name">Quinta-feira</span>
                             <div class="time-inputs">
-                                <input type="time" value="08:00">
+                                <input type="time" name="days[quinta][open]" min="08:00" max="17:00" value="08:00">
                                 <span>até</span>
-                                <input type="time" value="18:00">
+                                <input type="time" name="days[quinta][close]" min="08:00" max="17:00" value="17:00">
                             </div>
                         </div>
                         <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="friday" checked>
+                            <input type="checkbox" class="day-toggle" name="days[sexta][active]" checked>
                             <span class="day-name">Sexta-feira</span>
                             <div class="time-inputs">
-                                <input type="time" value="08:00">
+                                <input type="time" name="days[sexta][open]" min="08:00" max="17:00" value="08:00">
                                 <span>até</span>
-                                <input type="time" value="18:00">
+                                <input type="time" name="days[sexta][close]" min="08:00" max="17:00" value="17:00">
                             </div>
                         </div>
                         <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="saturday">
+                            <input type="checkbox" class="day-toggle" name="days[sabado][active]" checked>
                             <span class="day-name">Sábado</span>
                             <div class="time-inputs">
-                                <input type="time" value="08:00">
+                                <input type="time" name="days[sabado][open]" min="08:00" max="17:00" value="08:00">
                                 <span>até</span>
-                                <input type="time" value="12:00">
+                                <input type="time" name="days[sabado][close]" min="08:00" max="17:00" value="17:00">
                             </div>
                         </div>
                         <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="sunday">
+                            <input type="checkbox" class="day-toggle" name="days[domingo][active]" checked>
                             <span class="day-name">Domingo</span>
                             <div class="time-inputs">
-                                <input type="time" value="08:00">
+                                <input type="time" name="days[domingo][open]" min="08:00" max="17:00" value="08:00">
                                 <span>até</span>
-                                <input type="time" value="12:00">
+                                <input type="time" name="days[domingo][close]" min="08:00" max="17:00" value="17:00">
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Endereço -->
+                <div class="settings-section">
+                    <h2>Seu Endereço</h2>
+                    <form class="settings-form">
+                        <div class="form-group">
+                            <label for="cep">CEP</label>
+                            <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                        </div>
+                        <div class="form-group">
+                            <label for="rua">Rua</label>
+                            <input type="text" id="rua" placeholder="Rua das Flores">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero">Número</label>
+                            <input type="text" id="numero" placeholder="123">
+                        </div>
+                        <div class="form-group">
+                            <label for="complemento">Complemento</label>
+                            <input type="text" id="complemento" placeholder="Apto 456, Fundos">
+                        </div>
+                        <div class="form-group">
+                            <label for="bairro">Bairro</label>
+                            <input type="text" id="bairro" placeholder="Centro">
+                        </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" placeholder="São Paulo">
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <input type="text" id="estado" placeholder="SP" maxlength="2">
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Meio de Transporte -->
+                <div class="settings-section">
+                    <h2>Meio de Transporte</h2>
+                    <form class="settings-form">
+                        <div class="form-group">
+                            <label for="transport">Altere seu meio de transporte</label>
+                            <select id="transport" name="transport">
+                                <option value="">Escolha uma opção</option>
+                                <option value="carro">🚗 Carro</option>
+                                <option value="bicicleta">🚴 Bicicleta</option>
+                                <option value="motocicleta">🏍️ Motocicleta</option>
+                                <option value="carroca">🛒 Carroça</option>
+                                <option value="ape">🚶 À Pé</option>
+                            </select>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Botões de Ação -->
@@ -268,78 +317,27 @@ session_start();
         </main>
     </div>
     <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-<div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
         </div>
-    </div>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
 
 
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>
-        document.querySelector('.logout-btn').addEventListener('click', function() {
-            window.location.href = '../logout.php';
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Status toggle
-            const statusOptions = document.querySelectorAll('.status-option');
-            statusOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    statusOptions.forEach(opt => opt.classList.remove('active'));
-                    option.classList.add('active');
-                });
-            });
-
-            // Radius slider
-            const radiusSlider = document.getElementById('radius-slider');
-            const radiusValue = document.getElementById('radius-value');
-            radiusSlider.addEventListener('input', () => {
-                radiusValue.textContent = radiusSlider.value;
-            });
-
-            // Day schedule toggles
-            const dayToggles = document.querySelectorAll('.day-toggle');
-            dayToggles.forEach(toggle => {
-                toggle.addEventListener('change', (e) => {
-                    const timeInputs = e.target.parentElement.querySelector('.time-inputs');
-                    timeInputs.style.opacity = e.target.checked ? '1' : '0.5';
-                    const inputs = timeInputs.querySelectorAll('input');
-                    inputs.forEach(input => input.disabled = !e.target.checked);
-                });
-            });
-
-            // Notificações
-            const notificationBtn = document.querySelector('.notification-btn');
-            const notificationsPopup = document.querySelector('.notifications-popup');
-
-            document.addEventListener('click', function(event) {
-                const isClickInsidePopup = notificationsPopup.contains(event.target);
-                const isClickOnButton = notificationBtn.contains(event.target);
-
-                if (!isClickInsidePopup && !isClickOnButton) {
-                    notificationsPopup.classList.remove('show');
-                }
-            });
-
-            notificationBtn.addEventListener('click', function(event) {
-                event.stopPropagation();
-                notificationsPopup.classList.toggle('show');
-            });
-        });
-    </script>
-    <script src="../JS/navbar.js"></script>
-    <script src="../JS/libras.js"></script>
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script src="../JS/configuracoes.js"></script>
+        <script src="../JS/navbar.js"></script>
+        <script src="../JS/libras.js"></script>
 </body>
 
 </html>
