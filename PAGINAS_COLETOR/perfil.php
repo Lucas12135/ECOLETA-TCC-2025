@@ -1,5 +1,38 @@
 <?php
 session_start();
+require_once '../BANCO/conexao.php';
+
+// Verificar se o usuário está logado
+if (!isset($_SESSION['id_usuario'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+// Buscar dados do coletor incluindo foto
+$id_coletor = $_SESSION['id_usuario'];
+$sql = "SELECT c.id, c.nome_completo, c.email, c.telefone, c.cpf_cnpj, 
+               c.foto_perfil, c.avaliacao_media, c.total_avaliacoes,
+               e.rua, e.numero, e.complemento, e.bairro, e.cidade, e.cep
+        FROM coletores c
+        LEFT JOIN enderecos e ON c.id_endereco = e.id
+        WHERE c.id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id', $id_coletor, PDO::PARAM_INT);
+$stmt->execute();
+$coletor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$coletor) {
+    header('Location: ../index.php');
+    exit;
+}
+
+// Preparar dados para exibição
+$nome_completo = $coletor['nome_completo'] ?? 'Coletor';
+$avaliacao_media = $coletor['avaliacao_media'] ?? 0;
+$total_avaliacoes = $coletor['total_avaliacoes'] ?? 0;
+
+// URL da foto
+$foto_url = $coletor['foto_perfil'] ? '../uploads/profile_photos/' . $coletor['foto_perfil'] : '../img/profile-placeholder.jpg';
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -140,17 +173,29 @@ session_start();
                     <div class="profile-header">
                         <div class="profile-info">
                             <div class="profile-photo">
-                                <img src="../img/profile-placeholder.jpg" alt="Foto do perfil">
+                                <img src="<?php echo htmlspecialchars($foto_url); ?>" alt="Foto do perfil">
                             </div>
                             <div class="profile-text">
-                                <h2 class="profile-name"><?php echo isset($_SESSION['nome_usuario']) ? $_SESSION['nome_usuario'] : 'Nome do Coletor'; ?></h2>
+                                <h2 class="profile-name"><?php echo htmlspecialchars($nome_completo); ?></h2>
                                 <div class="rating">
-                                    <i class="ri-star-fill star"></i>
-                                    <i class="ri-star-fill star"></i>
-                                    <i class="ri-star-fill star"></i>
-                                    <i class="ri-star-fill star"></i>
-                                    <i class="ri-star-half-fill star"></i>
-                                    <span style="color: var(--cor-branco); margin-left: 0.5rem;">4.5</span>
+                                    <?php 
+                                        // Exibir estrelas baseado na avaliação
+                                        $estrelas_cheias = floor($avaliacao_media);
+                                        $meia_estrela = ($avaliacao_media - $estrelas_cheias) >= 0.5;
+                                        
+                                        for ($i = 0; $i < $estrelas_cheias; $i++) {
+                                            echo '<i class="ri-star-fill star"></i>';
+                                        }
+                                        if ($meia_estrela) {
+                                            echo '<i class="ri-star-half-fill star"></i>';
+                                            $i++;
+                                        }
+                                        while ($i < 5) {
+                                            echo '<i class="ri-star-line star"></i>';
+                                            $i++;
+                                        }
+                                    ?>
+                                    <span style="color: var(--cor-branco); margin-left: 0.5rem;"><?php echo number_format($avaliacao_media, 1); ?></span>
                                 </div>
                             </div>
                         </div>

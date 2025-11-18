@@ -1,5 +1,120 @@
 <?php
 session_start();
+require_once '../BANCO/conexao.php';
+
+// Verificar se o usuário está logado
+if (!isset($_SESSION['id_usuario'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+$id_gerador = $_SESSION['id_usuario'];
+$mensagem = '';
+$tipo_mensagem = '';
+
+// Processar salvamento de configurações
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        // Atualizar dados do gerador
+        if (!empty($_POST['email']) || !empty($_POST['telefone'])) {
+            $email = $_POST['email'] ?? '';
+            $telefone = $_POST['telefone'] ?? '';
+            
+            $sql_update = "UPDATE geradores SET email = :email, telefone = :telefone WHERE id = :id";
+            $stmt_update = $conn->prepare($sql_update);
+            $stmt_update->bindParam(':email', $email);
+            $stmt_update->bindParam(':telefone', $telefone);
+            $stmt_update->bindParam(':id', $id_gerador, PDO::PARAM_INT);
+            $stmt_update->execute();
+        }
+
+        // Atualizar endereço
+        if (!empty($_POST['cep']) && $gerador['id_endereco']) {
+            $sql_endereco = "UPDATE enderecos SET 
+                            cep = :cep, 
+                            rua = :rua, 
+                            numero = :numero, 
+                            complemento = :complemento, 
+                            bairro = :bairro, 
+                            cidade = :cidade 
+                            WHERE id = :id";
+            $stmt_endereco = $conn->prepare($sql_endereco);
+            $stmt_endereco->bindParam(':cep', $_POST['cep']);
+            $stmt_endereco->bindParam(':rua', $_POST['rua']);
+            $stmt_endereco->bindParam(':numero', $_POST['numero']);
+            $stmt_endereco->bindParam(':complemento', $_POST['complemento']);
+            $stmt_endereco->bindParam(':bairro', $_POST['bairro']);
+            $stmt_endereco->bindParam(':cidade', $_POST['cidade']);
+            $stmt_endereco->bindParam(':id', $gerador['id_endereco'], PDO::PARAM_INT);
+            $stmt_endereco->execute();
+        }
+
+        // Atualizar configurações de notificação
+        $notif_email = isset($_POST['notif_email']) ? 1 : 0;
+        $notif_push = isset($_POST['notif_push']) ? 1 : 0;
+
+        // Verificar se já existe configuração
+        $sql_check = "SELECT id FROM configuracoes_usuario WHERE id_gerador = :id";
+        $stmt_check = $conn->prepare($sql_check);
+        $stmt_check->bindParam(':id', $id_gerador, PDO::PARAM_INT);
+        $stmt_check->execute();
+        $existe_config = $stmt_check->fetch();
+
+        if ($existe_config) {
+            // Atualizar
+            $sql_config_update = "UPDATE configuracoes_usuario SET 
+                                 notificacoes_email = :email, 
+                                 notificacoes_push = :push 
+                                 WHERE id_gerador = :id";
+            $stmt_config = $conn->prepare($sql_config_update);
+        } else {
+            // Inserir
+            $sql_config_update = "INSERT INTO configuracoes_usuario 
+                                 (id_gerador, notificacoes_email, notificacoes_push) 
+                                 VALUES (:id, :email, :push)";
+            $stmt_config = $conn->prepare($sql_config_update);
+        }
+        
+        $stmt_config->bindParam(':id', $id_gerador, PDO::PARAM_INT);
+        $stmt_config->bindParam(':email', $notif_email, PDO::PARAM_INT);
+        $stmt_config->bindParam(':push', $notif_push, PDO::PARAM_INT);
+        $stmt_config->execute();
+
+        $mensagem = 'Configurações salvas com sucesso!';
+        $tipo_mensagem = 'sucesso';
+    } catch (Exception $e) {
+        $mensagem = 'Erro ao salvar: ' . $e->getMessage();
+        $tipo_mensagem = 'erro';
+    }
+}
+
+// Buscar dados do gerador
+$sql = "SELECT g.id, g.email, g.nome_completo, g.cpf, g.telefone, g.data_nasc, g.foto_perfil, g.id_endereco,
+                e.rua, e.numero, e.complemento, e.bairro, e.cidade, e.estado, e.cep
+        FROM geradores g
+        LEFT JOIN enderecos e ON g.id_endereco = e.id
+        WHERE g.id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id', $id_gerador, PDO::PARAM_INT);
+$stmt->execute();
+$gerador = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$gerador) {
+    header('Location: ../index.php');
+    exit;
+}
+
+// Buscar configurações de notificação
+$sql_config = "SELECT notificacoes_email, notificacoes_push FROM configuracoes_usuario WHERE id_gerador = :id";
+$stmt_config = $conn->prepare($sql_config);
+$stmt_config->bindParam(':id', $id_gerador, PDO::PARAM_INT);
+$stmt_config->execute();
+$config = $stmt_config->fetch(PDO::FETCH_ASSOC);
+
+// Se não existir configuração, criar padrão
+if (!$config) {
+    $config = ['notificacoes_email' => 1, 'notificacoes_push' => 1];
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -123,29 +238,33 @@ session_start();
                 </div>
             </header>
             <div class="settings-content">
+                <!-- Mensagem de Feedback -->
+                <?php if ($mensagem): ?>
+                <div class="feedback-message <?php echo $tipo_mensagem; ?>">
+                    <i class="ri-<?php echo $tipo_mensagem === 'sucesso' ? 'check-line' : 'alert-line'; ?>"></i>
+                    <span><?php echo $mensagem; ?></span>
+                </div>
+                <?php endif; ?>
+
                 <!-- Informações da Conta -->
                 <div class="settings-section">
                     <h2>Informações da Conta</h2>
-                    <form class="settings-form">
+                    <form class="settings-form" method="POST" action="">
                         <div class="form-group">
                             <label for="email">E-mail</label>
-                            <input type="email" id="email" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>">
+                            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($gerador['email'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
                             <label for="phone">Telefone</label>
-                            <input type="tel" id="phone" value="<?php echo isset($_SESSION['telefone']) ? $_SESSION['telefone'] : ''; ?>">
-                        </div>
-                        <div class="form-group">
-                            <label for="current-password">Senha Atual</label>
-                            <input type="password" id="current-password">
+                            <input type="tel" id="phone" name="telefone" value="<?php echo htmlspecialchars($gerador['telefone'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
                             <label for="new-password">Nova Senha</label>
-                            <input type="password" id="new-password">
+                            <input type="password" id="new-password" name="new-password">
                         </div>
                         <div class="form-group">
                             <label for="confirm-password">Confirmar Nova Senha</label>
-                            <input type="password" id="confirm-password">
+                            <input type="password" id="confirm-password" name="confirm-password">
                         </div>
                     </form>
                 </div>
@@ -153,33 +272,33 @@ session_start();
                 <!-- Endereço de Coleta Padrão -->
                 <div class="settings-section">
                     <h2>Endereço de Coleta Padrão</h2>
-                    <form class="settings-form">
+                    <form class="settings-form" method="POST" action="">
                         <div class="form-group">
                             <label for="cep">CEP</label>
-                            <input type="text" id="cep" placeholder="00000-000">
+                            <input type="text" id="cep" name="cep" placeholder="00000-000" value="<?php echo htmlspecialchars($gerador['cep'] ?? ''); ?>">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="rua">Rua</label>
-                                <input type="text" id="rua" placeholder="Nome da rua">
+                                <input type="text" id="rua" name="rua" placeholder="Nome da rua" value="<?php echo htmlspecialchars($gerador['rua'] ?? ''); ?>">
                             </div>
                             <div class="form-group">
                                 <label for="numero">Número</label>
-                                <input type="text" id="numero" placeholder="Nº">
+                                <input type="text" id="numero" name="numero" placeholder="Nº" value="<?php echo htmlspecialchars($gerador['numero'] ?? ''); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="complemento">Complemento</label>
-                            <input type="text" id="complemento" placeholder="Apto, bloco, etc (opcional)">
+                            <input type="text" id="complemento" name="complemento" placeholder="Apto, bloco, etc (opcional)" value="<?php echo htmlspecialchars($gerador['complemento'] ?? ''); ?>">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="bairro">Bairro</label>
-                                <input type="text" id="bairro" placeholder="Bairro">
+                                <input type="text" id="bairro" name="bairro" placeholder="Bairro" value="<?php echo htmlspecialchars($gerador['bairro'] ?? ''); ?>">
                             </div>
                             <div class="form-group">
                                 <label for="cidade">Cidade</label>
-                                <input type="text" id="cidade" placeholder="Cidade">
+                                <input type="text" id="cidade" name="cidade" placeholder="Cidade" value="<?php echo htmlspecialchars($gerador['cidade'] ?? ''); ?>">
                             </div>
                         </div>
                     </form>
@@ -188,47 +307,36 @@ session_start();
                 <!-- Preferências de Notificação -->
                 <div class="settings-section">
                     <h2>Preferências de Notificação</h2>
-                    <div class="notification-preferences">
-                        <div class="preference-item">
-                            <div class="preference-info">
-                                <i class="ri-mail-line"></i>
-                                <div>
-                                    <h3>Notificações por E-mail</h3>
-                                    <p>Receber atualizações sobre coletas por e-mail</p>
+                    <form method="POST" action="">
+                        <div class="notification-preferences">
+                            <div class="preference-item">
+                                <div class="preference-info">
+                                    <i class="ri-mail-line"></i>
+                                    <div>
+                                        <h3>Notificações por E-mail</h3>
+                                        <p>Receber atualizações sobre coletas por e-mail</p>
+                                    </div>
                                 </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="notif_email" name="notif_email" <?php echo (!empty($config) && $config['notificacoes_email']) ? 'checked' : ''; ?>>
+                                    <span class="slider"></span>
+                                </label>
                             </div>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="preference-item">
-                            <div class="preference-info">
-                                <i class="ri-smartphone-line"></i>
-                                <div>
-                                    <h3>Notificações Push</h3>
-                                    <p>Receber notificações no navegador</p>
+                            <div class="preference-item">
+                                <div class="preference-info">
+                                    <i class="ri-smartphone-line"></i>
+                                    <div>
+                                        <h3>Notificações Push</h3>
+                                        <p>Receber notificações no navegador</p>
+                                    </div>
                                 </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="notif_push" name="notif_push" <?php echo (!empty($config) && $config['notificacoes_push']) ? 'checked' : ''; ?>>
+                                    <span class="slider"></span>
+                                </label>
                             </div>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider"></span>
-                            </label>
                         </div>
-                        <div class="preference-item">
-                            <div class="preference-info">
-                                <i class="ri-message-3-line"></i>
-                                <div>
-                                    <h3>SMS</h3>
-                                    <p>Receber mensagens de texto sobre coletas</p>
-                                </div>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
+                    </form>
                 </div>
 
                 <!-- Horários Preferenciais -->
@@ -328,9 +436,11 @@ session_start();
 
                 <!-- Botões de Ação -->
                 <div class="action-buttons">
-                    <button class="save-btn">Salvar Alterações</button>
-                    <button class="cancel-btn">Cancelar</button>
-                    <button class="logout-btn"><i class="ri-logout-box-line"></i> Sair</button>
+                    <form method="POST" action="" style="display: contents;">
+                        <button type="submit" class="save-btn">Salvar Alterações</button>
+                    </form>
+                    <button class="cancel-btn" onclick="location.reload()">Cancelar</button>
+                    <button class="logout-btn" onclick="window.location.href='../logout.php'"><i class="ri-logout-box-line"></i> Sair</button>
                 </div>
             </div>
         </main>
@@ -355,11 +465,17 @@ session_start();
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>
-        document.querySelector('.logout-btn').addEventListener('click', function() {
-            window.location.href = '../logout.php';
-        });
-
         document.addEventListener('DOMContentLoaded', function() {
+            // Auto-hide feedback message after 5 seconds
+            const feedbackMessage = document.querySelector('.feedback-message');
+            if (feedbackMessage) {
+                setTimeout(() => {
+                    feedbackMessage.style.opacity = '0';
+                    feedbackMessage.style.transition = 'opacity 0.3s ease-out';
+                    setTimeout(() => feedbackMessage.remove(), 300);
+                }, 5000);
+            }
+
             // Quantity options
             const quantityOptions = document.querySelectorAll('.quantity-option');
             quantityOptions.forEach(option => {

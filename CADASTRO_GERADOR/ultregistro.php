@@ -3,30 +3,6 @@ session_start();
 
 if (!empty($_POST)) {
     
-    // Processa o upload da foto se existir
-    if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = '../uploads/profile_photos/';
-        if (!file_exists($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-        
-        $fileInfo = pathinfo($_FILES['photo']['name']);
-        $extension = strtolower($fileInfo['extension']);
-        
-        // Verifica extensão
-        if (!in_array($extension, ['jpg', 'jpeg', 'png'])) {
-            die('Tipo de arquivo não permitido');
-        }
-        
-        // Gera nome único para o arquivo
-        $newFileName = uniqid() . '.' . $extension;
-        $uploadFile = $uploadDir . $newFileName;
-        
-        if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
-            $_SESSION['cadastro']['foto'] = $newFileName;
-        }
-    }
-    
     // Salva os dados da última etapa na sessão
     $endereco = $_POST['endereco'];
     // Exemplo: "Rua das Flores, 123, apto 45"
@@ -51,7 +27,6 @@ if (!empty($_POST)) {
 
     try {
         if ($conn) {
-            $id_gerador = $conn->lastInsertId();
             // 1. Insere endereço na tabela 'enderecos' (PDO)
             $stmt_endereco = $conn->prepare("INSERT INTO enderecos (
                 rua, numero, complemento, cidade, cep, estado, bairro
@@ -68,14 +43,14 @@ if (!empty($_POST)) {
             $stmt_endereco->execute();
             $id_endereco = $conn->lastInsertId();
 
-            // 2. Insere coletor na tabela 'geradores', relacionando com o endereço
+            // 2. Insere gerador na tabela 'geradores', relacionando com o endereço
             $stmt = $conn->prepare("INSERT INTO geradores (
                   email, senha, nome_completo, cpf, telefone, data_nasc, genero, id_endereco
                 ) VALUES (
                   :email, :senha, :nome_completo, :cpf, :telefone, :data_nasc, :genero, :id_endereco
                 )");
 
-                $senha_hash = password_hash($dados['senha'], PASSWORD_DEFAULT);
+            $senha_hash = password_hash($dados['senha'], PASSWORD_DEFAULT);
             $stmt->bindParam(':email', $dados['email']);
             $stmt->bindParam(':senha', $senha_hash);
             $stmt->bindParam(':nome_completo', $dados['nome']);
@@ -85,22 +60,52 @@ if (!empty($_POST)) {
             $stmt->bindParam(':genero', $dados['genero']);
             $stmt->bindParam(':id_endereco', $id_endereco, PDO::PARAM_INT);
             $stmt->execute();
+            
+            // 3. Pega o ID do gerador APÓS inserir
+            $id_gerador = $conn->lastInsertId();
+
+            // 4. Processa upload da foto APÓS obter o ID
+            if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = '../uploads/profile_photos/';
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                
+                $fileInfo = pathinfo($_FILES['photo']['name']);
+                $extension = strtolower($fileInfo['extension']);
+                
+                // Verifica extensão
+                if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
+                    // Usa o ID do gerador no nome do arquivo
+                    $newFileName = $id_gerador . '_' . uniqid() . '.' . $extension;
+                    $uploadFile = $uploadDir . $newFileName;
+                    
+                    if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
+                        // Atualiza a foto no banco
+                        $stmt_foto = $conn->prepare("UPDATE geradores SET foto_perfil = :foto WHERE id = :id");
+                        $stmt_foto->bindParam(':foto', $newFileName);
+                        $stmt_foto->bindParam(':id', $id_gerador, PDO::PARAM_INT);
+                        $stmt_foto->execute();
+                    }
+                }
+            }
+
+            $_SESSION['id_usuario'] = $id_gerador;
+            $_SESSION['tipo_usuario'] = 'gerador';
+            $_SESSION['nome_usuario'] = $dados['nome'];
+            $_SESSION['email'] = $dados['email'];
+            $_SESSION['telefone'] = $dados['celular'];
+            $_SESSION['cadastro_completo'] = true;
+            
+            // Limpar dados temporários do cadastro
+            unset($_SESSION['cadastro']);
+            
+            header("Location: final.php");
+            $conn = null;
         }
     } catch (PDOException $e) {
         echo "<div style='color:red'>Erro ao cadastrar: " . $e->getMessage() . "</div>";
     }
-
-        $_SESSION['id_usuario'] = $id_gerador;
-        $_SESSION['tipo_usuario'] = 'gerador';
-        $_SESSION['nome_usuario'] = $dados['nome'];
-        $_SESSION['email'] = $dados['email'];
-        $_SESSION['telefone'] = $dados['celular'];
-        $_SESSION['cadastro_completo'] = true;
-        
-        // Limpar dados temporários do cadastro
-        unset($_SESSION['cadastro']);
-    header("Location: final.php");
-    $conn = null;
 }
 ?>
 <!DOCTYPE html>

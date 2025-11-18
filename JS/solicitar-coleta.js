@@ -4,9 +4,7 @@ new window.VLibras.Widget('https://vlibras.gov.br/app');
 // Variáveis globais
 let map;
 let marker;
-let selectedColetorId = null;
 
-// Coletores fictícios (em produção, seria carregado do banco de dados)
 // Inicialização do mapa
 function initMap() {
     const defaultLocation = { lat: -24.0089, lng: -46.4130 }; // Praia Grande, SP
@@ -46,10 +44,20 @@ document.getElementById('cep').addEventListener('blur', function() {
                     document.getElementById('rua').value = data.logradouro;
                     document.getElementById('bairro').value = data.bairro;
                     document.getElementById('cidade').value = data.localidade;
+                    document.getElementById('estado').value = data.uf;
                     
                     // Geocodificar o endereço
                     const endereco = `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
                     geocodeAddress(endereco);
+                    
+                    // Se estiver em modo de coleta específica, recarregar coletores
+                    if (document.querySelector('input[name="tipo_coleta"][value="especifico"]').checked) {
+                        // Aguardar um pouco para garantir que a cidade foi preenchida
+                        setTimeout(() => {
+                            const event = new Event('change');
+                            document.getElementById('cidade').dispatchEvent(event);
+                        }, 200);
+                    }
                 }
             })
             .catch(error => {
@@ -73,136 +81,6 @@ function geocodeAddress(address) {
     });
 }
 
-// Gerenciar tipo de coleta
-const tipoColetaInputs = document.querySelectorAll('input[name="tipo_coleta"]');
-const coletorSelection = document.getElementById('coletor-selection');
-
-tipoColetaInputs.forEach(input => {
-    input.addEventListener('change', function() {
-        if (this.value === 'especifico') {
-            coletorSelection.style.display = 'block';
-            carregarColetores();
-        } else {
-            coletorSelection.style.display = 'none';
-            selectedColetorId = null;
-        }
-    });
-});
-
-// Carregar coletores disponíveis
-async function carregarColetores() {
-    const coletoresList = document.getElementById('coletores-list');
-    const coletorSelect = document.getElementById('coletor');
-    
-    // Limpar lista e mostrar loading
-    coletoresList.innerHTML = '<div class="loading"><i class="ri-loader-4-line"></i> Carregando coletores...</div>';
-    coletorSelect.innerHTML = '<option value="">Carregando coletores...</option>';
-    
-    try {
-        const response = await fetch('buscar_coletores.php');
-        const data = await response.json();
-        
-        if (data.status === 'success') {
-            // Limpar e atualizar select
-            coletorSelect.innerHTML = '<option value="">Selecione um coletor</option>';
-            coletoresList.innerHTML = '';
-            
-            // Renderizar coletores
-            data.coletores.forEach(coletor => {
-                // Adicionar ao select
-                const option = document.createElement('option');
-                option.value = coletor.id;
-                option.textContent = coletor.nome;
-                coletorSelect.appendChild(option);
-                
-                // Criar e adicionar card
-                const card = criarColetorCard(coletor);
-                coletoresList.appendChild(card);
-            });
-        } else {
-            coletoresList.innerHTML = '<div class="error">Erro ao carregar coletores</div>';
-            console.error('Erro:', data.message);
-        }
-    } catch (error) {
-        coletoresList.innerHTML = '<div class="error">Erro ao carregar coletores</div>';
-        console.error('Erro:', error);
-    }
-}
-
-// Criar card de coletor
-function criarColetorCard(coletor) {
-    const card = document.createElement('div');
-    card.className = 'coletor-card';
-    card.dataset.coletorId = coletor.id;
-    
-    const stars = '★'.repeat(Math.floor(coletor.rating)) + '☆'.repeat(5 - Math.floor(coletor.rating));
-    
-    card.innerHTML = `
-        <div class="coletor-header">
-            <div class="coletor-avatar">${coletor.avatar}</div>
-            <div class="coletor-info">
-                <h4>${coletor.nome}</h4>
-                <div class="coletor-rating">
-                    <span>${stars}</span>
-                    <span>${coletor.rating}</span>
-                </div>
-            </div>
-        </div>
-        <div class="coletor-details">
-            <div class="coletor-detail">
-                <i class="ri-map-pin-line"></i>
-                <span>${coletor.distancia} de distância</span>
-            </div>
-            <div class="coletor-detail">
-                <i class="ri-checkbox-circle-line"></i>
-                <span>${coletor.coletas} coletas realizadas</span>
-            </div>
-            <div class="coletor-detail">
-                <i class="ri-truck-line"></i>
-                <span>${coletor.veiculos.join(', ')}</span>
-            </div>
-            ${coletor.disponivel ? '<span class="coletor-badge"><i class="ri-check-line"></i> Disponível</span>' : ''}
-        </div>
-    `;
-    
-    // Adicionar evento de clique
-    card.addEventListener('click', function() {
-        selecionarColetor(coletor.id);
-    });
-    
-    return card;
-}
-
-// Selecionar coletor
-function selecionarColetor(coletorId) {
-    // Remover seleção anterior
-    document.querySelectorAll('.coletor-card').forEach(card => {
-        card.classList.remove('selected');
-    });
-    
-    // Adicionar nova seleção
-    const selectedCard = document.querySelector(`.coletor-card[data-coletor-id="${coletorId}"]`);
-    if (selectedCard) {
-        selectedCard.classList.add('selected');
-        selectedColetorId = coletorId;
-        
-        // Atualizar select
-        document.getElementById('coletor').value = coletorId;
-    }
-}
-
-// Sincronizar select com cards
-document.getElementById('coletor').addEventListener('change', function() {
-    if (this.value) {
-        selecionarColetor(parseInt(this.value));
-    } else {
-        document.querySelectorAll('.coletor-card').forEach(card => {
-            card.classList.remove('selected');
-        });
-        selectedColetorId = null;
-    }
-});
-
 // Validação de data mínima (não permitir datas passadas)
 const dataInput = document.getElementById('data');
 const hoje = new Date().toISOString().split('T')[0];
@@ -219,24 +97,65 @@ document.getElementById('cep').addEventListener('input', function(e) {
 
 // Validação do formulário antes do envio
 document.querySelector('.collection-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
     const tipoColeta = document.querySelector('input[name="tipo_coleta"]:checked').value;
     
-    if (tipoColeta === 'especifico' && !selectedColetorId) {
-        e.preventDefault();
+    if (tipoColeta === 'especifico' && !document.getElementById('coletor_id').value) {
         alert('Por favor, selecione um coletor para realizar a coleta.');
         return false;
     }
     
-    // Adicionar coletor_id ao formulário se selecionado
-    if (selectedColetorId) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'coletor_id';
-        input.value = selectedColetorId;
-        this.appendChild(input);
-    }
+    // Sincronizar valores dos campos ocultos
+    document.getElementById('tipo_coleta_hidden').value = tipoColeta;
+    document.getElementById('rua_hidden').value = document.getElementById('rua').value;
+    document.getElementById('numero_hidden').value = document.getElementById('numero').value;
+    document.getElementById('complemento_hidden').value = document.getElementById('complemento').value;
+    document.getElementById('bairro_hidden').value = document.getElementById('bairro').value;
+    document.getElementById('cidade_hidden').value = document.getElementById('cidade').value;
     
-    return true;
+    // Enviar dados do formulário via AJAX
+    const formData = new FormData(this);
+    
+    fetch('processar_solicitar_coleta.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mostrar mensagem de sucesso
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success-notification';
+            successDiv.innerHTML = `
+                <div class="notification-content">
+                    <i class="ri-check-circle-line"></i>
+                    <div>
+                        <h3>Sucesso!</h3>
+                        <p>${data.message}</p>
+                        <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                            ID da solicitação: <strong>#${data.id_coleta}</strong>
+                        </p>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(successDiv);
+            
+            // Remover notificação após 3 segundos e redirecionar
+            setTimeout(() => {
+                successDiv.remove();
+                window.location.href = 'historico.php';
+            }, 3000);
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao enviar solicitação:', error);
+        alert('Erro ao enviar solicitação de coleta. Tente novamente.');
+    });
+    
+    return false;
 });
 
 // Inicializar mapa quando a página carregar

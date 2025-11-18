@@ -1,6 +1,45 @@
 /* Herda os estilos básicos do home-gerador.css */
 @import url("home-gerador.css");
 
+/* Mensagem de Feedback */
+.feedback-message {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+.feedback-message.sucesso {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+  color: #155724;
+}
+
+.feedback-message.erro {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+  color: #721c24;
+}
+
+.feedback-message i {
+  font-size: 1.25rem;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Estilos específicos para configurações do gerador */
 .settings-content {
   display: flex;
