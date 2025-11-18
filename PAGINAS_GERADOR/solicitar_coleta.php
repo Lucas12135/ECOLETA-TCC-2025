@@ -1,5 +1,24 @@
 <?php
 session_start();
+require_once '../BANCO/conexao.php';
+
+// Verificar se o usuário está logado
+if (!isset($_SESSION['id_usuario'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+// Buscar dados do gerador para pré-preencher o formulário
+$id_gerador = $_SESSION['id_usuario'];
+$sql_gerador = "SELECT g.email, g.telefone, 
+                       e.cep, e.rua, e.numero, e.complemento, e.bairro, e.cidade
+                FROM geradores g
+                LEFT JOIN enderecos e ON g.id_endereco = e.id
+                WHERE g.id = :id";
+$stmt_gerador = $conn->prepare($sql_gerador);
+$stmt_gerador->bindParam(':id', $id_gerador, PDO::PARAM_INT);
+$stmt_gerador->execute();
+$gerador_data = $stmt_gerador->fetch(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -95,7 +114,15 @@ session_start();
                 <p>Preencha as informações abaixo para solicitar uma coleta de óleo</p>
             </header>
 
-            <form class="collection-form" action="processar-solicitacao.php" method="POST">
+            <form class="collection-form" method="POST">
+                <!-- Campos Ocultos -->
+                <input type="hidden" name="tipo_coleta_hidden" id="tipo_coleta_hidden" value="automatico">
+                <input type="hidden" name="rua_hidden" id="rua_hidden">
+                <input type="hidden" name="numero_hidden" id="numero_hidden">
+                <input type="hidden" name="complemento_hidden" id="complemento_hidden">
+                <input type="hidden" name="bairro_hidden" id="bairro_hidden">
+                <input type="hidden" name="cidade_hidden" id="cidade_hidden">
+
                 <!-- Quantidade de Óleo -->
                 <div class="form-section">
                     <h2>Quantidade de Óleo</h2>
@@ -135,17 +162,20 @@ session_start();
                 <!-- Seleção de Coletor (oculto inicialmente) -->
                 <div class="form-section" id="coletor-selection" style="display: none;">
                     <h2>Selecionar Coletor</h2>
-                    <div class="form-group">
+                    
+                    <!-- Lista de Coletores dinâmica -->
+                    <div id="coletores-list" class="coletores-grid">
+                        <!-- Será preenchido dinamicamente após selecionar localização -->
+                    </div>
+                    
+                    <div class="form-group" id="coletor-select-group" style="display: none;">
                         <label for="coletor">Escolha o coletor</label>
                         <select id="coletor" name="coletor_id">
-                            <option value="">Carregando coletores...</option>
+                            <option value="">Selecione um coletor</option>
                         </select>
                     </div>
                     
-                    <!-- Lista de Coletores -->
-                    <div id="coletores-list" class="coletores-grid">
-                        <!-- Será preenchido dinamicamente via JavaScript -->
-                    </div>
+                    <input type="hidden" id="coletor_id" name="coletor_id" value="">
                 </div>
 
                 <!-- Local de Coleta -->
@@ -154,30 +184,30 @@ session_start();
                     <div class="address-container">
                         <div class="form-group">
                             <label for="cep">CEP</label>
-                            <input type="text" id="cep" name="cep" required pattern="[0-9]{5}-?[0-9]{3}">
+                            <input type="text" id="cep" name="cep" required pattern="[0-9]{5}-?[0-9]{3}" value="<?php echo htmlspecialchars($gerador_data['cep'] ?? ''); ?>">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="rua">Rua</label>
-                                <input type="text" id="rua" name="rua" required>
+                                <input type="text" id="rua" name="rua" required value="<?php echo htmlspecialchars($gerador_data['rua'] ?? ''); ?>">
                             </div>
                             <div class="form-group number">
                                 <label for="numero">Número</label>
-                                <input type="text" id="numero" name="numero" required>
+                                <input type="text" id="numero" name="numero" required value="<?php echo htmlspecialchars($gerador_data['numero'] ?? ''); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="complemento">Complemento (opcional)</label>
-                            <input type="text" id="complemento" name="complemento">
+                            <input type="text" id="complemento" name="complemento" value="<?php echo htmlspecialchars($gerador_data['complemento'] ?? ''); ?>">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="bairro">Bairro</label>
-                                <input type="text" id="bairro" name="bairro" required>
+                                <input type="text" id="bairro" name="bairro" required value="<?php echo htmlspecialchars($gerador_data['bairro'] ?? ''); ?>">
                             </div>
                             <div class="form-group">
                                 <label for="cidade">Cidade</label>
-                                <input type="text" id="cidade" name="cidade" required>
+                                <input type="text" id="cidade" name="cidade" required value="<?php echo htmlspecialchars($gerador_data['cidade'] ?? ''); ?>">
                             </div>
                         </div>
                         <!-- Mapa -->
@@ -185,6 +215,7 @@ session_start();
                             <div id="map"></div>
                             <input type="hidden" id="latitude" name="latitude">
                             <input type="hidden" id="longitude" name="longitude">
+                            <input type="hidden" id="estado" name="estado" value="SP">
                         </div>
                     </div>
                 </div>
@@ -246,6 +277,123 @@ session_start();
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places"></script>
+    
+    <!-- Manuseio de seleção de tipo de coleta -->
+    <script>
+        // Mostrar/ocultar seleção de coletor
+        const tipoColetaInputs = document.querySelectorAll('input[name="tipo_coleta"]');
+        const coletorSelection = document.getElementById('coletor-selection');
+        
+        tipoColetaInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.value === 'especifico') {
+                    coletorSelection.style.display = 'block';
+                    carregarColetores();
+                } else {
+                    coletorSelection.style.display = 'none';
+                    document.getElementById('coletor_id').value = '';
+                }
+            });
+        });
+        
+        // Carregar coletores baseado na localização
+        function carregarColetores() {
+            const cidade = document.getElementById('cidade').value.trim();
+            const bairro = document.getElementById('bairro').value.trim();
+            
+            if (!cidade) {
+                document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center;">Preencha a cidade primeiro</p>';
+                return;
+            }
+            
+            document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center;">Carregando coletores...</p>';
+            
+            // Fazer requisição ao servidor PHP
+            fetch('../api/get_coletores_por_localizacao.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'cidade=' + encodeURIComponent(cidade) + '&bairro=' + encodeURIComponent(bairro)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.coletores && data.coletores.length > 0) {
+                    exibirColetores(data.coletores);
+                } else {
+                    document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center;">Nenhum coletor disponível nesta região</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar coletores:', error);
+                document.getElementById('coletores-list').innerHTML = '<p style="color: #d32f2f; text-align: center;">Erro ao carregar coletores</p>';
+            });
+        }
+        
+        // Exibir coletores em cards
+        function exibirColetores(coletores) {
+            const container = document.getElementById('coletores-list');
+            container.innerHTML = '';
+            
+            coletores.forEach(coletor => {
+                const card = document.createElement('div');
+                card.className = 'coletor-card';
+                card.innerHTML = `
+                    <div class="coletor-card-header">
+                        <img src="${coletor.foto_perfil ? '../uploads/profile_photos/' + coletor.foto_perfil : '../img/default-avatar.png'}" alt="${coletor.nome_completo}" class="coletor-foto">
+                    </div>
+                    <div class="coletor-card-body">
+                        <h3>${coletor.nome_completo}</h3>
+                        <p class="coletor-localizacao"><i class="ri-map-pin-line"></i> ${coletor.localizacao}</p>
+                        <div class="coletor-info">
+                            <div class="rating">
+                                <i class="ri-star-fill"></i>
+                                <span>${coletor.avaliacao_media} (${coletor.total_avaliacoes})</span>
+                            </div>
+                            ${coletor.meio_transporte ? '<div><i class="ri-e-bike-2-line"></i> ' + coletor.meio_transporte + '</div>' : ''}
+                        </div>
+                        ${coletor.experiencia ? '<p class="coletor-experiencia"><i class="ri-award-line"></i> ' + coletor.experiencia + ' anos</p>' : ''}
+                    </div>
+                    <button type="button" class="btn-select-coletor" data-id="${coletor.id}" data-nome="${coletor.nome_completo}">
+                        Selecionar
+                    </button>
+                `;
+                container.appendChild(card);
+                
+                // Adicionar evento de click ao botão
+                card.querySelector('.btn-select-coletor').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    selecionarColetor(this.dataset.id, this.dataset.nome);
+                });
+            });
+        }
+        
+        // Selecionar coletor
+        function selecionarColetor(id, nome) {
+            document.getElementById('coletor_id').value = id;
+            
+            // Destacar coletor selecionado
+            document.querySelectorAll('.coletor-card').forEach(card => {
+                card.classList.remove('selected');
+                if (card.querySelector('[data-id="' + id + '"]')) {
+                    card.classList.add('selected');
+                }
+            });
+            
+            // Mostrar mensagem
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'success-message';
+            msgDiv.textContent = 'Coletor ' + nome + ' selecionado!';
+            document.getElementById('coletor-selection').insertBefore(msgDiv, document.getElementById('coletores-list'));
+            
+            setTimeout(() => msgDiv.remove(), 3000);
+        }
+        
+        // Recarregar coletores quando cidade/bairro mudarem
+        document.getElementById('cidade').addEventListener('change', carregarColetores);
+        document.getElementById('bairro').addEventListener('change', carregarColetores);
+    </script>
+    
     <script src="../JS/solicitar-coleta.js"></script>
     <script src="../JS/navbar.js"></script>
     <script src="../JS/libras.js"></script>

@@ -4,7 +4,12 @@ session_start();
 // Verifica se o usuário está logado e qual seu tipo
 $usuarioLogado = isset($_SESSION['id_usuario']);
 $tipoUsuario = $_SESSION['tipo_usuario'] ?? null;
-$nomeUsuario = $_SESSION['nome_usuario'] ?? 'Usuário';
+$nomeCompleto = $_SESSION['nome_usuario'] ?? 'Usuário';
+
+// Extrai primeiro e último nome
+$nomePartes = explode(' ', trim($nomeCompleto));
+$primeiroNome = $nomePartes[0] ?? 'Usuário';
+$ultimoNome = end($nomePartes);
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -35,7 +40,7 @@ $nomeUsuario = $_SESSION['nome_usuario'] ?? 'Usuário';
                 <?php if ($usuarioLogado): ?>
                     <!-- Usuário Logado -->
                     <div class="user-menu">
-                        <span class="welcome-text">Olá, <?php echo htmlspecialchars($nomeUsuario); ?>!</span>
+                        <span class="welcome-text">Olá, <?php echo htmlspecialchars($primeiroNome) . ' ' . htmlspecialchars($ultimoNome); ?>!</span>
                         <?php if ($tipoUsuario === 'coletor'): ?>
                             <a href="PAGINAS_COLETOR/home.php" class="btn-filled">Ver Dashboard</a>
                         <?php elseif ($tipoUsuario === 'gerador'): ?>

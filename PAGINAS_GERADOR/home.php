@@ -1,5 +1,11 @@
 <?php
 session_start();
+
+// Extrai primeiro e último nome
+$nomeCompleto = $_SESSION['nome_usuario'] ?? 'Gerador';
+$nomePartes = explode(' ', trim($nomeCompleto));
+$primeiroNome = $nomePartes[0] ?? 'Gerador';
+$ultimoNome = end($nomePartes);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -84,7 +90,7 @@ session_start();
         <main class="main-content">
             <header class="content-header">
                 <div class="welcome-message">
-                    <h1>Olá, <?php echo isset($_SESSION['nome']) ? $_SESSION['nome'] : 'Gerador'; ?>!</h1>
+                    <h1>Olá, <?php echo htmlspecialchars($primeiroNome) . ' ' . htmlspecialchars($ultimoNome); ?>!</h1>
                     <p>Gerencie suas solicitações de coleta de óleo</p>
                 </div>
                 <div class="header-actions">

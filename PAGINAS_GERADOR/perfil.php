@@ -59,19 +59,22 @@ try {
        ============================================== */
     $stmt = $db->prepare("
         SELECT 
-            id,
-            nome_completo,
-            email,
-            telefone,
-            cpf,
-            rua,
-            numero,
-            complemento,
-            bairro,
-            cidade,
-            foto_perfil
-        FROM geradores
-        WHERE id = :id
+            g.id,
+            g.nome_completo,
+            g.email,
+            g.telefone,
+            g.cpf,
+            g.foto_perfil,
+            g.id_endereco,
+            e.rua,
+            e.numero,
+            e.complemento,
+            e.bairro,
+            e.cidade,
+            e.cep
+        FROM geradores g
+        LEFT JOIN enderecos e ON g.id_endereco = e.id
+        WHERE g.id = :id
         LIMIT 1
     ");
     $stmt->bindValue(':id', $usuarioId, PDO::PARAM_INT);
@@ -204,7 +207,7 @@ function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                 <div class="profile-cover">
                     <div class="profile-photo-container">
                         <?php
-                          $foto = $gerador['foto_perfil'] ? '../uploads/'.$gerador['foto_perfil'] : '../img/profile-placeholder.jpg';
+                          $foto = $gerador['foto_perfil'] ? '../uploads/profile_photos/' . htmlspecialchars($gerador['foto_perfil']) : '../img/profile-placeholder.jpg';
                         ?>
                         <img src="<?= e($foto) ?>" alt="Foto de Perfil" id="profilePhoto" class="profile-photo">
                         <button class="change-photo-btn" onclick="document.getElementById('photoInput').click()">

@@ -1,5 +1,53 @@
 <?php
 session_start();
+require_once '../BANCO/conexao.php';
+
+// Verificar se o usuário está logado
+if (!isset($_SESSION['id_usuario'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+// Buscar dados do coletor
+$id_coletor = $_SESSION['id_usuario'];
+$sql = "SELECT c.email, c.nome_completo, c.cpf_cnpj, c.telefone, c.data_nasc, c.foto_perfil, 
+               c.raio_atuacao, c.meio_transporte, c.capacidade_coleta,
+               e.rua, e.numero, e.complemento, e.bairro, e.cidade, e.estado, e.cep
+        FROM coletores c
+        LEFT JOIN enderecos e ON c.id_endereco = e.id
+        WHERE c.id = :id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':id', $id_coletor, PDO::PARAM_INT);
+$stmt->execute();
+$coletor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Buscar disponibilidade
+$sql_disp = "SELECT * FROM disponibilidade_coletores WHERE id_coletor = :id";
+$stmt_disp = $conn->prepare($sql_disp);
+$stmt_disp->bindParam(':id', $id_coletor, PDO::PARAM_INT);
+$stmt_disp->execute();
+$disponibilidade = $stmt_disp->fetchAll(PDO::FETCH_ASSOC);
+
+// Mapa de dias da semana
+$dias_semana = [
+    'segunda' => ['id' => 'monday', 'nome' => 'Segunda-feira'],
+    'terca' => ['id' => 'tuesday', 'nome' => 'Terça-feira'],
+    'quarta' => ['id' => 'wednesday', 'nome' => 'Quarta-feira'],
+    'quinta' => ['id' => 'thursday', 'nome' => 'Quinta-feira'],
+    'sexta' => ['id' => 'friday', 'nome' => 'Sexta-feira'],
+    'sabado' => ['id' => 'saturday', 'nome' => 'Sábado'],
+    'domingo' => ['id' => 'sunday', 'nome' => 'Domingo']
+];
+
+// Função para buscar disponibilidade de um dia
+function getDisponibilidadeDia($disponibilidade, $dia) {
+    foreach ($disponibilidade as $d) {
+        if ($d['dia_semana'] === $dia) {
+            return $d;
+        }
+    }
+    return null;
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -154,9 +202,9 @@ session_start();
                 <div class="settings-section">
                     <h2>Raio de Atuação</h2>
                     <div class="range-slider">
-                        <input type="range" min="1" max="50" value="10" id="radius-slider">
+                        <input type="range" min="1" max="50" value="<?php echo $coletor['raio_atuacao'] ?? 10; ?>" id="radius-slider">
                         <div class="range-value">
-                            Raio atual: <span id="radius-value">10</span> km
+                            Raio atual: <span id="radius-value"><?php echo $coletor['raio_atuacao'] ?? 10; ?></span> km
                         </div>
                     </div>
                 </div>
@@ -167,11 +215,11 @@ session_start();
                     <form class="settings-form">
                         <div class="form-group">
                             <label for="email">E-mail</label>
-                            <input type="email" id="email" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>">
+                            <input type="email" id="email" value="<?php echo $coletor['email'] ?? ''; ?>">
                         </div>
                         <div class="form-group">
                             <label for="phone">Telefone</label>
-                            <input type="tel" id="phone" value="<?php echo isset($_SESSION['telefone']) ? $_SESSION['telefone'] : ''; ?>">
+                            <input type="tel" id="phone" value="<?php echo $coletor['telefone'] ?? ''; ?>">
                         </div>
                         <div class="form-group">
                             <label for="current-password">Senha Atual</label>
