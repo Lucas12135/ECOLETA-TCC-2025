@@ -662,3 +662,228 @@ label[for]:not([for="complemento"]):not([for="observacoes"])::after {
         max-width: none;
     }
 }
+
+/* Adicione ao seu arquivo CSS */
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+.alert i {
+    font-size: 24px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mensagens de Alerta */
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease;
+}
+
+.alert i {
+    font-size: 24px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mensagem de Sucesso na Seleção de Coletor */
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #c3e6cb;
+    animation: slideIn 0.3s ease;
+}
+
+.success-message i {
+    font-size: 20px;
+}
+
+/* Grid de Coletores */
+.coletores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Card de Coletor */
+.coletor-card {
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.coletor-card:hover {
+    border-color: #4CAF50;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+    transform: translateY(-2px);
+}
+
+.coletor-card.selected {
+    border-color: #4CAF50;
+    background-color: #f1f8f4;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.coletor-card-header {
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+}
+
+.coletor-foto {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.coletor-card-body {
+    padding: 15px 20px;
+}
+
+.coletor-card-body h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.coletor-localizacao {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.coletor-localizacao i {
+    color: #4CAF50;
+}
+
+.coletor-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.rating i {
+    color: #ffc107;
+}
+
+.coletor-experiencia {
+    color: #666;
+    font-size: 0.85rem;
+    margin: 8px 0 0 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.coletor-experiencia i {
+    color: #4CAF50;
+}
+
+.btn-select-coletor {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0 0 10px 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.btn-select-coletor:hover {
+    background-color: #45a049;
+}
+
+.coletor-card.selected .btn-select-coletor {
+    background-color: #2e7d32;
+}
+
+.coletor-card.selected .btn-select-coletor::before {
+    content: "✓ ";
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .coletores-grid {
+        grid-template-columns: 1fr;
+    }
+}

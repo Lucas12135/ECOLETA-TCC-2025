@@ -1,6 +1,5 @@
 <?php
 session_start();
-require_once '../BANCO/conexao.php';
 
 // Verificar se o usuário está logado
 if (!isset($_SESSION['id_usuario'])) {
@@ -8,17 +7,87 @@ if (!isset($_SESSION['id_usuario'])) {
     exit;
 }
 
-// Buscar dados do gerador para pré-preencher o formulário
-$id_gerador = $_SESSION['id_usuario'];
-$sql_gerador = "SELECT g.email, g.telefone, 
-                       e.cep, e.rua, e.numero, e.complemento, e.bairro, e.cidade
-                FROM geradores g
-                LEFT JOIN enderecos e ON g.id_endereco = e.id
-                WHERE g.id = :id";
-$stmt_gerador = $conn->prepare($sql_gerador);
-$stmt_gerador->bindParam(':id', $id_gerador, PDO::PARAM_INT);
-$stmt_gerador->execute();
-$gerador_data = $stmt_gerador->fetch(PDO::FETCH_ASSOC);
+// Definir fuso horário de Brasília
+date_default_timezone_set('America/Sao_Paulo');
+
+// Processar formulário
+if (!empty($_POST)) {
+    $id_gerador = $_SESSION['id_usuario'];
+    $quantidade_oleo = $_POST['volume'];
+    $tipo_coleta = $_POST['tipo_coleta'] ?? 'automatico';
+    
+    // Apenas adiciona id_coletor se tipo for específico E o campo existir
+    $id_coletor = null;
+    if ($tipo_coleta === 'especifico' && isset($_POST['coletor_id']) && !empty($_POST['coletor_id'])) {
+        $id_coletor = $_POST['coletor_id'];
+    }
+    
+    $cep = $_POST['cep'];
+    $rua = $_POST['rua'];
+    $numero = $_POST['numero'];
+    $complemento = $_POST['complemento'] ?? '';
+    $cidade = $_POST['cidade'];
+    $estado = $_POST['estado'];
+    $bairro = $_POST['bairro'];
+    $data_solicitacao = date('Y-m-d H:i:s'); // Com horário de Brasília
+    $data_coleta = $_POST['data'];
+    $periodo = $_POST['periodo'];
+    $observacoes = $_POST['observacoes'] ?? '';
+
+    include_once('../BANCO/conexao.php');
+
+    try {
+        if ($conn) {
+            $stmt_coleta = $conn->prepare("INSERT INTO coletas (
+                id_gerador, quantidade_oleo, id_coletor, data_coleta, data_solicitacao, 
+                periodo, numero, complemento, cidade, cep, rua, estado, bairro, observacoes
+            ) VALUES (
+                :id_gerador, :quantidade_oleo, :id_coletor, :data_coleta, :data_solicitacao, 
+                :periodo, :numero, :complemento, :cidade, :cep, :rua, :estado, :bairro, :observacoes
+            )");
+            
+            $stmt_coleta->bindParam(':id_gerador', $id_gerador);
+            $stmt_coleta->bindParam(':quantidade_oleo', $quantidade_oleo);
+            $stmt_coleta->bindParam(':id_coletor', $id_coletor);
+            $stmt_coleta->bindParam(':data_coleta', $data_coleta);
+            $stmt_coleta->bindParam(':data_solicitacao', $data_solicitacao);
+            $stmt_coleta->bindParam(':periodo', $periodo);
+            $stmt_coleta->bindParam(':cep', $cep);
+            $stmt_coleta->bindParam(':numero', $numero);
+            $stmt_coleta->bindParam(':complemento', $complemento);
+            $stmt_coleta->bindParam(':cidade', $cidade);
+            $stmt_coleta->bindParam(':rua', $rua);
+            $stmt_coleta->bindParam(':estado', $estado);
+            $stmt_coleta->bindParam(':bairro', $bairro);
+            $stmt_coleta->bindParam(':observacoes', $observacoes);
+            
+            if ($stmt_coleta->execute()) {
+                $id_coleta = $conn->lastInsertId();
+                $_SESSION['mensagem_sucesso'] = "Coleta solicitada com sucesso! ID: #$id_coleta";
+                header('Location: historico.php');
+                exit;
+            } else {
+                $_SESSION['mensagem_erro'] = "Erro ao cadastrar coleta.";
+            }
+        }
+    } catch (PDOException $e) {
+        $_SESSION['mensagem_erro'] = "Erro ao cadastrar: " . $e->getMessage();
+    }
+}
+
+// Buscar dados do gerador para preencher campos
+$gerador_data = [];
+if (isset($_SESSION['id_usuario'])) {
+    include_once('../BANCO/conexao.php');
+    try {
+        $stmt = $conn->prepare("SELECT * FROM geradores WHERE id_usuario = :id_usuario");
+        $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
+        $stmt->execute();
+        $gerador_data = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        // Silenciosamente ignorar
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -33,7 +102,9 @@ $gerador_data = $stmt_gerador->fetch(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../CSS/libras.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
 
+<body>
     <!-- VLibras -->
     <div vw class="enabled">
         <div vw-access-button class="active"></div>
@@ -41,10 +112,7 @@ $gerador_data = $stmt_gerador->fetch(PDO::FETCH_ASSOC);
             <div class="vw-plugin-top-wrapper"></div>
         </div>
     </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-</head>
 
-<body>
     <div class="container">
         <!-- Navbar -->
         <header class="sidebar">
@@ -114,15 +182,32 @@ $gerador_data = $stmt_gerador->fetch(PDO::FETCH_ASSOC);
                 <p>Preencha as informações abaixo para solicitar uma coleta de óleo</p>
             </header>
 
-            <form class="collection-form" method="POST">
-                <!-- Campos Ocultos -->
-                <input type="hidden" name="tipo_coleta_hidden" id="tipo_coleta_hidden" value="automatico">
-                <input type="hidden" name="rua_hidden" id="rua_hidden">
-                <input type="hidden" name="numero_hidden" id="numero_hidden">
-                <input type="hidden" name="complemento_hidden" id="complemento_hidden">
-                <input type="hidden" name="bairro_hidden" id="bairro_hidden">
-                <input type="hidden" name="cidade_hidden" id="cidade_hidden">
+            <!-- Mensagens de Sucesso/Erro -->
+            <?php if (isset($_SESSION['mensagem_sucesso'])): ?>
+                <div class="alert alert-success">
+                    <i class="ri-check-circle-line"></i>
+                    <?php 
+                        echo $_SESSION['mensagem_sucesso']; 
+                        unset($_SESSION['mensagem_sucesso']);
+                    ?>
+                </div>
+            <?php endif; ?>
 
+            <?php if (isset($_SESSION['mensagem_erro'])): ?>
+                <div class="alert alert-error">
+                    <i class="ri-error-warning-line"></i>
+                    <?php 
+                        echo $_SESSION['mensagem_erro']; 
+                        unset($_SESSION['mensagem_erro']);
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <form class="collection-form" method="POST">
+                
+                <!-- Campo hidden para id_coletor -->
+                <input type="hidden" id="coletor_id" name="coletor_id" value="">
+                
                 <!-- Quantidade de Óleo -->
                 <div class="form-section">
                     <h2>Quantidade de Óleo</h2>
@@ -165,17 +250,8 @@ $gerador_data = $stmt_gerador->fetch(PDO::FETCH_ASSOC);
                     
                     <!-- Lista de Coletores dinâmica -->
                     <div id="coletores-list" class="coletores-grid">
-                        <!-- Será preenchido dinamicamente após selecionar localização -->
+                        <p style="color: #999; text-align: center; padding: 20px;">Preencha o CEP primeiro para carregar os coletores disponíveis</p>
                     </div>
-                    
-                    <div class="form-group" id="coletor-select-group" style="display: none;">
-                        <label for="coletor">Escolha o coletor</label>
-                        <select id="coletor" name="coletor_id">
-                            <option value="">Selecione um coletor</option>
-                        </select>
-                    </div>
-                    
-                    <input type="hidden" id="coletor_id" name="coletor_id" value="">
                 </div>
 
                 <!-- Local de Coleta -->
@@ -184,30 +260,37 @@ $gerador_data = $stmt_gerador->fetch(PDO::FETCH_ASSOC);
                     <div class="address-container">
                         <div class="form-group">
                             <label for="cep">CEP</label>
-                            <input type="text" id="cep" name="cep" required pattern="[0-9]{5}-?[0-9]{3}" value="<?php echo htmlspecialchars($gerador_data['cep'] ?? ''); ?>">
+                            <input type="text" id="cep" name="cep" required pattern="[0-9]{5}-?[0-9]{3}" 
+                                   value="<?php echo htmlspecialchars($gerador_data['cep'] ?? ''); ?>" 
+                                   placeholder="00000-000">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="rua">Rua</label>
-                                <input type="text" id="rua" name="rua" required value="<?php echo htmlspecialchars($gerador_data['rua'] ?? ''); ?>">
+                                <input type="text" id="rua" name="rua" required 
+                                       value="<?php echo htmlspecialchars($gerador_data['rua'] ?? ''); ?>">
                             </div>
                             <div class="form-group number">
                                 <label for="numero">Número</label>
-                                <input type="text" id="numero" name="numero" required value="<?php echo htmlspecialchars($gerador_data['numero'] ?? ''); ?>">
+                                <input type="text" id="numero" name="numero" required 
+                                       value="<?php echo htmlspecialchars($gerador_data['numero'] ?? ''); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="complemento">Complemento (opcional)</label>
-                            <input type="text" id="complemento" name="complemento" value="<?php echo htmlspecialchars($gerador_data['complemento'] ?? ''); ?>">
+                            <input type="text" id="complemento" name="complemento" 
+                                   value="<?php echo htmlspecialchars($gerador_data['complemento'] ?? ''); ?>">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="bairro">Bairro</label>
-                                <input type="text" id="bairro" name="bairro" required value="<?php echo htmlspecialchars($gerador_data['bairro'] ?? ''); ?>">
+                                <input type="text" id="bairro" name="bairro" required 
+                                       value="<?php echo htmlspecialchars($gerador_data['bairro'] ?? ''); ?>">
                             </div>
                             <div class="form-group">
                                 <label for="cidade">Cidade</label>
-                                <input type="text" id="cidade" name="cidade" required value="<?php echo htmlspecialchars($gerador_data['cidade'] ?? ''); ?>">
+                                <input type="text" id="cidade" name="cidade" required 
+                                       value="<?php echo htmlspecialchars($gerador_data['cidade'] ?? ''); ?>">
                             </div>
                         </div>
                         <!-- Mapa -->
@@ -257,143 +340,24 @@ $gerador_data = $stmt_gerador->fetch(PDO::FETCH_ASSOC);
             </form>
         </main>
     </div>
+
     <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-<div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
         </div>
     </div>
 
-
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places"></script>
-    
-    <!-- Manuseio de seleção de tipo de coleta -->
     <script>
-        // Mostrar/ocultar seleção de coletor
-        const tipoColetaInputs = document.querySelectorAll('input[name="tipo_coleta"]');
-        const coletorSelection = document.getElementById('coletor-selection');
-        
-        tipoColetaInputs.forEach(input => {
-            input.addEventListener('change', function() {
-                if (this.value === 'especifico') {
-                    coletorSelection.style.display = 'block';
-                    carregarColetores();
-                } else {
-                    coletorSelection.style.display = 'none';
-                    document.getElementById('coletor_id').value = '';
-                }
-            });
-        });
-        
-        // Carregar coletores baseado na localização
-        function carregarColetores() {
-            const cidade = document.getElementById('cidade').value.trim();
-            const bairro = document.getElementById('bairro').value.trim();
-            
-            if (!cidade) {
-                document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center;">Preencha a cidade primeiro</p>';
-                return;
-            }
-            
-            document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center;">Carregando coletores...</p>';
-            
-            // Fazer requisição ao servidor PHP
-            fetch('../api/get_coletores_por_localizacao.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: 'cidade=' + encodeURIComponent(cidade) + '&bairro=' + encodeURIComponent(bairro)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success && data.coletores && data.coletores.length > 0) {
-                    exibirColetores(data.coletores);
-                } else {
-                    document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center;">Nenhum coletor disponível nesta região</p>';
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao carregar coletores:', error);
-                document.getElementById('coletores-list').innerHTML = '<p style="color: #d32f2f; text-align: center;">Erro ao carregar coletores</p>';
-            });
-        }
-        
-        // Exibir coletores em cards
-        function exibirColetores(coletores) {
-            const container = document.getElementById('coletores-list');
-            container.innerHTML = '';
-            
-            coletores.forEach(coletor => {
-                const card = document.createElement('div');
-                card.className = 'coletor-card';
-                card.innerHTML = `
-                    <div class="coletor-card-header">
-                        <img src="${coletor.foto_perfil ? '../uploads/profile_photos/' + coletor.foto_perfil : '../img/default-avatar.png'}" alt="${coletor.nome_completo}" class="coletor-foto">
-                    </div>
-                    <div class="coletor-card-body">
-                        <h3>${coletor.nome_completo}</h3>
-                        <p class="coletor-localizacao"><i class="ri-map-pin-line"></i> ${coletor.localizacao}</p>
-                        <div class="coletor-info">
-                            <div class="rating">
-                                <i class="ri-star-fill"></i>
-                                <span>${coletor.avaliacao_media} (${coletor.total_avaliacoes})</span>
-                            </div>
-                            ${coletor.meio_transporte ? '<div><i class="ri-e-bike-2-line"></i> ' + coletor.meio_transporte + '</div>' : ''}
-                        </div>
-                        ${coletor.experiencia ? '<p class="coletor-experiencia"><i class="ri-award-line"></i> ' + coletor.experiencia + ' anos</p>' : ''}
-                    </div>
-                    <button type="button" class="btn-select-coletor" data-id="${coletor.id}" data-nome="${coletor.nome_completo}">
-                        Selecionar
-                    </button>
-                `;
-                container.appendChild(card);
-                
-                // Adicionar evento de click ao botão
-                card.querySelector('.btn-select-coletor').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    selecionarColetor(this.dataset.id, this.dataset.nome);
-                });
-            });
-        }
-        
-        // Selecionar coletor
-        function selecionarColetor(id, nome) {
-            document.getElementById('coletor_id').value = id;
-            
-            // Destacar coletor selecionado
-            document.querySelectorAll('.coletor-card').forEach(card => {
-                card.classList.remove('selected');
-                if (card.querySelector('[data-id="' + id + '"]')) {
-                    card.classList.add('selected');
-                }
-            });
-            
-            // Mostrar mensagem
-            const msgDiv = document.createElement('div');
-            msgDiv.className = 'success-message';
-            msgDiv.textContent = 'Coletor ' + nome + ' selecionado!';
-            document.getElementById('coletor-selection').insertBefore(msgDiv, document.getElementById('coletores-list'));
-            
-            setTimeout(() => msgDiv.remove(), 3000);
-        }
-        
-        // Recarregar coletores quando cidade/bairro mudarem
-        document.getElementById('cidade').addEventListener('change', carregarColetores);
-        document.getElementById('bairro').addEventListener('change', carregarColetores);
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
-    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places"></script>
     <script src="../JS/solicitar-coleta.js"></script>
     <script src="../JS/navbar.js"></script>
     <script src="../JS/libras.js"></script>

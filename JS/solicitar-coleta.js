@@ -37,6 +37,9 @@ document.getElementById('cep').addEventListener('blur', function() {
     const cep = this.value.replace(/\D/g, '');
     
     if (cep.length === 8) {
+        // Mostrar loading
+        document.getElementById('rua').value = 'Buscando...';
+        
         fetch(`https://viacep.com.br/ws/${cep}/json/`)
             .then(response => response.json())
             .then(data => {
@@ -51,17 +54,21 @@ document.getElementById('cep').addEventListener('blur', function() {
                     geocodeAddress(endereco);
                     
                     // Se estiver em modo de coleta específica, recarregar coletores
-                    if (document.querySelector('input[name="tipo_coleta"][value="especifico"]').checked) {
-                        // Aguardar um pouco para garantir que a cidade foi preenchida
+                    const tipoColetaEspecifico = document.querySelector('input[name="tipo_coleta"][value="especifico"]');
+                    if (tipoColetaEspecifico && tipoColetaEspecifico.checked) {
                         setTimeout(() => {
-                            const event = new Event('change');
-                            document.getElementById('cidade').dispatchEvent(event);
-                        }, 200);
+                            carregarColetores();
+                        }, 300);
                     }
+                } else {
+                    alert('CEP não encontrado!');
+                    document.getElementById('rua').value = '';
                 }
             })
             .catch(error => {
                 console.error('Erro ao buscar CEP:', error);
+                alert('Erro ao buscar CEP. Tente novamente.');
+                document.getElementById('rua').value = '';
             });
     }
 });
@@ -95,67 +102,153 @@ document.getElementById('cep').addEventListener('input', function(e) {
     e.target.value = value;
 });
 
-// Validação do formulário antes do envio
-document.querySelector('.collection-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+// Mostrar/ocultar seleção de coletor
+const tipoColetaInputs = document.querySelectorAll('input[name="tipo_coleta"]');
+const coletorSelection = document.getElementById('coletor-selection');
+
+tipoColetaInputs.forEach(input => {
+    input.addEventListener('change', function() {
+        if (this.value === 'especifico') {
+            coletorSelection.style.display = 'block';
+            carregarColetores();
+        } else {
+            coletorSelection.style.display = 'none';
+            const coletorIdInput = document.getElementById('coletor_id');
+            if (coletorIdInput) {
+                coletorIdInput.value = '';
+            }
+        }
+    });
+});
+
+// Carregar coletores baseado na localização
+function carregarColetores() {
+    const cidade = document.getElementById('cidade').value.trim();
+    const bairro = document.getElementById('bairro').value.trim();
     
-    const tipoColeta = document.querySelector('input[name="tipo_coleta"]:checked').value;
-    
-    if (tipoColeta === 'especifico' && !document.getElementById('coletor_id').value) {
-        alert('Por favor, selecione um coletor para realizar a coleta.');
-        return false;
+    if (!cidade) {
+        document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Preencha o CEP primeiro para carregar os coletores disponíveis</p>';
+        return;
     }
     
-    // Sincronizar valores dos campos ocultos
-    document.getElementById('tipo_coleta_hidden').value = tipoColeta;
-    document.getElementById('rua_hidden').value = document.getElementById('rua').value;
-    document.getElementById('numero_hidden').value = document.getElementById('numero').value;
-    document.getElementById('complemento_hidden').value = document.getElementById('complemento').value;
-    document.getElementById('bairro_hidden').value = document.getElementById('bairro').value;
-    document.getElementById('cidade_hidden').value = document.getElementById('cidade').value;
+    document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Carregando coletores...</p>';
     
-    // Enviar dados do formulário via AJAX
-    const formData = new FormData(this);
-    
-    fetch('processar_solicitar_coleta.php', {
+    // Fazer requisição ao servidor PHP
+    fetch('../api/get_coletores_por_localizacao.php', {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'cidade=' + encodeURIComponent(cidade) + '&bairro=' + encodeURIComponent(bairro)
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            // Mostrar mensagem de sucesso
-            const successDiv = document.createElement('div');
-            successDiv.className = 'success-notification';
-            successDiv.innerHTML = `
-                <div class="notification-content">
-                    <i class="ri-check-circle-line"></i>
-                    <div>
-                        <h3>Sucesso!</h3>
-                        <p>${data.message}</p>
-                        <p style="font-size: 0.9em; color: #666; margin-top: 5px;">
-                            ID da solicitação: <strong>#${data.id_coleta}</strong>
-                        </p>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(successDiv);
-            
-            // Remover notificação após 3 segundos e redirecionar
-            setTimeout(() => {
-                successDiv.remove();
-                window.location.href = 'historico.php';
-            }, 3000);
+        if (data.success && data.coletores && data.coletores.length > 0) {
+            exibirColetores(data.coletores);
         } else {
-            alert('Erro: ' + data.message);
+            document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Nenhum coletor disponível nesta região</p>';
         }
     })
     .catch(error => {
-        console.error('Erro ao enviar solicitação:', error);
-        alert('Erro ao enviar solicitação de coleta. Tente novamente.');
+        console.error('Erro ao carregar coletores:', error);
+        document.getElementById('coletores-list').innerHTML = '<p style="color: #d32f2f; text-align: center; padding: 20px;">Erro ao carregar coletores. Tente novamente.</p>';
+    });
+}
+
+// Exibir coletores em cards
+function exibirColetores(coletores) {
+    const container = document.getElementById('coletores-list');
+    container.innerHTML = '';
+    
+    coletores.forEach(coletor => {
+        const card = document.createElement('div');
+        card.className = 'coletor-card';
+        card.innerHTML = `
+            <div class="coletor-card-header">
+                <img src="${coletor.foto_perfil ? '../uploads/profile_photos/' + coletor.foto_perfil : '../img/default-avatar.png'}" 
+                     alt="${coletor.nome_completo}" class="coletor-foto">
+            </div>
+            <div class="coletor-card-body">
+                <h3>${coletor.nome_completo}</h3>
+                <p class="coletor-localizacao"><i class="ri-map-pin-line"></i> ${coletor.localizacao}</p>
+                <div class="coletor-info">
+                    <div class="rating">
+                        <i class="ri-star-fill"></i>
+                        <span>${coletor.avaliacao_media} (${coletor.total_avaliacoes})</span>
+                    </div>
+                    ${coletor.meio_transporte ? '<div><i class="ri-e-bike-2-line"></i> ' + coletor.meio_transporte + '</div>' : ''}
+                </div>
+                ${coletor.experiencia ? '<p class="coletor-experiencia"><i class="ri-award-line"></i> ' + coletor.experiencia + ' anos</p>' : ''}
+            </div>
+            <button type="button" class="btn-select-coletor" data-id="${coletor.id}" data-nome="${coletor.nome_completo}">
+                Selecionar
+            </button>
+        `;
+        container.appendChild(card);
+        
+        // Adicionar evento de click ao botão
+        card.querySelector('.btn-select-coletor').addEventListener('click', function(e) {
+            e.preventDefault();
+            selecionarColetor(this.dataset.id, this.dataset.nome);
+        });
+    });
+}
+
+// Selecionar coletor
+function selecionarColetor(id, nome) {
+    document.getElementById('coletor_id').value = id;
+    
+    // Destacar coletor selecionado
+    document.querySelectorAll('.coletor-card').forEach(card => {
+        card.classList.remove('selected');
+        if (card.querySelector('[data-id="' + id + '"]')) {
+            card.classList.add('selected');
+        }
     });
     
-    return false;
+    // Remover mensagem antiga se existir
+    const msgAntiga = document.querySelector('.success-message');
+    if (msgAntiga) msgAntiga.remove();
+    
+    // Mostrar mensagem
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'success-message';
+    msgDiv.innerHTML = '<i class="ri-check-circle-line"></i> Coletor ' + nome + ' selecionado!';
+    document.getElementById('coletor-selection').insertBefore(msgDiv, document.getElementById('coletores-list'));
+    
+    setTimeout(() => msgDiv.remove(), 3000);
+}
+
+// Recarregar coletores quando cidade/bairro mudarem
+document.getElementById('cidade').addEventListener('change', function() {
+    const tipoColetaEspecifico = document.querySelector('input[name="tipo_coleta"][value="especifico"]');
+    if (tipoColetaEspecifico && tipoColetaEspecifico.checked) {
+        carregarColetores();
+    }
+});
+
+document.getElementById('bairro').addEventListener('change', function() {
+    const tipoColetaEspecifico = document.querySelector('input[name="tipo_coleta"][value="especifico"]');
+    if (tipoColetaEspecifico && tipoColetaEspecifico.checked) {
+        carregarColetores();
+    }
+});
+
+// Validação do formulário antes do envio
+document.querySelector('.collection-form').addEventListener('submit', function(e) {
+    const tipoColeta = document.querySelector('input[name="tipo_coleta"]:checked').value;
+    
+    if (tipoColeta === 'especifico') {
+        const coletorId = document.getElementById('coletor_id').value;
+        if (!coletorId) {
+            e.preventDefault();
+            alert('Por favor, selecione um coletor para realizar a coleta.');
+            return false;
+        }
+    }
+    
+    // Formulário válido, permitir envio
+    return true;
 });
 
 // Inicializar mapa quando a página carregar

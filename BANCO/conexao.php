@@ -3,6 +3,7 @@ $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "ecoleta";
+date_default_timezone_set('America/Sao_Paulo');
 
 try {
     // Cria a conexao com o banco de dados
