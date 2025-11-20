@@ -10,38 +10,42 @@ if (!isset($_SESSION['id_usuario'])) {
 
 // Buscar dados do coletor
 $id_coletor = $_SESSION['id_usuario'];
-$sql = "SELECT c.email, c.nome_completo, c.cpf_cnpj, c.telefone, c.data_nasc, c.foto_perfil, 
-               c.raio_atuacao, c.meio_transporte, c.capacidade_coleta,
-               e.rua, e.numero, e.complemento, e.bairro, e.cidade, e.estado, e.cep
-        FROM coletores c
-        LEFT JOIN enderecos e ON c.id_endereco = e.id
-        WHERE c.id = :id";
+$sql = "SELECT 
+    c.email, c.cpf_cnpj, c.telefone, 
+    cc.raio_atuacao, cc.meio_transporte, cc.disponibilidade,
+    e.rua, e.numero, e.complemento, e.bairro, e.cidade, e.estado, e.cep
+FROM coletores c
+LEFT JOIN enderecos e ON c.id_endereco = e.id
+LEFT JOIN coletores_config cc ON cc.id_coletor = c.id
+WHERE c.id = :id;
+";
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':id', $id_coletor, PDO::PARAM_INT);
 $stmt->execute();
 $coletor = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Buscar disponibilidade
-$sql_disp = "SELECT * FROM disponibilidade_coletores WHERE id_coletor = :id";
+$sql_disp = "SELECT * FROM horarios_funcionamento WHERE id_coletor = :id";
 $stmt_disp = $conn->prepare($sql_disp);
 $stmt_disp->bindParam(':id', $id_coletor, PDO::PARAM_INT);
 $stmt_disp->execute();
-$disponibilidade = $stmt_disp->fetchAll(PDO::FETCH_ASSOC);
+$horarios = $stmt_disp->fetchAll(PDO::FETCH_ASSOC);
 
 // Mapa de dias da semana
 $dias_semana = [
-    'segunda' => ['id' => 'monday', 'nome' => 'Segunda-feira'],
-    'terca' => ['id' => 'tuesday', 'nome' => 'Terça-feira'],
-    'quarta' => ['id' => 'wednesday', 'nome' => 'Quarta-feira'],
-    'quinta' => ['id' => 'thursday', 'nome' => 'Quinta-feira'],
-    'sexta' => ['id' => 'friday', 'nome' => 'Sexta-feira'],
-    'sabado' => ['id' => 'saturday', 'nome' => 'Sábado'],
-    'domingo' => ['id' => 'sunday', 'nome' => 'Domingo']
+    'segunda',
+    'terca',
+    'quarta',
+    'quinta',
+    'sexta',
+    'sabado',
+    'domingo'
 ];
 
-// Função para buscar disponibilidade de um dia
-function getDisponibilidadeDia($disponibilidade, $dia) {
-    foreach ($disponibilidade as $d) {
+// Função para buscar horarios de um dia
+function getDisponibilidadeDia($horarios, $dia)
+{
+    foreach ($horarios as $d) {
         if ($d['dia_semana'] === $dia) {
             return $d;
         }
@@ -183,11 +187,12 @@ function getDisponibilidadeDia($disponibilidade, $dia) {
                 <div class="settings-section">
                     <h2>Disponibilidade</h2>
                     <div class="status-toggle">
-                        <div class="status-option active">
+                        <?php $disponibilidade = $coletor['disponibilidade'] ?? 'disponivel'; ?>
+                        <div class="status-option <?= $disponibilidade === 'disponivel' ? 'active' : '' ?>">
                             <i class="ri-check-line"></i>
                             Disponível
                         </div>
-                        <div class="status-option">
+                        <div class="status-option <?= $disponibilidade === 'indisponivel' ? 'active' : '' ?>">
                             <i class="ri-time-line"></i>
                             Indisponível
                         </div>
@@ -198,9 +203,9 @@ function getDisponibilidadeDia($disponibilidade, $dia) {
                 <div class="settings-section">
                     <h2>Raio de Atuação</h2>
                     <div class="range-slider">
-                        <input type="range" min="1" max="50" value="<?php echo $coletor['raio_atuacao'] ?? 10; ?>" id="radius-slider">
+                        <input type="range" min="1" max="50" value="<?= htmlspecialchars($coletor['raio_atuacao'] ?? 10) ?>" id="radius-slider">
                         <div class="range-value">
-                            Raio atual: <span id="radius-value"><?php echo $coletor['raio_atuacao'] ?? 10; ?></span> km
+                            Raio atual: <span id="radius-value"><?= htmlspecialchars($coletor['raio_atuacao'] ?? 10) ?></span> km
                         </div>
                     </div>
                 </div>
@@ -217,18 +222,6 @@ function getDisponibilidadeDia($disponibilidade, $dia) {
                             <label for="phone">Telefone</label>
                             <input type="tel" id="phone" value="<?php echo $coletor['telefone'] ?? ''; ?>">
                         </div>
-                        <div class="form-group">
-                            <label for="current-password">Senha Atual</label>
-                            <input type="password" id="current-password">
-                        </div>
-                        <div class="form-group">
-                            <label for="new-password">Nova Senha</label>
-                            <input type="password" id="new-password">
-                        </div>
-                        <div class="form-group">
-                            <label for="confirm-password">Confirmar Nova Senha</label>
-                            <input type="password" id="confirm-password">
-                        </div>
                     </form>
                 </div>
 
@@ -236,69 +229,24 @@ function getDisponibilidadeDia($disponibilidade, $dia) {
                 <div class="settings-section">
                     <h2>Horários de Funcionamento</h2>
                     <div class="schedule-container">
+                        <?php
+                        foreach ($dias_semana as $dia_semana) :
+                        $dia = getDisponibilidadeDia($horarios, $dia_semana);
+                        ?>
                         <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" name="days[segunda][active]" checked>
-                            <span class="day-name">Segunda-feira</span>
+                            <!-- Checkbox ativado ou não -->
+                            <input type="checkbox" class="day-toggle" name="days[<?= $dia_semana ?>][active]"
+                                <?= ($dia && $dia['ativo']) ? 'checked' : '' ?>>
+                            <span class="day-name"><?= $dia_semana ?></span>
                             <div class="time-inputs">
-                                <input type="time" name="days[segunda][open]" min="08:00" max="17:00" value="08:00">
+                                <!-- Hora de abertura -->
+                                <input type="time" min="08:00" max="17:00" name="days[<?= $dia_semana ?>][open]" value="<?= $dia['hora_abertura'] ?? '08:00' ?>">
                                 <span>até</span>
-                                <input type="time" name="days[segunda][close]" min="08:00" max="17:00" value="17:00">
+                                <!-- Hora de fechamento -->
+                                <input type="time" min="08:00" max="17:00" name="days[<?= $dia_semana ?>][close]" value="<?= $dia['hora_fechamento'] ?? '17:00' ?>">
                             </div>
                         </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" name="days[terça][active]" checked>
-                            <span class="day-name">Terça-feira</span>
-                            <div class="time-inputs">
-                                <input type="time" name="days[terça][open]" min="08:00" max="17:00" value="08:00">
-                                <span>até</span>
-                                <input type="time" name="days[terça][close]" min="08:00" max="17:00" value="17:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" name="days[quarta][active]" checked>
-                            <span class="day-name">Quarta-feira</span>
-                            <div class="time-inputs">
-                                <input type="time" name="days[quarta][open]" min="08:00" max="17:00" value="08:00">
-                                <span>até</span>
-                                <input type="time" name="days[quarta][close]" min="08:00" max="17:00" value="17:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" name="days[quinta][active]" checked>
-                            <span class="day-name">Quinta-feira</span>
-                            <div class="time-inputs">
-                                <input type="time" name="days[quinta][open]" min="08:00" max="17:00" value="08:00">
-                                <span>até</span>
-                                <input type="time" name="days[quinta][close]" min="08:00" max="17:00" value="17:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" name="days[sexta][active]" checked>
-                            <span class="day-name">Sexta-feira</span>
-                            <div class="time-inputs">
-                                <input type="time" name="days[sexta][open]" min="08:00" max="17:00" value="08:00">
-                                <span>até</span>
-                                <input type="time" name="days[sexta][close]" min="08:00" max="17:00" value="17:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" name="days[sabado][active]" checked>
-                            <span class="day-name">Sábado</span>
-                            <div class="time-inputs">
-                                <input type="time" name="days[sabado][open]" min="08:00" max="17:00" value="08:00">
-                                <span>até</span>
-                                <input type="time" name="days[sabado][close]" min="08:00" max="17:00" value="17:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" name="days[domingo][active]" checked>
-                            <span class="day-name">Domingo</span>
-                            <div class="time-inputs">
-                                <input type="time" name="days[domingo][open]" min="08:00" max="17:00" value="08:00">
-                                <span>até</span>
-                                <input type="time" name="days[domingo][close]" min="08:00" max="17:00" value="17:00">
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
 
@@ -308,31 +256,31 @@ function getDisponibilidadeDia($disponibilidade, $dia) {
                     <form class="settings-form">
                         <div class="form-group">
                             <label for="cep">CEP</label>
-                            <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                            <input type="text" id="cep" value="<?= htmlspecialchars($coletor['cep'] ?? '') ?>" placeholder="00000-000" maxlength="9">
                         </div>
                         <div class="form-group">
                             <label for="rua">Rua</label>
-                            <input type="text" id="rua" placeholder="Rua das Flores">
+                            <input type="text" id="rua" value="<?= htmlspecialchars($coletor['rua'] ?? '') ?>" placeholder="Rua das Flores">
                         </div>
                         <div class="form-group">
                             <label for="numero">Número</label>
-                            <input type="text" id="numero" placeholder="123">
+                            <input type="text" id="numero" value="<?= htmlspecialchars($coletor['numero'] ?? '') ?>" placeholder="123">
                         </div>
                         <div class="form-group">
                             <label for="complemento">Complemento</label>
-                            <input type="text" id="complemento" placeholder="Apto 456, Fundos">
+                            <input type="text" id="complemento" value="<?= htmlspecialchars($coletor['complemento'] ?? '') ?>" placeholder="Apto 456, Fundos">
                         </div>
                         <div class="form-group">
                             <label for="bairro">Bairro</label>
-                            <input type="text" id="bairro" placeholder="Centro">
+                            <input type="text" id="bairro" value="<?= htmlspecialchars($coletor['bairro'] ?? '') ?>" placeholder="Centro">
                         </div>
                         <div class="form-group">
                             <label for="cidade">Cidade</label>
-                            <input type="text" id="cidade" placeholder="São Paulo">
+                            <input type="text" id="cidade" value="<?= htmlspecialchars($coletor['cidade'] ?? '') ?>" placeholder="São Paulo">
                         </div>
                         <div class="form-group">
                             <label for="estado">Estado</label>
-                            <input type="text" id="estado" placeholder="SP" maxlength="2">
+                            <input type="text" id="estado" value="<?= htmlspecialchars($coletor['estado'] ?? '') ?>" placeholder="SP" maxlength="2">
                         </div>
                     </form>
                 </div>
@@ -344,12 +292,11 @@ function getDisponibilidadeDia($disponibilidade, $dia) {
                         <div class="form-group">
                             <label for="transport">Altere seu meio de transporte</label>
                             <select id="transport" name="transport">
-                                <option value="">Escolha uma opção</option>
-                                <option value="carro">🚗 Carro</option>
-                                <option value="bicicleta">🚴 Bicicleta</option>
-                                <option value="motocicleta">🏍️ Motocicleta</option>
-                                <option value="carroca">🛒 Carroça</option>
-                                <option value="ape">🚶 À Pé</option>
+                                <option value="carro" <?= ($coletor['meio_transporte'] ?? '') === 'carro' ? 'selected' : '' ?>>🚗 Carro</option>
+                                <option value="bicicleta" <?= ($coletor['meio_transporte'] ?? '') === 'bicicleta' ? 'selected' : '' ?>>🚴 Bicicleta</option>
+                                <option value="motocicleta" <?= ($coletor['meio_transporte'] ?? '') === 'motocicleta' ? 'selected' : '' ?>>🏍️ Motocicleta</option>
+                                <option value="carroca" <?= ($coletor['meio_transporte'] ?? '') === 'carroca' ? 'selected' : '' ?>>🛒 Carroça</option>
+                                <option value="ape" <?= ($coletor['meio_transporte'] ?? '') === 'ape' ? 'selected' : '' ?>>🚶 À Pé</option>
                             </select>
                         </div>
                     </form>

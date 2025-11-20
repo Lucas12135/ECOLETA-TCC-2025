@@ -109,7 +109,7 @@ if (!empty($_POST)) {
       if ($stmt->execute()) {
         $id_coletor = $conn->lastInsertId();
 
-        $dias = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+        $dias = ['segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
 
         $stmt = $conn->prepare("
     INSERT INTO horarios_funcionamento 
@@ -120,7 +120,7 @@ if (!empty($_POST)) {
         foreach ($dias as $dia) {
 
           // Segunda a sexta: ativo
-          if (in_array($dia, ['segunda', 'terca', 'quarta', 'quinta', 'sexta'])) {
+          if (in_array($dia, ['segunda', 'terça', 'quarta', 'quinta', 'sexta'])) {
             $ativo = 1;
             $abertura = $hora_inicio;
             $fechamento = $hora_fim;

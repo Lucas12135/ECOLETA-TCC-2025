@@ -324,6 +324,99 @@ async function buscarEnderecoPorCEP(cep) {
   }
 }
 
+// Função para salvar todas as alterações
+async function handleSaveSettings() {
+  try {
+    // Coletar dados de disponibilidade (status toggle)
+    const statusOptions = document.querySelectorAll(".status-option");
+    let disponibilidade = "disponivel";
+    statusOptions.forEach((option) => {
+      if (option.classList.contains("active")) {
+        disponibilidade =
+          option.textContent.trim().toLowerCase() === "disponível"
+            ? "disponivel"
+            : "indisponivel";
+      }
+    });
+
+    // Coletar dados do raio de atuação
+    const radiusSlider = document.getElementById("radius-slider");
+    const raio_atuacao = radiusSlider ? radiusSlider.value : 10;
+
+    // Coletar dados de conta
+    const email = document.getElementById("email")?.value || "";
+    const phone = document.getElementById("phone")?.value || "";
+
+    // Coletar dados de endereço
+    const endereco = {
+      cep: document.getElementById("cep")?.value || "",
+      rua: document.getElementById("rua")?.value || "",
+      numero: document.getElementById("numero")?.value || "",
+      complemento: document.getElementById("complemento")?.value || "",
+      bairro: document.getElementById("bairro")?.value || "",
+      cidade: document.getElementById("cidade")?.value || "",
+      estado: document.getElementById("estado")?.value || "",
+    };
+
+    // Coletar dados de meio de transporte
+    const meio_transporte =
+      document.getElementById("transport")?.value || "carro";
+
+    // Coletar dados de horários
+    const horarios = {};
+    const scheduleContainers = document.querySelectorAll(".day-schedule");
+
+    scheduleContainers.forEach((container) => {
+      const checkbox = container.querySelector(".day-toggle");
+      const timeInputs = container.querySelectorAll('input[type="time"]');
+
+      // Extrair o nome do dia do atributo name do checkbox
+      // name é no formato: days[segunda][active]
+      const nameMatch = checkbox.getAttribute("name").match(/days\[([^\]]+)\]/);
+      const dia = nameMatch ? nameMatch[1] : null;
+
+      if (dia) {
+        horarios[dia] = {
+          active: checkbox.checked,
+          open: timeInputs[0]?.value || "08:00",
+          close: timeInputs[1]?.value || "17:00",
+        };
+      }
+    });
+
+    // Preparar dados para envio
+    const payload = {
+      email,
+      phone,
+      disponibilidade,
+      raio_atuacao: parseInt(raio_atuacao),
+      meio_transporte,
+      endereco,
+      horarios,
+    };
+
+    // Enviar para o servidor
+    const response = await fetch("../BANCO/update_coletor_config.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      showNotification("Configurações salvas com sucesso!", "success");
+    } else {
+      showNotification(data.message || "Erro ao salvar configurações", "error");
+    }
+  } catch (error) {
+    console.error("Erro ao salvar:", error);
+    showNotification("Erro ao processar a solicitação", "error");
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   // Status toggle
   const statusOptions = document.querySelectorAll(".status-option");
@@ -390,6 +483,20 @@ document.addEventListener("DOMContentLoaded", function () {
   if (transportSelect) {
     transportSelect.addEventListener("change", function () {
       console.log("Meio de transporte selecionado:", this.value);
+    });
+  }
+
+  // Botão Salvar Alterações
+  const saveBtn = document.querySelector(".save-btn");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", handleSaveSettings);
+  }
+
+  // Botão Cancelar
+  const cancelBtn = document.querySelector(".cancel-btn");
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", function () {
+      location.reload();
     });
   }
 });
