@@ -1,96 +1,72 @@
 <?php
 header('Content-Type: application/json');
-session_start();
 
 try {
-    require_once '../BANCO/conexao.php';
+    // Conexão com banco
+    include_once("../BANCO/conexao.php");
 
-    // Obter parâmetros opcionais para filtro
-    $cidade = isset($_GET['cidade']) ? $_GET['cidade'] : null;
-    $bairro = isset($_GET['bairro']) ? $_GET['bairro'] : null;
-    
-    // Construir query base
-    $sql = "SELECT 
-                c.id,
-                c.nome_completo,
-                c.foto_perfil,
-                c.avaliacao_media,
-                c.total_avaliacoes,
-                c.raio_atuacao,
-                c.meio_transporte,
-                c.telefone,
-                e.cidade,
-                e.bairro,
-                e.rua,
-                e.numero,
-                e.cep
-            FROM coletores c
-            LEFT JOIN enderecos e ON c.id_endereco = e.id
-            WHERE c.status = 'ativo'";
-    
-    // Adicionar filtros opcionais
-    $params = [];
-    
-    if (!empty($cidade)) {
-        $sql .= " AND e.cidade LIKE ?";
-        $params[] = '%' . $cidade . '%';
-    }
-    
-    if (!empty($bairro)) {
-        $sql .= " AND e.bairro LIKE ?";
-        $params[] = '%' . $bairro . '%';
-    }
-    
-    // Ordenar por avaliação e número de avaliações
-    $sql .= " ORDER BY c.avaliacao_media DESC, c.total_avaliacoes DESC
-            LIMIT 50";
-    
-    $stmt = $conn->prepare($sql);
-    
-    // Executar com parâmetros
-    if (!empty($params)) {
-        $stmt->execute($params);
-    } else {
-        $stmt->execute();
-    }
-    
+    // Busca coletores + endereços + config
+    $sql = "
+        SELECT 
+            c.id,
+            c.nome_completo,
+            c.foto_perfil,
+            c.created_at,
+            c.avaliacao_media,
+            c.total_avaliacoes,
+            c.telefone,
+            c.meio_transporte AS meio_transporte_coletor,
+            e.rua,
+            e.numero,
+            e.complemento,
+            e.bairro,
+            e.cidade,
+            e.estado,
+            e.cep,
+            COALESCE(cc.raio_atuacao, 5) AS raio_atuacao,
+            COALESCE(cc.meio_transporte, c.meio_transporte) AS meio_transporte
+        FROM coletores c
+        LEFT JOIN enderecos e ON e.id = c.id_endereco
+        LEFT JOIN coletores_config cc ON cc.id_coletor = c.id
+    ";
+
+    $stmt = $conn->query($sql);
     $coletores = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Processar dados para exibição
+    // Processar dados
     $resultado = [];
-    foreach ($coletores as $coletor) {
-        $avaliacao = $coletor['avaliacao_media'] ? floatval($coletor['avaliacao_media']) : 0;
-        $localizacao = '';
-        
-        if ($coletor['bairro'] && $coletor['cidade']) {
-            $localizacao = $coletor['bairro'] . ', ' . $coletor['cidade'];
-        } elseif ($coletor['cidade']) {
-            $localizacao = $coletor['cidade'];
-        } else {
-            $localizacao = 'Localização não informada';
+    foreach ($coletores as $c) {
+        // Montar endereço completo - validar campos vazios
+        $endereco = "";
+        if (!empty($c['rua']) && !empty($c['numero']) && !empty($c['bairro']) && !empty($c['cidade']) && !empty($c['estado']) && !empty($c['cep'])) {
+            $endereco = "{$c['rua']}, {$c['numero']}, {$c['bairro']}, {$c['cidade']} - {$c['estado']}, {$c['cep']}";
+            if (!empty($c['complemento'])) {
+                $endereco .= " ({$c['complemento']})";
+            }
         }
-        
+
         $resultado[] = [
-            'id' => intval($coletor['id']),
-            'nome_completo' => $coletor['nome_completo'],
-            'foto_perfil' => $coletor['foto_perfil'] ? $coletor['foto_perfil'] : null,
-            'avaliacao_media' => round($avaliacao, 1),
-            'total_avaliacoes' => intval($coletor['total_avaliacoes'] ?? 0),
-            'raio_atuacao' => $coletor['raio_atuacao'] ?? null,
-            'meio_transporte' => $coletor['meio_transporte'] ?? null,
-            'telefone' => $coletor['telefone'] ?? null,
-            'localizacao' => $localizacao,
-            'cidade' => $coletor['cidade'] ?? null,
-            'bairro' => $coletor['bairro'] ?? null
+            'id' => intval($c['id']),
+            'nome_completo' => $c['nome_completo'],
+            'foto_perfil' => $c['foto_perfil'] ? $c['foto_perfil'] : null,
+            'created_at' => $c['created_at'] ?? null,
+            'avaliacao_media' => floatval($c['avaliacao_media'] ?? 0),
+            'total_avaliacoes' => intval($c['total_avaliacoes'] ?? 0),
+            'telefone' => $c['telefone'] ?? null,
+            'raio_atuacao' => intval($c['raio_atuacao'] ?? 5),
+            'meio_transporte' => $c['meio_transporte'] ?? 'a_pe',
+            'endereco_completo' => $endereco,
+            'rua' => $c['rua'] ?? null,
+            'numero' => $c['numero'] ?? null,
+            'complemento' => $c['complemento'] ?? null,
+            'bairro' => $c['bairro'] ?? null,
+            'cidade' => $c['cidade'] ?? null,
+            'estado' => $c['estado'] ?? null,
+            'cep' => $c['cep'] ?? null
         ];
     }
 
-    echo json_encode([
-        'success' => true,
-        'total' => count($resultado),
-        'coletores' => $resultado
-    ]);
-
+    echo json_encode($resultado);
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
@@ -98,4 +74,3 @@ try {
         'message' => 'Erro ao buscar coletores: ' . $e->getMessage()
     ]);
 }
-?>

@@ -2,7 +2,7 @@
 session_start();
 
 if (!empty($_POST)) {
-    
+
     // Salva os dados da última etapa na sessão
     $endereco = $_POST['endereco'];
     // Exemplo: "Rua das Flores, 123, apto 45"
@@ -60,32 +60,41 @@ if (!empty($_POST)) {
             $stmt->bindParam(':genero', $dados['genero']);
             $stmt->bindParam(':id_endereco', $id_endereco, PDO::PARAM_INT);
             $stmt->execute();
-            
+
             // 3. Pega o ID do gerador APÓS inserir
             $id_gerador = $conn->lastInsertId();
 
             // 4. Processa upload da foto APÓS obter o ID
-            if(isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+            if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
                 $uploadDir = '../uploads/profile_photos/';
+                $maxFileSize = 2097152; // 2MB em bytes
+                $allowedExtensions = ['jpg', 'jpeg', 'png'];
+
                 if (!file_exists($uploadDir)) {
                     mkdir($uploadDir, 0777, true);
                 }
-                
-                $fileInfo = pathinfo($_FILES['photo']['name']);
-                $extension = strtolower($fileInfo['extension']);
-                
-                // Verifica extensão
-                if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
-                    // Usa o ID do gerador no nome do arquivo
-                    $newFileName = $id_gerador . '_' . uniqid() . '.' . $extension;
-                    $uploadFile = $uploadDir . $newFileName;
-                    
-                    if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
-                        // Atualiza a foto no banco
-                        $stmt_foto = $conn->prepare("UPDATE geradores SET foto_perfil = :foto WHERE id = :id");
-                        $stmt_foto->bindParam(':foto', $newFileName);
-                        $stmt_foto->bindParam(':id', $id_gerador, PDO::PARAM_INT);
-                        $stmt_foto->execute();
+
+                // Valida tamanho do arquivo
+                if ($_FILES['photo']['size'] > $maxFileSize) {
+                    // Imagem muito grande, mas não impede o cadastro
+                    // Você pode adicionar aqui um registro de erro na sessão
+                } else {
+                    $fileInfo = pathinfo($_FILES['photo']['name']);
+                    $extension = strtolower($fileInfo['extension']);
+
+                    // Verifica extensão (png ou jpg)
+                    if (in_array($extension, $allowedExtensions)) {
+                        // Usa o ID do gerador no nome do arquivo
+                        $newFileName = $id_gerador . '_' . uniqid() . '.' . $extension;
+                        $uploadFile = $uploadDir . $newFileName;
+
+                        if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
+                            // Atualiza a foto no banco
+                            $stmt_foto = $conn->prepare("UPDATE geradores SET foto_perfil = :foto WHERE id = :id");
+                            $stmt_foto->bindParam(':foto', $newFileName);
+                            $stmt_foto->bindParam(':id', $id_gerador, PDO::PARAM_INT);
+                            $stmt_foto->execute();
+                        }
                     }
                 }
             }
@@ -96,10 +105,10 @@ if (!empty($_POST)) {
             $_SESSION['email'] = $dados['email'];
             $_SESSION['telefone'] = $dados['celular'];
             $_SESSION['cadastro_completo'] = true;
-            
+
             // Limpar dados temporários do cadastro
             unset($_SESSION['cadastro']);
-            
+
             header("Location: final.php");
             $conn = null;
         }

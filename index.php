@@ -77,7 +77,7 @@ $ultimoNome = end($nomePartes);
 
         <div class="coletores-proximos">
             <h1 class="coletores-titulo">
-                Coletores mais bem avaliados desse mês perto de você
+                Coletores mais bem avaliados perto de você
             </h1>
 
             <!-- Container dos Cards (Responsivo: Grid em Desktop, Coluna em Mobile) -->
@@ -342,6 +342,7 @@ $ultimoNome = end($nomePartes);
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="JS/index.js"></script>
+    <script src="JS/coletores-proximos.js"></script>
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places,marker&v=beta&callback=initAutocomplete&loading=async" async defer></script>
     <script>

@@ -157,22 +157,33 @@ if (!empty($_POST)) {
         // 4. Processa upload de foto
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
           $uploadDir = '../uploads/profile_photos/';
+          $maxFileSize = 2097152; // 2MB em bytes
+          $allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+          // Cria pasta se não existir
           if (!file_exists($uploadDir)) {
             mkdir($uploadDir, 0777, true);
           }
 
-          $fileInfo = pathinfo($_FILES['photo']['name']);
-          $extension = strtolower($fileInfo['extension']);
+          // Valida tamanho do arquivo
+          if ($_FILES['photo']['size'] > $maxFileSize) {
+            // Imagem muito grande, mas não impede o cadastro
+            // Você pode adicionar aqui um registro de erro na sessão
+          } else {
+            $fileInfo = pathinfo($_FILES['photo']['name']);
+            $extension = strtolower($fileInfo['extension']);
 
-          if (in_array($extension, ['jpg', 'jpeg', 'png'])) {
-            $newFileName = $id_coletor . '_' . uniqid() . '.' . $extension;
-            $uploadFile = $uploadDir . $newFileName;
+            // Valida extensão (png ou jpg)
+            if (in_array($extension, $allowedExtensions)) {
+              $newFileName = $id_coletor . '_' . uniqid() . '.' . $extension;
+              $uploadFile = $uploadDir . $newFileName;
 
-            if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
-              $stmt_foto = $conn->prepare("UPDATE coletores SET foto_perfil = :foto WHERE id = :id");
-              $stmt_foto->bindParam(':foto', $newFileName);
-              $stmt_foto->bindParam(':id', $id_coletor);
-              $stmt_foto->execute();
+              if (move_uploaded_file($_FILES['photo']['tmp_name'], $uploadFile)) {
+                $stmt_foto = $conn->prepare("UPDATE coletores SET foto_perfil = :foto WHERE id = :id");
+                $stmt_foto->bindParam(':foto', $newFileName);
+                $stmt_foto->bindParam(':id', $id_coletor);
+                $stmt_foto->execute();
+              }
             }
           }
         }

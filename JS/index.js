@@ -69,14 +69,18 @@ function calcularTempoDeAfiliacao(dataCadastro) {
 
 function createInfoWindowHTML(coletor) {
   // HTML simples para a InfoWindow (pode ser estilizado)
-  const foto = coletor.foto ? coletor.foto : "img/default-user.png";
-  const tempo = coletor.created_at ? calcularTempoDeAfiliacao(coletor.created_at) + " de atuação" : "";
+  const defaultAvatar =
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23e0e0e0' width='100' height='100'/%3E%3Ccircle cx='50' cy='35' r='20' fill='%23999'/%3E%3Cellipse cx='50' cy='70' rx='30' ry='25' fill='%23999'/%3E%3C/svg%3E";
+  const foto = coletor.foto_perfil ? `uploads/profile_photos/${coletor.foto_perfil}` : defaultAvatar;
+  const tempo = coletor.created_at
+    ? calcularTempoDeAfiliacao(coletor.created_at) + " de atuação"
+    : "";
   const nome = coletor.nome_completo || coletor.nome || "Coletor";
 
   return `
     <div style="font-family: Inter, Arial; width: 260px; padding: 12px; border-radius: 10px;">
       <div style="display:flex; align-items:center; gap:12px;">
-        <img src="${foto}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:1px solid #eee">
+        <img src="${foto}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:1px solid #eee" onerror="this.src='${defaultAvatar}'">
         <div style="flex:1">
           <div style="font-weight:700; font-size:15px; margin-bottom:4px;">${nome}</div>
           <div style="font-size:13px; color:#555;">${tempo}</div>
@@ -117,7 +121,7 @@ async function loadColetores(userLat, userLng) {
 
   let response;
   try {
-    response = await fetch("get_coletores.php");
+    response = await fetch("api/get_coletores.php");
   } catch (e) {
     console.error("Falha ao buscar coletores:", e);
     return [];
@@ -126,6 +130,7 @@ async function loadColetores(userLat, userLng) {
   let coletores;
   try {
     coletores = await response.json();
+    console.log("Coletores recebidos:", coletores);
   } catch (e) {
     console.error("Resposta inválida de get_coletores.php:", e);
     return [];
