@@ -40,12 +40,6 @@ $ultimoNome = end($nomePartes);
 
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="nav-link">
-                        <a href="../index.php" class="nav-link">
-                            <i class="ri-arrow-left-line"></i>
-                            <span>Voltar</span>
-                        </a>
-                    </li>
                     <li class="active">
                         <a href="#" class="nav-link">
                             <i class="ri-home-4-line"></i>
@@ -88,6 +82,9 @@ $ultimoNome = end($nomePartes);
 
         <!-- Conteúdo Principal -->
         <main class="main-content">
+            <div style="margin-bottom: 20px;">
+                <a href="../index.php"><button class="back-button" style="background-color: #ff6b6b; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px;"><i class="ri-arrow-left-line"></i>Voltar</button></a>
+            </div>
             <header class="content-header">
                 <div class="welcome-message">
                     <h1>Olá, <?php echo htmlspecialchars($primeiroNome) . ' ' . htmlspecialchars($ultimoNome); ?>!</h1>

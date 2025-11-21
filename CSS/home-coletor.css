@@ -32,6 +32,11 @@ body {
   color: var(--cor-texto-primaria);
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .container {
   display: flex;
   min-height: 100vh;

@@ -8,15 +8,20 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (!form) return;
 
+  // Determinar qual é o campo dinâmico (cpf ou cnpj)
+  const cpfField = document.getElementById('cpf');
+  const cnpjField = document.getElementById('cnpj');
+  const campoDocumento = cpfField ? 'cpf' : cnpjField ? 'cnpj' : null;
+
   // Campos do formulário
   const campos = {
     nome: {
       input: document.getElementById('fullName'),
       erro: 'Por favor, digite o seu nome completo.'
     },
-    cpf: {
-      input: document.getElementById('cpf'),
-      erro: 'Informe o CPF.'
+    documento: {
+      input: cpfField || cnpjField,
+      erro: campoDocumento === 'cnpj' ? 'Informe o CNPJ.' : 'Informe o CPF.'
     },
     celular: {
       input: document.getElementById('phone'),
@@ -122,9 +127,9 @@ document.addEventListener('DOMContentLoaded', function() {
       temErro = true;
     }
 
-    // Validar CPF
-    if (campos.cpf.input.value.trim() === '') {
-      mostrarErro('cpf', campos.cpf.erro);
+    // Validar Documento (CPF ou CNPJ)
+    if (campos.documento.input.value.trim() === '') {
+      mostrarErro('documento', campos.documento.erro);
       temErro = true;
     }
 

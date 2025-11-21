@@ -82,19 +82,16 @@ if (!empty($_POST)) {
           <div class="form-group">
             <label for="nome" class="field-label"><?= $nome ?> *</label>
             <input type="text" id="fullName" name="nome" placeholder="<?= $placeholder_nome ?>" required>
-            <div class="error-message">Por favor, digite o <?= strtolower($nome) ?></div>
           </div>
 
           <div class="form-group">
             <label for="<?= $campo ?>" class="field-label"><?= strtoupper($campo) ?> *</label>
             <input type="text" id="<?= $campo ?>" name="<?= $campo ?>" placeholder="<?= $placeholder_cnpfj ?>" maxlength="<?= $tamanho_campo ?>" required>
-            <div class="error-message">Por favor, digite um <?= strtoupper($campo) ?> válido</div>
           </div>
 
           <div class="form-group">
             <label for="celular" class="field-label">Telefone *</label>
             <input type="tel" id="phone" name="celular" placeholder="(00) 00000-0000" maxlength="15" required>
-            <div class="error-message">Por favor, digite um telefone válido</div>
           </div>
 
           <label class="checkbox-label">

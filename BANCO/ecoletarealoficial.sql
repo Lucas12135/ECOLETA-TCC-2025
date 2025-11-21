@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 20/11/2025 às 21:26
+-- Tempo de geração: 21/11/2025 às 05:09
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -56,6 +56,14 @@ CREATE TABLE `avaliacoes_coletores` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
+-- Despejando dados para a tabela `avaliacoes_coletores`
+--
+
+INSERT INTO `avaliacoes_coletores` (`id`, `id_historico_coleta`, `id_gerador`, `id_coletor`, `nota`, `comentario`, `pontualidade`, `profissionalismo`, `qualidade_servico`, `created_at`) VALUES
+(1, 2, 1, 1, 5, 'Coletou de forma eficiente', 5, 5, 5, '2025-11-21 02:49:41'),
+(2, 1, 1, 1, 3, 'Coletou de forma regular', 4, 2, 4, '2025-11-21 02:50:32');
+
+--
 -- Acionadores `avaliacoes_coletores`
 --
 DELIMITER $$
@@ -104,6 +112,14 @@ CREATE TABLE `coletas` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Despejando dados para a tabela `coletas`
+--
+
+INSERT INTO `coletas` (`id`, `id_gerador`, `id_coletor`, `data_agendada`, `data_solicitacao`, `status`, `periodo`, `quantidade_oleo`, `observacoes`, `cep`, `rua`, `numero`, `bairro`, `cidade`, `estado`, `complemento`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, '2025-12-01 00:00:00', '2025-11-20 22:54:01', 'concluida', 'tarde', 5.00, '', '01001-000', 'Praça da Sé', '123', 'Sé', 'São Paulo', 'SP', 'Casa', '2025-11-21 01:54:01', '2025-11-21 02:20:58'),
+(2, 1, 1, '2026-03-10 00:00:00', '2025-11-20 23:15:08', 'concluida', 'manha', 10.00, '', '59020-565', 'Travessa Progresso', '920', 'Barro Vermelho', 'Natal', 'RN', 'abc', '2025-11-21 02:15:08', '2025-11-21 02:24:40');
+
 -- --------------------------------------------------------
 
 --
@@ -124,8 +140,19 @@ CREATE TABLE `coletores` (
   `tipo_coletor` enum('pessoa_fisica','pessoa_juridica') DEFAULT 'pessoa_fisica',
   `meio_transporte` enum('carro','moto','bicicleta','van','caminhao') NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `avaliacao_media` float NOT NULL DEFAULT 0,
+  `total_avaliacoes` int(6) NOT NULL DEFAULT 0,
+  `coletas` int(5) NOT NULL DEFAULT 0,
+  `total_oleo` float NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `coletores`
+--
+
+INSERT INTO `coletores` (`id`, `email`, `senha`, `nome_completo`, `cpf_cnpj`, `telefone`, `data_nasc`, `genero`, `foto_perfil`, `id_endereco`, `tipo_coletor`, `meio_transporte`, `created_at`, `updated_at`, `avaliacao_media`, `total_avaliacoes`, `coletas`, `total_oleo`) VALUES
+(1, 'admin@gmail.com', '$2y$10$zzE2dnJfRH62kEjolUcAQe28j6TejdZY1EohXRSiCQkTRs2wRHGme', 'Coletor Administrador', '54548576614', '13982095384', '1994-05-08', 'M', '1_691fb6f0e139d.jpeg', 2, 'pessoa_fisica', 'carro', '2025-11-21 00:48:48', '2025-11-21 02:50:32', 4.16667, 2, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -140,6 +167,13 @@ CREATE TABLE `coletores_config` (
   `raio_atuacao` int(11) NOT NULL DEFAULT 5 CHECK (`raio_atuacao` between 1 and 50),
   `meio_transporte` enum('carro','bicicleta','motocicleta','carroca','a_pe') NOT NULL DEFAULT 'a_pe'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `coletores_config`
+--
+
+INSERT INTO `coletores_config` (`id`, `id_coletor`, `disponibilidade`, `raio_atuacao`, `meio_transporte`) VALUES
+(2, 1, 'disponivel', 5, 'carro');
 
 -- --------------------------------------------------------
 
@@ -197,6 +231,14 @@ CREATE TABLE `enderecos` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Despejando dados para a tabela `enderecos`
+--
+
+INSERT INTO `enderecos` (`id`, `rua`, `numero`, `complemento`, `bairro`, `cidade`, `estado`, `cep`, `created_at`, `updated_at`) VALUES
+(1, 'Praça da Sé', '732', 'Casa', 'Sé', 'São Paulo', 'SP', '01001-000', '2025-11-21 00:46:38', '2025-11-21 00:46:38'),
+(2, 'Praça da Sé', '732', 'Casa', 'Sé', 'São Paulo', 'SP', '01001-000', '2025-11-21 00:48:48', '2025-11-21 00:48:48');
+
 -- --------------------------------------------------------
 
 --
@@ -214,6 +256,14 @@ CREATE TABLE `ganhos_coletores` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `ganhos_coletores`
+--
+
+INSERT INTO `ganhos_coletores` (`id`, `id_coletor`, `id_historico_coleta`, `valor_ganho`, `data_pagamento`, `status_pagamento`, `metodo_pagamento`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 2.50, NULL, 'pendente', NULL, '2025-11-21 02:20:58', '2025-11-21 02:20:58'),
+(2, 1, 2, 5.00, NULL, 'pendente', NULL, '2025-11-21 02:24:40', '2025-11-21 02:24:40');
 
 -- --------------------------------------------------------
 
@@ -237,6 +287,13 @@ CREATE TABLE `geradores` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Despejando dados para a tabela `geradores`
+--
+
+INSERT INTO `geradores` (`id`, `email`, `senha`, `nome_completo`, `cpf`, `telefone`, `data_nasc`, `genero`, `foto_perfil`, `id_endereco`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'admin@gmail.com', '$2y$10$BDwbhBFzX3pF1COhEFZ/V.Bryom6oAqC4hYh8CzLzjDVXCmxizpzS', 'Gerador Administrador', '94721255578', '13982095384', '1994-03-19', 'M', '1_691fb66eb8add.jpeg', 1, 'pendente', '2025-11-21 00:46:38', '2025-11-21 00:46:38');
+
 -- --------------------------------------------------------
 
 --
@@ -257,6 +314,14 @@ CREATE TABLE `historico_coletas` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Despejando dados para a tabela `historico_coletas`
+--
+
+INSERT INTO `historico_coletas` (`id`, `id_coleta`, `id_coletor`, `id_gerador`, `data_inicio`, `data_conclusao`, `quantidade_coletada`, `observacoes`, `status`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 1, '2025-12-01 00:00:00', '2025-11-20 23:20:58', 5.00, '', 'concluida', '2025-11-21 02:20:58', '2025-11-21 02:20:58'),
+(2, 2, 1, 1, '2026-03-10 00:00:00', '2025-11-20 23:24:40', 10.00, 'Bao', 'concluida', '2025-11-21 02:24:40', '2025-11-21 02:24:40');
+
 -- --------------------------------------------------------
 
 --
@@ -271,6 +336,19 @@ CREATE TABLE `horarios_funcionamento` (
   `hora_abertura` time DEFAULT NULL,
   `hora_fechamento` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `horarios_funcionamento`
+--
+
+INSERT INTO `horarios_funcionamento` (`id`, `id_coletor`, `dia_semana`, `ativo`, `hora_abertura`, `hora_fechamento`) VALUES
+(1, 1, 'segunda', 1, '13:00:00', '17:00:00'),
+(2, 1, 'terca', 1, '13:00:00', '17:00:00'),
+(3, 1, 'quarta', 1, '13:00:00', '17:00:00'),
+(4, 1, 'quinta', 1, '13:00:00', '17:00:00'),
+(5, 1, 'sexta', 1, '13:00:00', '17:00:00'),
+(6, 1, 'sabado', 0, NULL, NULL),
+(7, 1, 'domingo', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -302,7 +380,9 @@ INSERT INTO `otp_tokens` (`id`, `email`, `otp_hash`, `otp_salt`, `expires_at`, `
 (1, 'pietro.123pietro4@gmail.com', '8f0ddbe8f32d92710bad46883028e5cbb047d3a5cdba93440ef52c8ec731e0fe', '5a9bf7f4a8ec1ef392bdb4d3b05ac520', '2025-11-13 00:06:36', 5, '2025-11-12 19:56:36', '2025-11-12 19:56:36', 0, 'cadastro', 0, '::1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 OPR/95.0.0.0'),
 (2, 'pietro.123pietro4@gmail.com', 'bff06d893b2f3ad4625647fe362481eb8759bfda5036cfe5709c28d6f37bb959', 'e0918d9b9a813e020338c9c74c3b889a', '2025-11-13 00:08:14', 5, '2025-11-12 19:58:14', '2025-11-12 19:58:14', 0, 'cadastro', 0, '::1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 OPR/95.0.0.0'),
 (3, 'pietrocesar@gmail.com', 'c51fe29499e9287b73f6f5f7e0fe9ef1e4dd20a12710075666327930c3edb194', '3587ae75c8479cac3e210653f1ac89ed', '2025-11-13 00:17:16', 5, '2025-11-12 20:07:16', '2025-11-12 20:07:16', 0, 'cadastro', 0, '::1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 OPR/95.0.0.0'),
-(4, 'pietrocesar@gmail.com', '4f7307e069ab7aca59e6474cd915e508af6571e832ca5f082c3b7e84ec473169', 'e37e7e9285ecc2168dfc44a1566bc974', '2025-11-13 00:17:43', 5, '2025-11-12 20:07:43', '2025-11-12 20:07:43', 0, 'cadastro', 0, '::1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 OPR/95.0.0.0');
+(4, 'pietrocesar@gmail.com', '4f7307e069ab7aca59e6474cd915e508af6571e832ca5f082c3b7e84ec473169', 'e37e7e9285ecc2168dfc44a1566bc974', '2025-11-13 00:17:43', 5, '2025-11-12 20:07:43', '2025-11-12 20:07:43', 0, 'cadastro', 0, '::1', 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 OPR/95.0.0.0'),
+(0, 'admin@gmail.com', 'ea71c65da064288675c0b58101f920f1e703d0aba8cc4ee500079e6a5a3a78b5', '37c636b954aec3918386b5f2b5ae7aae', '2025-11-20 21:54:58', 5, '2025-11-20 21:44:58', '2025-11-20 21:44:58', 0, 'cadastro_gerador', 0, '::1', ''),
+(0, 'admin2@gmail.com', 'd34b4278b5be8ec857e1b4e0feabf1256d5cb6d684d91281636f322275912f2d', 'a14d92f172650080a3346eadcf7356ed', '2025-11-21 00:18:04', 5, '2025-11-21 00:08:04', '2025-11-21 00:08:04', 0, 'cadastro_gerador', 0, '::1', '');
 
 --
 -- Índices para tabelas despejadas
@@ -421,25 +501,25 @@ ALTER TABLE `avaliacoes`
 -- AUTO_INCREMENT de tabela `avaliacoes_coletores`
 --
 ALTER TABLE `avaliacoes_coletores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `coletas`
 --
 ALTER TABLE `coletas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `coletores`
 --
 ALTER TABLE `coletores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de tabela `coletores_config`
 --
 ALTER TABLE `coletores_config`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `configuracoes_usuario`
@@ -457,31 +537,31 @@ ALTER TABLE `documentos_coletor`
 -- AUTO_INCREMENT de tabela `enderecos`
 --
 ALTER TABLE `enderecos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `ganhos_coletores`
 --
 ALTER TABLE `ganhos_coletores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `geradores`
 --
 ALTER TABLE `geradores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de tabela `historico_coletas`
 --
 ALTER TABLE `historico_coletas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `horarios_funcionamento`
 --
 ALTER TABLE `horarios_funcionamento`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restrições para tabelas despejadas

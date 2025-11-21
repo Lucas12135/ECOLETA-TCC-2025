@@ -26,10 +26,26 @@ if (!$coletor) {
     exit;
 }
 
+// Buscar estatísticas de coleta do coletor
+$sql_stats = "SELECT 
+                COUNT(hc.id) as total_coletas,
+                COALESCE(SUM(hc.quantidade_coletada), 0) as total_oleo,
+                COALESCE(AVG((ac.pontualidade + ac.profissionalismo + ac.qualidade_servico) / 3), 0) as avaliacao_media,
+                COUNT(DISTINCT ac.id) as total_avaliacoes
+              FROM historico_coletas hc
+              LEFT JOIN avaliacoes_coletores ac ON hc.id = ac.id_historico_coleta
+              WHERE hc.id_coletor = :id_coletor AND hc.status = 'concluida'";
+$stmt_stats = $conn->prepare($sql_stats);
+$stmt_stats->bindParam(':id_coletor', $id_coletor, PDO::PARAM_INT);
+$stmt_stats->execute();
+$stats = $stmt_stats->fetch(PDO::FETCH_ASSOC);
+
 // Preparar dados para exibição
 $nome_completo = $coletor['nome_completo'] ?? 'Coletor';
-$avaliacao_media = $coletor['avaliacao_media'] ?? 0;
-$total_avaliacoes = $coletor['total_avaliacoes'] ?? 0;
+$avaliacao_media = !empty($stats['avaliacao_media']) ? $stats['avaliacao_media'] : $coletor['avaliacao_media'] ?? 0;
+$total_avaliacoes = !empty($stats['total_avaliacoes']) ? $stats['total_avaliacoes'] : $coletor['total_avaliacoes'] ?? 0;
+$coletas = !empty($stats['total_coletas']) ? $stats['total_coletas'] : 0;
+$total_oleo = !empty($stats['total_oleo']) ? $stats['total_oleo'] : 0;
 
 // URL da foto
 $foto_url = $coletor['foto_perfil'] ? '../uploads/profile_photos/' . $coletor['foto_perfil'] : '../img/profile-placeholder.jpg';
@@ -67,12 +83,6 @@ $foto_url = $coletor['foto_perfil'] ? '../uploads/profile_photos/' . $coletor['f
 
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="nav-link">
-                        <a href="../index.php" class="nav-link">
-                            <i class="ri-arrow-left-line"></i>
-                            <span>Voltar</span>
-                        </a>
-                    </li>
                     <li>
                         <a href="home.php" class="nav-link">
                             <i class="ri-home-4-line"></i>
@@ -212,7 +222,7 @@ $foto_url = $coletor['foto_perfil'] ? '../uploads/profile_photos/' . $coletor['f
                                 <i class="ri-oil-line"></i>
                                 Total de Óleo Coletado
                             </div>
-                            <div class="stat-value">1.250</div>
+                            <div class="stat-value"><?php echo number_format($total_oleo, 2); ?></div>
                             <div class="stat-label">litros</div>
                         </div>
 
@@ -221,7 +231,7 @@ $foto_url = $coletor['foto_perfil'] ? '../uploads/profile_photos/' . $coletor['f
                                 <i class="ri-calendar-check-line"></i>
                                 Coletas Realizadas
                             </div>
-                            <div class="stat-value">85</div>
+                            <div class="stat-value"><?php echo $coletas; ?></div>
                             <div class="stat-label">coletas</div>
                         </div>
 
@@ -231,13 +241,25 @@ $foto_url = $coletor['foto_perfil'] ? '../uploads/profile_photos/' . $coletor['f
                                 Avaliação Média
                             </div>
                             <div class="rating" style="margin-top: 0.5rem;">
-                                <i class="ri-star-fill star"></i>
-                                <i class="ri-star-fill star"></i>
-                                <i class="ri-star-fill star"></i>
-                                <i class="ri-star-fill star"></i>
-                                <i class="ri-star-half-fill star"></i>
+                                <?php 
+                                        // Exibir estrelas baseado na avaliação
+                                        $estrelas_cheias = floor($avaliacao_media);
+                                        $meia_estrela = ($avaliacao_media - $estrelas_cheias) >= 0.5;
+                                        
+                                        for ($i = 0; $i < $estrelas_cheias; $i++) {
+                                            echo '<i class="ri-star-fill star"></i>';
+                                        }
+                                        if ($meia_estrela) {
+                                            echo '<i class="ri-star-half-fill star"></i>';
+                                            $i++;
+                                        }
+                                        while ($i < 5) {
+                                            echo '<i class="ri-star-line star"></i>';
+                                            $i++;
+                                        }
+                                    ?>
                             </div>
-                            <div class="stat-label">baseado em 45 avaliações</div>
+                            <div class="stat-label">baseado em <?php echo $total_avaliacoes; ?> avaliações</div>
                         </div>
                     </div>
                 </div>

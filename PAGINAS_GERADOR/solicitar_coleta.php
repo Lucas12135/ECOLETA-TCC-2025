@@ -39,17 +39,17 @@ if (!empty($_POST)) {
     try {
         if ($conn) {
             $stmt_coleta = $conn->prepare("INSERT INTO coletas (
-                id_gerador, quantidade_oleo, id_coletor, data_coleta, data_solicitacao, 
+                id_gerador, quantidade_oleo, id_coletor, data_agendada, data_solicitacao, 
                 periodo, numero, complemento, cidade, cep, rua, estado, bairro, observacoes
             ) VALUES (
-                :id_gerador, :quantidade_oleo, :id_coletor, :data_coleta, :data_solicitacao, 
+                :id_gerador, :quantidade_oleo, :id_coletor, :data_agendada, :data_solicitacao, 
                 :periodo, :numero, :complemento, :cidade, :cep, :rua, :estado, :bairro, :observacoes
             )");
             
             $stmt_coleta->bindParam(':id_gerador', $id_gerador);
             $stmt_coleta->bindParam(':quantidade_oleo', $quantidade_oleo);
             $stmt_coleta->bindParam(':id_coletor', $id_coletor);
-            $stmt_coleta->bindParam(':data_coleta', $data_coleta);
+            $stmt_coleta->bindParam(':data_agendada', $data_coleta);
             $stmt_coleta->bindParam(':data_solicitacao', $data_solicitacao);
             $stmt_coleta->bindParam(':periodo', $periodo);
             $stmt_coleta->bindParam(':cep', $cep);
@@ -129,12 +129,6 @@ if (isset($_SESSION['id_usuario'])) {
 
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="nav-link">
-                        <a href="../index.php" class="nav-link">
-                            <i class="ri-arrow-left-line"></i>
-                            <span>Voltar</span>
-                        </a>
-                    </li>
                     <li>
                         <a href="home.php" class="nav-link">
                             <i class="ri-home-4-line"></i>

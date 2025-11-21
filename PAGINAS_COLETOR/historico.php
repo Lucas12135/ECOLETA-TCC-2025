@@ -1,5 +1,70 @@
 <?php
 session_start();
+
+// Verificar se o usuário está logado
+if (!isset($_SESSION['id_usuario'])) {
+    header('Location: ../index.php');
+    exit;
+}
+
+// Definir fuso horário de Brasília
+date_default_timezone_set('America/Sao_Paulo');
+
+include_once('../BANCO/conexao.php');
+
+// Buscar histórico de coletas do coletor
+$historico_coletas = [];
+
+try {
+    if ($conn) {
+        $stmt_historico = $conn->prepare("
+            SELECT 
+                hc.id,
+                hc.id_coleta,
+                hc.id_gerador,
+                hc.data_inicio,
+                hc.data_conclusao,
+                hc.quantidade_coletada,
+                hc.observacoes,
+                hc.status,
+                g.nome_completo as nome_gerador,
+                g.telefone,
+                g.email,
+                gc.valor_ganho,
+                gc.status_pagamento
+            FROM historico_coletas hc
+            LEFT JOIN geradores g ON hc.id_gerador = g.id
+            LEFT JOIN ganhos_coletores gc ON hc.id = gc.id_historico_coleta
+            WHERE hc.id_coletor = :id_coletor
+            ORDER BY hc.data_conclusao DESC
+        ");
+        $stmt_historico->bindParam(':id_coletor', $_SESSION['id_usuario']);
+        $stmt_historico->execute();
+        $historico_coletas = $stmt_historico->fetchAll(PDO::FETCH_ASSOC);
+    }
+} catch (PDOException $e) {
+    // Silenciosamente ignorar erro
+}
+
+// Função auxiliar para formatar data
+function formatarData($data) {
+    return date('d/m/Y', strtotime($data));
+}
+
+// Função auxiliar para formatar hora
+function formatarHora($data) {
+    return date('H:i', strtotime($data));
+}
+
+// Função auxiliar para formatar status
+function formatarStatus($status) {
+    $statusMap = [
+        'concluida' => ['label' => 'Concluída', 'class' => 'status-concluida'],
+        'em_andamento' => ['label' => 'Em Andamento', 'class' => 'status-andamento'],
+        'cancelada' => ['label' => 'Cancelada', 'class' => 'status-cancelada']
+    ];
+    return $statusMap[$status] ?? ['label' => $status, 'class' => 'status-padrao'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -34,12 +99,6 @@ session_start();
 
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="nav-link">
-                        <a href="../index.php" class="nav-link">
-                            <i class="ri-arrow-left-line"></i>
-                            <span>Voltar</span>
-                        </a>
-                    </li>
                     <li>
                         <a href="home.php" class="nav-link">
                             <i class="ri-home-4-line"></i>
@@ -134,101 +193,79 @@ session_start();
 
             <!-- Lista de Histórico -->
             <div class="history-list">
-                <!-- Item de Histórico -->
-                <div class="history-item">
-                    <div class="history-item-header">
-                        <div class="history-main-info">
-                            <span class="collection-id">ID: #12345</span>
-                            <span class="collection-quantity">5 litros</span>
-                            <span class="collection-date">28/10/2025</span>
-                        </div>
-                        <div class="history-actions">
-                            <span class="collection-status status-concluida">Concluída</span>
-                            <button class="expand-button">
-                                Mais detalhes
-                                <i class="ri-arrow-down-s-line"></i>
-                            </button>
-                        </div>
+                <?php if (empty($historico_coletas)): ?>
+                    <div style="text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="ri-history-line" style="font-size: 64px; margin-bottom: 20px; display: block;"></i>
+                        <h3>Nenhuma coleta realizada ainda</h3>
+                        <p>Suas coletas concluídas aparecerão aqui</p>
                     </div>
-                    <div class="history-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Solicitante:</span>
-                            <span class="detail-value">João da Silva</span>
+                <?php else: ?>
+                    <?php foreach ($historico_coletas as $coleta): ?>
+                        <?php $status_info = formatarStatus($coleta['status']); ?>
+                        <div class="history-item">
+                            <div class="history-item-header">
+                                <div class="history-main-info">
+                                    <span class="collection-id">ID: #<?php echo $coleta['id_coleta']; ?></span>
+                                    <span class="collection-quantity">
+                                        <i class="ri-oil-line"></i>
+                                        <?php echo number_format($coleta['quantidade_coletada'], 2); ?> litros
+                                    </span>
+                                    <span class="collection-date"><?php echo formatarData($coleta['data_conclusao']); ?></span>
+                                </div>
+                                <div class="history-actions">
+                                    <span class="collection-status <?php echo $status_info['class']; ?>">
+                                        <?php echo $status_info['label']; ?>
+                                    </span>
+                                    <button class="expand-button">
+                                        Mais detalhes
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="history-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">Solicitante:</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($coleta['nome_gerador']); ?></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Contato:</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($coleta['telefone']); ?> / <?php echo htmlspecialchars($coleta['email']); ?></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Data da Conclusão:</span>
+                                    <span class="detail-value"><?php echo formatarData($coleta['data_conclusao']); ?> às <?php echo formatarHora($coleta['data_conclusao']); ?></span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Quantidade Coletada:</span>
+                                    <span class="detail-value"><?php echo number_format($coleta['quantidade_coletada'], 2); ?> litros</span>
+                                </div>
+                                <?php if ($coleta['valor_ganho']): ?>
+                                <div class="detail-row">
+                                    <span class="detail-label">Ganho:</span>
+                                    <span class="detail-value" style="color: #4CAF50; font-weight: bold;">
+                                        R$ <?php echo number_format($coleta['valor_ganho'], 2, ',', '.'); ?>
+                                    </span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Status do Pagamento:</span>
+                                    <span class="detail-value">
+                                        <?php 
+                                            $status_pag = $coleta['status_pagamento'] ?? 'pendente';
+                                            echo $status_pag === 'pago' ? '✓ Pago' : 'Pendente';
+                                        ?>
+                                    </span>
+                                </div>
+                                <?php endif; ?>
+                                <?php if ($coleta['observacoes']): ?>
+                                <div class="detail-row">
+                                    <span class="detail-label">Observações:</span>
+                                    <span class="detail-value"><?php echo htmlspecialchars($coleta['observacoes']); ?></span>
+                                </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Endereço:</span>
-                            <span class="detail-value">Rua das Flores, 123 - Jardim Primavera</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Data da solicitação:</span>
-                            <span class="detail-value">25/10/2025</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item de Histórico -->
-                <div class="history-item">
-                    <div class="history-item-header">
-                        <div class="history-main-info">
-                            <span class="collection-id">ID: #12344</span>
-                            <span class="collection-quantity">3 litros</span>
-                            <span class="collection-date">27/10/2025</span>
-                        </div>
-                        <div class="history-actions">
-                            <span class="collection-status status-cancelada">Cancelada</span>
-                            <button class="expand-button">
-                                Mais detalhes
-                                <i class="ri-arrow-down-s-line"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="history-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Solicitante:</span>
-                            <span class="detail-value">Maria Santos</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Endereço:</span>
-                            <span class="detail-value">Av. das Palmeiras, 456 - Centro</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Data da solicitação:</span>
-                            <span class="detail-value">24/10/2025</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Item de Histórico -->
-                <div class="history-item">
-                    <div class="history-item-header">
-                        <div class="history-main-info">
-                            <span class="collection-id">ID: #12343</span>
-                            <span class="collection-quantity">7 litros</span>
-                            <span class="collection-date">26/10/2025</span>
-                        </div>
-                        <div class="history-actions">
-                            <span class="collection-status status-concluida">Concluída</span>
-                            <button class="expand-button">
-                                Mais detalhes
-                                <i class="ri-arrow-down-s-line"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="history-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Solicitante:</span>
-                            <span class="detail-value">Pedro Oliveira</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Endereço:</span>
-                            <span class="detail-value">Rua dos Ipês, 789 - Jardim América</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">Data da solicitação:</span>
-                            <span class="detail-value">23/10/2025</span>
-                        </div>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
         </main>
     </div>
