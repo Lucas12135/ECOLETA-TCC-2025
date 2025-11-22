@@ -101,6 +101,21 @@ try {
         $_SESSION['cadastro']['gerador_id'] = $gerador['id'];
     }
 
+    // Verifica se já existe um coletor com esse e-mail
+    $stmt = $conn->prepare("
+        SELECT id
+        FROM coletores
+        WHERE email = :e
+        LIMIT 1
+    ");
+    $stmt->execute([':e' => $email]);
+    $coletor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($coletor) {
+        // Coletor já existe, salva o ID na sessão
+        $_SESSION['cadastro']['coletor_id'] = $coletor['id'];
+    }
+
     // ===== FLUXO PARA CADASTRO DE GERADOR =====
     if ($purpose === 'cadastro_gerador') {
         // Redireciona para o formulário de registro
@@ -108,10 +123,16 @@ try {
         exit;
     }
 
-    // Se tiver outros purposes (recuperação de senha, coletor etc) trata aqui depois.
+    // ===== FLUXO PARA CADASTRO DE COLETOR =====
+    if ($purpose === 'cadastro_coletor') {
+        // Redireciona para o formulário de registro
+        header('Location: ../CADASTRO_COLETOR/registro.php');
+        exit;
+    }
+
+    // Se tiver outros purposes (recuperação de senha, etc) trata aqui depois.
     header('Location: ../index.php');
     exit;
-
 } catch (PDOException $e) {
     http_response_code(500);
     echo 'Erro no servidor ao verificar o código: ' . htmlspecialchars($e->getMessage());

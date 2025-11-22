@@ -181,14 +181,22 @@ function exibirColetores(coletores) {
     const tempoAfiliacao = calcularTempoAfiliacao(coletor.data_criacao);
     const distancia = coletor.distancia ? coletor.distancia.toFixed(1) : "N/A";
 
+    // Definir foto de perfil com fallback para avatar padrão em SVG
+    const defaultAvatar =
+      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23e0e0e0' width='100' height='100'/%3E%3Ccircle cx='50' cy='35' r='20' fill='%23999'/%3E%3Cellipse cx='50' cy='70' rx='30' ry='25' fill='%23999'/%3E%3C/svg%3E";
+    const foto = coletor.foto_perfil
+      ? `uploads/profile_photos/${coletor.foto_perfil}`
+      : defaultAvatar;
+
     console.log("Coletor nome:", coletor.nome); // Debug
+    console.log("Foto perfil:", coletor.foto_perfil);
 
     const card = document.createElement("div");
     card.className = "coletor-card";
     card.innerHTML = `
       <div class="card-content" style="color: var(--cor-texto-primaria);">
-        <div class="avatar-placeholder">
-          &#x1F464;
+        <div class="avatar-placeholder" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: #f0f0f0; margin: 0 auto 10px;">
+          <img src="${foto}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${defaultAvatar}'">
         </div>
         
         <h2 class="coletor-nome">${escapeHtml(coletor.nome)}</h2>

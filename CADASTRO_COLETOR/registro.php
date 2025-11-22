@@ -1,5 +1,12 @@
 <?php
 session_start();
+
+// Valida se o email foi verificado
+if (!isset($_SESSION['cadastro']['email_verificado']) || $_SESSION['cadastro']['email_verificado'] !== true) {
+  header('Location: login.php');
+  exit;
+}
+
 // Verifica se existe a sessão e o índice 'tipo'
 $tipo = $_SESSION['cadastro']['tipo'] ?? null;
 if ($tipo === "pessoa_juridica") {
