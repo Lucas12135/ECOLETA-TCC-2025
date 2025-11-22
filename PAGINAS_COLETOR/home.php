@@ -57,7 +57,9 @@ try {
         $stmt->execute();
         $coletasHoje = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $coletasHojeTotal = count($coletasHoje);
-        $coletasHojeCompletar = count(array_filter($coletasHoje, function($c) { return $c['status'] !== 'concluida'; }));
+        $coletasHojeCompletar = count(array_filter($coletasHoje, function ($c) {
+            return $c['status'] !== 'concluida';
+        }));
 
         // Buscar solicitações pendentes (não aceitas ainda)
         $stmt = $conn->prepare("
@@ -76,7 +78,8 @@ try {
 }
 
 // Função auxiliar para formatar período
-function formatarPeriodo($periodo) {
+function formatarPeriodo($periodo)
+{
     $periodos = [
         'manha' => 'Manhã (8h - 12h)',
         'tarde' => 'Tarde (13h - 17h)'
@@ -85,17 +88,20 @@ function formatarPeriodo($periodo) {
 }
 
 // Função auxiliar para formatar data
-function formatarData($data) {
+function formatarData($data)
+{
     return date('d/m/Y', strtotime($data));
 }
 
 // Função auxiliar para formatar hora
-function formatarHora($data) {
+function formatarHora($data)
+{
     return date('H:i', strtotime($data));
 }
 
 // Função auxiliar para obter nome do dia da semana
-function obterDiaSemana($data) {
+function obterDiaSemana($data)
+{
     $dias = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
     return $dias[date('w', strtotime($data))];
 }
@@ -184,47 +190,6 @@ function obterDiaSemana($data) {
                     <p>Confira suas coletas e atualizações de hoje</p>
                 </div>
                 <div class="header-actions">
-                    <div class="action-buttons">
-                        <button class="notification-btn" title="Notificações">
-                            <i class="ri-notification-3-line"></i>
-                            <span class="notification-badge">3</span>
-                        </button>
-                        <!-- Popup de Notificações -->
-                        <div class="notifications-popup">
-                            <div class="notifications-header">
-                                <h3>Notificações</h3>
-                            </div>
-                            <div class="notification-list">
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-calendar-check-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Nova coleta agendada para hoje às 14:30</p>
-                                            <span class="notification-time">Há 5 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-map-pin-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Alteração no endereço de coleta - Rua das Palmeiras, 789</p>
-                                            <span class="notification-time">Há 30 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-message-3-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Mensagem do gerador sobre a coleta #123</p>
-                                            <span class="notification-time">Há 1 hora</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </header>
 
@@ -298,14 +263,14 @@ function obterDiaSemana($data) {
                                     </div>
                                     <div class="details">
                                         <span class="quantity"><?php echo $coleta['quantidade_oleo']; ?>L</span>
-                                        <span class="status <?php echo strtolower($coleta['status']); ?>"><?php 
-                                            $statusTexto = [
-                                                'agendada' => 'Agendada',
-                                                'em_andamento' => 'Em andamento',
-                                                'concluida' => 'Concluída'
-                                            ];
-                                            echo $statusTexto[$coleta['status']] ?? ucfirst($coleta['status']); 
-                                        ?></span>
+                                        <span class="status <?php echo strtolower($coleta['status']); ?>"><?php
+                                                                                                            $statusTexto = [
+                                                                                                                'agendada' => 'Agendada',
+                                                                                                                'em_andamento' => 'Em andamento',
+                                                                                                                'concluida' => 'Concluída'
+                                                                                                            ];
+                                                                                                            echo $statusTexto[$coleta['status']] ?? ucfirst($coleta['status']);
+                                                                                                            ?></span>
                                         <button class="view-map-btn" title="Ver no mapa">
                                             <i class="ri-map-pin-line"></i>
                                         </button>
@@ -345,14 +310,14 @@ function obterDiaSemana($data) {
                         $stmt->bindParam(':hoje', $hoje);
                         $stmt->execute();
                         $coletasProximos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        
+
                         if (empty($coletasProximos)):
                     ?>
-                        <div style="text-align: center; padding: 40px; color: #999;">
-                            <i class="ri-calendar-blank-line" style="font-size: 48px; margin-bottom: 10px;"></i>
-                            <p>Nenhuma coleta agendada para os próximos dias</p>
-                        </div>
-                    <?php
+                            <div style="text-align: center; padding: 40px; color: #999;">
+                                <i class="ri-calendar-blank-line" style="font-size: 48px; margin-bottom: 10px;"></i>
+                                <p>Nenhuma coleta agendada para os próximos dias</p>
+                            </div>
+                        <?php
                         else:
                             // Agrupar coletas por data
                             $coletasPorData = [];
@@ -363,35 +328,35 @@ function obterDiaSemana($data) {
                                 }
                                 $coletasPorData[$data][] = $coleta;
                             }
-                    ?>
-                        <div class="upcoming-days">
-                            <?php foreach ($coletasPorData as $data => $coletas): ?>
-                                <div class="upcoming-day">
-                                    <div class="day-header">
-                                        <h4><?php echo date('d/m/Y', strtotime($data)); ?></h4>
-                                        <span class="day-name"><?php echo obterDiaSemana($data); ?></span>
+                        ?>
+                            <div class="upcoming-days">
+                                <?php foreach ($coletasPorData as $data => $coletas): ?>
+                                    <div class="upcoming-day">
+                                        <div class="day-header">
+                                            <h4><?php echo date('d/m/Y', strtotime($data)); ?></h4>
+                                            <span class="day-name"><?php echo obterDiaSemana($data); ?></span>
+                                        </div>
+                                        <div class="day-collections">
+                                            <?php foreach ($coletas as $coleta): ?>
+                                                <div class="upcoming-collection-item">
+                                                    <div class="collection-time">
+                                                        <i class="ri-time-line"></i>
+                                                        <span><?php echo formatarHora($coleta['data_agendada']); ?></span>
+                                                    </div>
+                                                    <div class="collection-info">
+                                                        <p class="generator"><?php echo htmlspecialchars($coleta['nome_completo']); ?></p>
+                                                        <p class="location"><?php echo htmlspecialchars($coleta['bairro']); ?>, <?php echo htmlspecialchars($coleta['cidade']); ?></p>
+                                                    </div>
+                                                    <div class="collection-amount">
+                                                        <span><?php echo $coleta['quantidade_oleo']; ?>L</span>
+                                                        <span class="period"><?php echo formatarPeriodo($coleta['periodo']); ?></span>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
                                     </div>
-                                    <div class="day-collections">
-                                        <?php foreach ($coletas as $coleta): ?>
-                                            <div class="upcoming-collection-item">
-                                                <div class="collection-time">
-                                                    <i class="ri-time-line"></i>
-                                                    <span><?php echo formatarHora($coleta['data_agendada']); ?></span>
-                                                </div>
-                                                <div class="collection-info">
-                                                    <p class="generator"><?php echo htmlspecialchars($coleta['nome_completo']); ?></p>
-                                                    <p class="location"><?php echo htmlspecialchars($coleta['bairro']); ?>, <?php echo htmlspecialchars($coleta['cidade']); ?></p>
-                                                </div>
-                                                <div class="collection-amount">
-                                                    <span><?php echo $coleta['quantidade_oleo']; ?>L</span>
-                                                    <span class="period"><?php echo formatarPeriodo($coleta['periodo']); ?></span>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
+                                <?php endforeach; ?>
+                            </div>
                     <?php
                         endif;
                     } catch (PDOException $e) {

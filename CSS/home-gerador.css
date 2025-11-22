@@ -165,53 +165,6 @@ a {
   gap: 1rem;
 }
 
-/* Notification Styles */
-.notification-btn {
-  background: var(--cor-branco);
-  border: 2px solid var(--cor-borda);
-  font-size: 1.5rem;
-  color: var(--verde-escuro);
-  cursor: pointer;
-  padding: 0.5rem;
-  position: relative;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.notification-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: var(--cor-secondaria);
-  color: var(--verde-escuro);
-  font-size: 0.75rem;
-  padding: 0.15rem 0.4rem;
-  border-radius: 10px;
-  font-weight: bold;
-}
-
-.notifications-popup {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  width: 320px;
-  background-color: var(--cor-branco);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  padding: 1rem;
-  z-index: 1000;
-  display: none;
-}
-
-.notifications-popup.show {
-  display: block;
-}
-
 /* Status Timeline Styles */
 .collection-status-container {
   display: grid;
@@ -238,7 +191,7 @@ a {
 }
 
 .status-step:not(:last-child)::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 30px;
   left: 15px;

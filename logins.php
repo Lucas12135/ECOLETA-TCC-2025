@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - Escolha o tipo</title>
+    <title>Login - Escolha o tipo</title>
     <link rel="icon" href="img/logo.png" type="image/png">
     <link rel="stylesheet" href="CSS/index.css">
     <link rel="stylesheet" href="CSS/login.css">
@@ -19,7 +19,7 @@
                 <div class="logo-placeholder">
                     <img src="img/logo.png" alt="Logo" />
                 </div>
-                <span class="logo-text">Portal de Cadastro</span>
+                <span class="logo-text">Portal de Login</span>
             </div>
             <nav>
                 <a href="cadastros.php" class="btn-outline">Cadastrar</a>
@@ -96,8 +96,8 @@
         <div class="cadastros-grid">
             <article class="cadastro-card cadastro-gerador">
                 <div class="card-content">
-                    <h2>Gerador de Óleo</h2>
-                    <p>Sou um gerador de óleo e quero acessar minha conta.</p>
+                    <h2>Produtor de Óleo usado</h2>
+                    <p>Sou um produtor de óleo usado e quero acessar minha conta.</p>
                 </div>
                 <div class="card-actions">
                     <a href="LOGINS/login-gerador/login.php" class="card-cta">Entrar</a>

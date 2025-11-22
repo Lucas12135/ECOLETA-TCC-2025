@@ -1,25 +1,4 @@
-// Gerenciamento do popup de notificações
-document.addEventListener("DOMContentLoaded", function () {
-  const notificationBtn = document.querySelector(".notification-btn");
-  const notificationsPopup = document.querySelector(".notifications-popup");
-
-  // Fechar popup quando clicar fora dele
-  document.addEventListener("click", function (event) {
-    const isClickInsidePopup = notificationsPopup.contains(event.target);
-    const isClickOnButton = notificationBtn.contains(event.target);
-
-    if (!isClickInsidePopup && !isClickOnButton) {
-      notificationsPopup.classList.remove("show");
-    }
-  });
-
-  // Toggle do popup ao clicar no botão
-  notificationBtn.addEventListener("click", function (event) {
-    event.stopPropagation();
-    notificationsPopup.classList.toggle("show");
-  });
-
-  // Inicialização do mapa (substitua com sua chave API)
+// Inicialização do mapa
   function initMap() {
     const map = new google.maps.Map(document.getElementById("map"), {
       center: { lat: -23.55052, lng: -46.633308 }, // Coordenadas de São Paulo

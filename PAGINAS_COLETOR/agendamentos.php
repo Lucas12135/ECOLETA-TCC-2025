@@ -49,7 +49,8 @@ try {
 }
 
 // Função auxiliar para formatar período
-function formatarPeriodo($periodo) {
+function formatarPeriodo($periodo)
+{
     $periodos = [
         'manha' => 'Manhã (8h - 12h)',
         'tarde' => 'Tarde (13h - 17h)'
@@ -58,7 +59,8 @@ function formatarPeriodo($periodo) {
 }
 
 // Função auxiliar para formatar data
-function formatarData($data) {
+function formatarData($data)
+{
     return date('d/m/Y', strtotime($data));
 }
 ?>
@@ -143,47 +145,6 @@ function formatarData($data) {
                     <p>Gerencie suas solicitações e agendamentos de coleta</p>
                 </div>
                 <div class="header-actions">
-                    <div class="action-buttons">
-                        <button class="notification-btn" title="Notificações">
-                            <i class="ri-notification-3-line"></i>
-                            <span class="notification-badge">3</span>
-                        </button>
-                        <!-- Popup de Notificações -->
-                        <div class="notifications-popup">
-                            <div class="notifications-header">
-                                <h3>Notificações</h3>
-                            </div>
-                            <div class="notification-list">
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-calendar-check-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Nova coleta agendada para hoje às 14:30</p>
-                                            <span class="notification-time">Há 5 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-map-pin-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Alteração no endereço de coleta - Rua das Palmeiras, 789</p>
-                                            <span class="notification-time">Há 30 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-message-3-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Mensagem do gerador sobre a coleta #123</p>
-                                            <span class="notification-time">Há 1 hora</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </header>
             <div class="agendamento-content">
@@ -372,268 +333,269 @@ function formatarData($data) {
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
     <script src="../JS/agendamentos.js"></script>
     <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
         </div>
-    </div>
-
-    <script src="../JS/libras.js"></script>   
-    <script src="../JS/navbar.js"></script>
-    
-    <!-- Modal para Concluir Coleta -->
-    <div id="modalConcluir" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Concluir Coleta</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="formConcluirColeta">
-                    <div class="form-group">
-                        <label for="coleta_id_input">ID da Coleta</label>
-                        <input type="text" id="coleta_id_input" disabled>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="quantidade_coletada">Quantidade de Óleo Coletada (litros)</label>
-                        <input type="number" id="quantidade_coletada" name="quantidade_coletada" min="0" step="0.5" required placeholder="Digite a quantidade coletada" max="999">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="observacoes_coleta">Observações da Coleta (opcional)</label>
-                        <textarea id="observacoes_coleta" name="observacoes_coleta" rows="3" placeholder="Ex.: Local de armazenamento, condições do óleo, etc."></textarea>
-                    </div>
-                    
-                    <input type="hidden" id="hidden_coleta_id" name="id_coleta">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="btnCancelarModal">Cancelar</button>
-                <button class="btn btn-primary" id="btnConfirmarConclusao">Concluir Coleta</button>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal para Confirmação Geral -->
-    <div id="modalConfirmacao" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalConfirmacaoTitulo">Confirmação</h2>
-                <button class="modal-close" data-modal="modalConfirmacao">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p id="modalConfirmacaoMensagem"></p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="btnCancelarConfirmacao">Cancelar</button>
-                <button class="btn btn-primary" id="btnConfirmarAcao">Confirmar</button>
+        <script src="../JS/libras.js"></script>
+        <script src="../JS/navbar.js"></script>
+
+        <!-- Modal para Concluir Coleta -->
+        <div id="modalConcluir" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Concluir Coleta</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formConcluirColeta">
+                        <div class="form-group">
+                            <label for="coleta_id_input">ID da Coleta</label>
+                            <input type="text" id="coleta_id_input" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantidade_coletada">Quantidade de Óleo Coletada (litros)</label>
+                            <input type="number" id="quantidade_coletada" name="quantidade_coletada" min="0" step="0.5" required placeholder="Digite a quantidade coletada" max="999">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="observacoes_coleta">Observações da Coleta (opcional)</label>
+                            <textarea id="observacoes_coleta" name="observacoes_coleta" rows="3" placeholder="Ex.: Local de armazenamento, condições do óleo, etc."></textarea>
+                        </div>
+
+                        <input type="hidden" id="hidden_coleta_id" name="id_coleta">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btnCancelarModal">Cancelar</button>
+                    <button class="btn btn-primary" id="btnConfirmarConclusao">Concluir Coleta</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Modal para Sucesso/Erro -->
-    <div id="modalResultado" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalResultadoTitulo">Sucesso</h2>
-                <button class="modal-close" data-modal="modalResultado">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="modalResultadoConteudo"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" id="btnFecharResultado">Fechar</button>
+        <!-- Modal para Confirmação Geral -->
+        <div id="modalConfirmacao" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalConfirmacaoTitulo">Confirmação</h2>
+                    <button class="modal-close" data-modal="modalConfirmacao">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalConfirmacaoMensagem"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btnCancelarConfirmacao">Cancelar</button>
+                    <button class="btn btn-primary" id="btnConfirmarAcao">Confirmar</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-            animation: fadeIn 0.3s ease;
-        }
+        <!-- Modal para Sucesso/Erro -->
+        <div id="modalResultado" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalResultadoTitulo">Sucesso</h2>
+                    <button class="modal-close" data-modal="modalResultado">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="modalResultadoConteudo"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="btnFecharResultado">Fechar</button>
+                </div>
+            </div>
+        </div>
 
-        .modal.show {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            padding: 0;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-            font-size: 20px;
-            color: #333;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #999;
-            transition: color 0.3s;
-        }
-
-        .modal-close:hover {
-            color: #333;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .modal-body .form-group {
-            margin-bottom: 15px;
-        }
-
-        .modal-body label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .modal-body input[type="text"],
-        .modal-body input[type="number"],
-        .modal-body textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: inherit;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-
-        .modal-body input[type="text"]:disabled {
-            background-color: #f5f5f5;
-            cursor: not-allowed;
-        }
-
-        .modal-body input[type="text"]:focus,
-        .modal-body input[type="number"]:focus,
-        .modal-body textarea:focus {
-            outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-        }
-
-        .modal-body p {
-            margin: 0;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .modal-footer {
-            padding: 20px;
-            border-top: 1px solid #e0e0e0;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        .modal-footer .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .modal-footer .btn-secondary {
-            background-color: #f0f0f0;
-            color: #333;
-        }
-
-        .modal-footer .btn-secondary:hover {
-            background-color: #e0e0e0;
-        }
-
-        .modal-footer .btn-primary {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .modal-footer .btn-primary:hover {
-            background-color: #45a049;
-        }
-
-        .modal-resultado-sucesso {
-            background-color: #f1f8f4;
-            border-left: 4px solid #4CAF50;
-            padding: 15px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-resultado-sucesso i {
-            color: #4CAF50;
-            font-size: 24px;
-        }
-
-        .modal-resultado-erro {
-            background-color: #fef1f1;
-            border-left: 4px solid #f44336;
-            padding: 15px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-resultado-erro i {
-            color: #f44336;
-            font-size: 24px;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
+        <style>
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.4);
+                animation: fadeIn 0.3s ease;
             }
-            to {
-                opacity: 1;
+
+            .modal.show {
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
-        }
-    </style>
+
+            .modal-content {
+                background-color: #fefefe;
+                padding: 0;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                border-bottom: 1px solid #e0e0e0;
+            }
+
+            .modal-header h2 {
+                margin: 0;
+                font-size: 20px;
+                color: #333;
+            }
+
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 28px;
+                cursor: pointer;
+                color: #999;
+                transition: color 0.3s;
+            }
+
+            .modal-close:hover {
+                color: #333;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-body .form-group {
+                margin-bottom: 15px;
+            }
+
+            .modal-body label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                color: #333;
+                font-size: 14px;
+            }
+
+            .modal-body input[type="text"],
+            .modal-body input[type="number"],
+            .modal-body textarea {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-family: inherit;
+                font-size: 14px;
+                box-sizing: border-box;
+            }
+
+            .modal-body input[type="text"]:disabled {
+                background-color: #f5f5f5;
+                cursor: not-allowed;
+            }
+
+            .modal-body input[type="text"]:focus,
+            .modal-body input[type="number"]:focus,
+            .modal-body textarea:focus {
+                outline: none;
+                border-color: #4CAF50;
+                box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+            }
+
+            .modal-body p {
+                margin: 0;
+                color: #333;
+                line-height: 1.6;
+            }
+
+            .modal-footer {
+                padding: 20px;
+                border-top: 1px solid #e0e0e0;
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+            }
+
+            .modal-footer .btn {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s;
+            }
+
+            .modal-footer .btn-secondary {
+                background-color: #f0f0f0;
+                color: #333;
+            }
+
+            .modal-footer .btn-secondary:hover {
+                background-color: #e0e0e0;
+            }
+
+            .modal-footer .btn-primary {
+                background-color: #4CAF50;
+                color: white;
+            }
+
+            .modal-footer .btn-primary:hover {
+                background-color: #45a049;
+            }
+
+            .modal-resultado-sucesso {
+                background-color: #f1f8f4;
+                border-left: 4px solid #4CAF50;
+                padding: 15px;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .modal-resultado-sucesso i {
+                color: #4CAF50;
+                font-size: 24px;
+            }
+
+            .modal-resultado-erro {
+                background-color: #fef1f1;
+                border-left: 4px solid #f44336;
+                padding: 15px;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .modal-resultado-erro i {
+                color: #f44336;
+                font-size: 24px;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+        </style>
 </body>
 
 </html>

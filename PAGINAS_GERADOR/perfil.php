@@ -98,7 +98,6 @@ try {
             'foto_perfil'   => null,
         ];
     }
-
 } catch (Throwable $e) {
     // Em produção, logue o erro
     // error_log($e->getMessage());
@@ -120,10 +119,14 @@ try {
     ];
 }
 
-function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); } 
+function e($v)
+{
+    return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -189,7 +192,7 @@ function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                             <span>Suporte</span>
                         </a>
                     </li>
-                
+
                 </ul>
             </nav>
         </header>
@@ -201,7 +204,7 @@ function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                 <div class="profile-cover">
                     <div class="profile-photo-container">
                         <?php
-                          $foto = $gerador['foto_perfil'] ? '../uploads/profile_photos/' . htmlspecialchars($gerador['foto_perfil']) : '../img/profile-placeholder.jpg';
+                        $foto = $gerador['foto_perfil'] ? '../uploads/profile_photos/' . htmlspecialchars($gerador['foto_perfil']) : '../img/profile-placeholder.jpg';
                         ?>
                         <img src="<?= e($foto) ?>" alt="Foto de Perfil" id="profilePhoto" class="profile-photo">
                         <button class="change-photo-btn" onclick="document.getElementById('photoInput').click()">
@@ -212,7 +215,7 @@ function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                 </div>
                 <div class="profile-info">
                     <h1><?= e($gerador['nome_completo'] ?? 'Nome do Usuário') ?></h1>
-                    <p class="user-type">Gerador de Óleo</p>
+                    <p class="user-type">Produtor de Óleo usado</p>
                     <?php if (!empty($erroConexao ?? '')): ?>
                         <div class="input-error" style="margin-top:.5rem;"><?= e($erroConexao) ?></div>
                     <?php endif; ?>
@@ -252,44 +255,157 @@ function e($v) { return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
                 <!-- Ações -->
                 <div class="profile-actions">
                     <!-- No modo de visualização, apenas botões utilitários -->
-                    <a href="configuracoes.php" class="btn btn-primary">Editar Perfil</a>
+                    <button class="btn-edit-profile">
+                        <i class="ri-edit-line"></i>
+                        Editar Perfil
+                    </button>
                     <a href="../logout.php" class="btn btn-secondary">Sair</a>
                 </div>
             </div>
         </main>
     </div>
     <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-<div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
+        </div>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
         </div>
     </div>
 
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal-btn">&times;</button>
+            <h2>Editar Perfil</h2>
+
+            <form id="editProfileForm">
+                <!-- Preview e Input de Foto -->
+                <div class="form-group">
+                    <label>Foto de Perfil</label>
+                    <div class="foto-preview-container">
+                        <img id="previewFoto" src="<?php echo htmlspecialchars($foto); ?>" alt="Preview da foto" class="foto-preview">
+                    </div>
+                    <input type="file" id="fotoInput" accept="image/*" style="margin-top: 10px;">
+                    <small style="display: block; margin-top: 5px; color: #666;">Formatos aceitos: JPG, PNG (máx. 2MB)</small>
+                </div>
+
+                <!-- Nome Completo -->
+                <div class="form-group">
+                    <label for="nomePerfil">Nome Completo</label>
+                    <input type="text" id="nomePerfil" value="<?php echo htmlspecialchars($_SESSION['nome']); ?>" required>
+                </div>
+
+                <!-- Botões -->
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="document.getElementById('editProfileModal').style.display='none'">Cancelar</button>
+                    <button type="submit" class="btn-save">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>
-    // Stubs dos seus scripts
-    function toggleMobileMenu(){ document.body.classList.toggle('menu-open'); }
-    function updateProfilePhoto(input){
-        if (!input.files || !input.files[0]) return;
-        const reader = new FileReader();
-        reader.onload = e => { document.getElementById('profilePhoto').src = e.target.result; };
-        reader.readAsDataURL(input.files[0]);
-        // Obs.: upload real deve ser feito via form + PHP
-    }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Botão de editar perfil
+            const editBtn = document.querySelector('.btn-edit-profile');
+            const editModal = document.getElementById('editProfileModal');
+            const closeModalBtn = document.querySelector('.close-modal-btn');
+            const editForm = document.getElementById('editProfileForm');
+            const previewFoto = document.getElementById('previewFoto');
+            const fotoInput = document.getElementById('fotoInput');
+
+            // Abrir modal
+            editBtn.addEventListener('click', function() {
+                editModal.style.display = 'block';
+            });
+
+            // Fechar modal
+            closeModalBtn.addEventListener('click', function() {
+                editModal.style.display = 'none';
+            });
+
+            // Fechar modal ao clicar fora
+            window.addEventListener('click', function(event) {
+                if (event.target === editModal) {
+                    editModal.style.display = 'none';
+                }
+            });
+
+            // Preview da foto antes de salvar
+            fotoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        previewFoto.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Salvar alterações
+            editForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData();
+                formData.append('nome_completo', document.getElementById('nomePerfil').value);
+
+                // Se uma nova foto foi selecionada
+                if (fotoInput.files.length > 0) {
+                    formData.append('foto', fotoInput.files[0]);
+                }
+
+                try {
+                    const response = await fetch('../BANCO/update_profile.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        alert('Perfil atualizado com sucesso!');
+                        editModal.style.display = 'none';
+                        // Recarregar página para mostrar as alterações
+                        location.reload();
+                    } else {
+                        alert('Erro ao atualizar perfil: ' + data.message);
+                    }
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alert('Erro ao atualizar perfil');
+                }
+            });
+        });
+        
+        // Stubs dos seus scripts
+        function toggleMobileMenu() {
+            document.body.classList.toggle('menu-open');
+        }
+
+        function updateProfilePhoto(input) {
+            if (!input.files || !input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('profilePhoto').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+            // Obs.: upload real deve ser feito via form + PHP
+        }
     </script>
     <script src="../JS/navbar.js"></script>
     <script src="../JS/perfil.js"></script>
     <script src="../JS/libras.js"></script>
 </body>
+
 </html>

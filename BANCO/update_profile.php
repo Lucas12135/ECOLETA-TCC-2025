@@ -10,6 +10,8 @@ if (!isset($_SESSION['id_usuario'])) {
 
 require_once 'conexao.php';
 
+// Detectar tabela correta
+$tabela = ($_SESSION['tipo_usuario'] === 'gerador') ? 'geradores' : 'coletores';
 $id_usuario = $_SESSION['id_usuario'];
 $nome_completo = isset($_POST['nome_completo']) ? trim($_POST['nome_completo']) : null;
 $foto_perfil = null;
@@ -54,7 +56,7 @@ try {
         }
 
         // Deletar foto antiga se existir
-        $query = $conn->prepare("SELECT foto_perfil FROM coletores WHERE id = ?");
+        $query = $conn->prepare("SELECT foto_perfil FROM $tabela WHERE id = ?");
         $query->execute([$id_usuario]);
         $result = $query->fetch(PDO::FETCH_ASSOC);
 
@@ -89,7 +91,7 @@ try {
     $params[] = $id_usuario;
 
     // Executar update
-    $sql = "UPDATE coletores SET " . implode(", ", $updates) . " WHERE id = ?";
+    $sql = "UPDATE $tabela SET " . implode(", ", $updates) . " WHERE id = ?";
     $query = $conn->prepare($sql);
     $query->execute($params);
 

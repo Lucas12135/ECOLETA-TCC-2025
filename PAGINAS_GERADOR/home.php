@@ -2,9 +2,9 @@
 session_start();
 
 // Extrai primeiro e último nome
-$nomeCompleto = $_SESSION['nome_usuario'] ?? 'Gerador';
+$nomeCompleto = $_SESSION['nome_usuario'] ?? 'Produtor de Óleo usado';
 $nomePartes = explode(' ', trim($nomeCompleto));
-$primeiroNome = $nomePartes[0] ?? 'Gerador';
+$primeiroNome = $nomePartes[0] ?? 'Produtor';
 $ultimoNome = end($nomePartes);
 ?>
 <!DOCTYPE html>
@@ -90,40 +90,6 @@ $ultimoNome = end($nomePartes);
                     <h1>Olá, <?php echo htmlspecialchars($primeiroNome) . ' ' . htmlspecialchars($ultimoNome); ?>!</h1>
                     <p>Gerencie suas solicitações de coleta de óleo</p>
                 </div>
-                <div class="header-actions">
-                    <div class="action-buttons">
-                        <button class="notification-btn" title="Notificações">
-                            <i class="ri-notification-3-line"></i>
-                            <span class="notification-badge">2</span>
-                        </button>
-                        <!-- Popup de Notificações -->
-                        <div class="notifications-popup">
-                            <div class="notifications-header">
-                                <h3>Notificações</h3>
-                            </div>
-                            <div class="notification-list">
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-check-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Sua solicitação de coleta foi aceita!</p>
-                                            <span class="notification-time">Há 1 hora</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-time-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Coleta agendada para amanhã às 14:00</p>
-                                            <span class="notification-time">Há 2 horas</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </header>
 
             <!-- Cards de Informações -->
@@ -164,7 +130,7 @@ $ultimoNome = end($nomePartes);
             <!-- Status da Coleta Atual -->
             <div class="collection-status-container">
                 <div class="status-tracking">
-                    <h3>Status da Coleta Atual</h3>
+                    <h3>Situação da Coleta Atual</h3>
                     <div class="status-timeline">
                         <div class="status-step completed">
                             <div class="step-icon">

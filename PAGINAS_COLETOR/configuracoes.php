@@ -67,7 +67,159 @@ function getDisponibilidadeDia($horarios, $dia)
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Biblioteca de ícones -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-</head>
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #f5f5f5;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .close-modal-btn:hover {
+            color: #2ecc71;
+        }
+
+        .modal .form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .modal .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .modal .form-group input:focus {
+            outline: none;
+            border-color: #2ecc71;
+            box-shadow: 0 0 5px rgba(46, 204, 113, 0.3);
+        }
+
+        .password-hint {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #ffebee;
+            border-radius: 5px;
+            border-left: 3px solid #d32f2f;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .btn-cancel,
+        .btn-save {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        .btn-cancel:hover {
+            background-color: #ccc;
+        }
+
+        .btn-save {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background-color: #27ae60;
+        }
+
+        .change-password-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .change-password-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.3);
+        }
+
+        .change-password-btn i {
+            font-size: 1.1rem;
+        }
+    </style>
+
 
 <body>
     <div class="container">
@@ -133,50 +285,12 @@ function getDisponibilidadeDia($horarios, $dia)
                     <p>Gerencie suas preferências e configurações aqui</p>
                 </div>
                 <div class="header-actions">
-                    <div class="action-buttons">
-                        <button class="notification-btn" title="Notificações">
-                            <i class="ri-notification-3-line"></i>
-                            <span class="notification-badge">3</span>
-                        </button>
-                        <!-- Popup de Notificações -->
-                        <div class="notifications-popup">
-                            <div class="notifications-header">
-                                <h3>Notificações</h3>
-                            </div>
-                            <div class="notification-list">
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-calendar-check-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Nova coleta agendada para hoje às 14:30</p>
-                                            <span class="notification-time">Há 5 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-map-pin-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Alteração no endereço de coleta - Rua das Palmeiras, 789</p>
-                                            <span class="notification-time">Há 30 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-message-3-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Mensagem do gerador sobre a coleta #123</p>
-                                            <span class="notification-time">Há 1 hora</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </header>
             <div class="settings-content">
+                <!-- Mensagem de Feedback -->
+                <div id="feedbackContainer"></div>
+
                 <!-- Status do Usuário -->
                 <div class="settings-section">
                     <h2>Disponibilidade</h2>
@@ -216,6 +330,12 @@ function getDisponibilidadeDia($horarios, $dia)
                             <label for="phone">Telefone</label>
                             <input type="tel" id="phone" value="<?php echo $coletor['telefone'] ?? ''; ?>">
                         </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <button type="button" class="change-password-btn" id="changePasswordBtn">
+                                <i class="ri-lock-line"></i> Alterar Senha
+                            </button>
+                        </div>
                     </form>
                 </div>
 
@@ -225,21 +345,21 @@ function getDisponibilidadeDia($horarios, $dia)
                     <div class="schedule-container">
                         <?php
                         foreach ($dias_semana as $dia_semana) :
-                        $dia = getDisponibilidadeDia($horarios, $dia_semana);
+                            $dia = getDisponibilidadeDia($horarios, $dia_semana);
                         ?>
-                        <div class="day-schedule">
-                            <!-- Checkbox ativado ou não -->
-                            <input type="checkbox" class="day-toggle" name="days[<?= $dia_semana ?>][active]"
-                                <?= ($dia && $dia['ativo']) ? 'checked' : '' ?>>
-                            <span class="day-name"><?= $dia_semana ?></span>
-                            <div class="time-inputs">
-                                <!-- Hora de abertura -->
-                                <input type="time" min="08:00" max="17:00" name="days[<?= $dia_semana ?>][open]" value="<?= $dia['hora_abertura'] ?? '08:00' ?>">
-                                <span>até</span>
-                                <!-- Hora de fechamento -->
-                                <input type="time" min="08:00" max="17:00" name="days[<?= $dia_semana ?>][close]" value="<?= $dia['hora_fechamento'] ?? '17:00' ?>">
+                            <div class="day-schedule">
+                                <!-- Checkbox ativado ou não -->
+                                <input type="checkbox" class="day-toggle" name="days[<?= $dia_semana ?>][active]"
+                                    <?= ($dia && $dia['ativo']) ? 'checked' : '' ?>>
+                                <span class="day-name"><?= $dia_semana ?></span>
+                                <div class="time-inputs">
+                                    <!-- Hora de abertura -->
+                                    <input type="time" min="08:00" max="17:00" name="days[<?= $dia_semana ?>][open]" value="<?= $dia['hora_abertura'] ?? '08:00' ?>">
+                                    <span>até</span>
+                                    <!-- Hora de fechamento -->
+                                    <input type="time" min="08:00" max="17:00" name="days[<?= $dia_semana ?>][close]" value="<?= $dia['hora_fechamento'] ?? '17:00' ?>">
+                                </div>
                             </div>
-                        </div>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -304,6 +424,34 @@ function getDisponibilidadeDia($horarios, $dia)
                 </div>
             </div>
         </main>
+
+        <!-- Modal de Alterar Senha -->
+        <div id="changePasswordModal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2>Alterar Senha</h2>
+
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="newPassword">Nova Senha</label>
+                        <input type="password" id="newPassword" name="newPassword" placeholder="Digite sua nova senha" required>
+                        <small class="password-hint">Mínimo 8 caracteres, incluindo maiúscula, minúscula, número e caractere especial</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar Nova Senha</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirme sua nova senha" required>
+                    </div>
+
+                    <div id="passwordError" class="error-message" style="display: none;"></div>
+
+                    <div class="modal-buttons">
+                        <button type="button" class="btn-cancel" onclick="document.getElementById('changePasswordModal').style.display='none'">Cancelar</button>
+                        <button type="submit" class="btn-save">Alterar Senha</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="right">
         <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
@@ -327,6 +475,146 @@ function getDisponibilidadeDia($horarios, $dia)
         <script src="../JS/configuracoes.js"></script>
         <script src="../JS/navbar.js"></script>
         <script src="../JS/libras.js"></script>
+        <script>
+            // Modal de Alterar Senha
+            document.addEventListener('DOMContentLoaded', function() {
+                const changePasswordBtn = document.getElementById('changePasswordBtn');
+                const changePasswordModal = document.getElementById('changePasswordModal');
+                const closeModalBtn = document.querySelector('.close-modal-btn');
+                const changePasswordForm = document.getElementById('changePasswordForm');
+                const passwordError = document.getElementById('passwordError');
+                const newPasswordInput = document.getElementById('newPassword');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
+
+                // Abrir modal
+                if (changePasswordBtn) {
+                    changePasswordBtn.addEventListener('click', function() {
+                        changePasswordModal.style.display = 'block';
+                        newPasswordInput.focus();
+                    });
+                }
+
+                // Fechar modal ao clicar no X
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', function() {
+                        changePasswordModal.style.display = 'none';
+                        passwordError.style.display = 'none';
+                    });
+                }
+
+                // Fechar modal ao clicar fora
+                window.addEventListener('click', function(event) {
+                    if (event.target === changePasswordModal) {
+                        changePasswordModal.style.display = 'none';
+                        passwordError.style.display = 'none';
+                    }
+                });
+
+                // Validar e enviar senha
+                if (changePasswordForm) {
+                    changePasswordForm.addEventListener('submit', async function(e) {
+                        e.preventDefault();
+
+                        const newPassword = newPasswordInput.value.trim();
+                        const confirmPassword = confirmPasswordInput.value.trim();
+
+                        // Limpar mensagem de erro anterior
+                        passwordError.style.display = 'none';
+                        passwordError.textContent = '';
+
+                        // Validações
+                        if (newPassword.length < 8) {
+                            showError('A senha deve ter no mínimo 8 caracteres.');
+                            return;
+                        }
+
+                        if (!/[A-Z]/.test(newPassword)) {
+                            showError('A senha deve conter pelo menos uma letra maiúscula.');
+                            return;
+                        }
+
+                        if (!/[a-z]/.test(newPassword)) {
+                            showError('A senha deve conter pelo menos uma letra minúscula.');
+                            return;
+                        }
+
+                        if (!/[0-9]/.test(newPassword)) {
+                            showError('A senha deve conter pelo menos um número.');
+                            return;
+                        }
+
+                        if (!/[^A-Za-z0-9]/.test(newPassword)) {
+                            showError('A senha deve conter pelo menos um caractere especial.');
+                            return;
+                        }
+
+                        if (newPassword !== confirmPassword) {
+                            showError('As senhas não coincidem. Tente novamente.');
+                            return;
+                        }
+
+                        // Enviar para backend
+                        try {
+                            const response = await fetch('../BANCO/change_password.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: new URLSearchParams({
+                                    nova_senha: newPassword
+                                })
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                alert('Senha alterada com sucesso!');
+                                changePasswordModal.style.display = 'none';
+                                changePasswordForm.reset();
+                            } else {
+                                showError(data.message || 'Erro ao alterar a senha.');
+                            }
+                        } catch (error) {
+                            showError('Erro de conexão ao alterar a senha.');
+                            console.error('Erro:', error);
+                        }
+                    });
+                }
+
+                function showError(message) {
+                    passwordError.textContent = message;
+                    passwordError.style.display = 'block';
+                }
+
+                // Função para mostrar notificação de feedback
+                function showNotification(message, type) {
+                    // Remover notificação anterior se existir
+                    const existingMessage = document.querySelector('.feedback-message');
+                    if (existingMessage) {
+                        existingMessage.remove();
+                    }
+
+                    // Criar novo elemento de notificação
+                    const notification = document.createElement('div');
+                    notification.className = `feedback-message ${type}`;
+                    notification.innerHTML = `
+                        <i class="ri-${type === 'sucesso' ? 'check-line' : 'alert-line'}"></i>
+                        <span>${message}</span>
+                    `;
+
+                    // Inserir após o header
+                    const header = document.querySelector('.content-header');
+                    header.parentElement.insertBefore(notification, header.nextSibling);
+
+                    // Auto-hide após 5 segundos
+                    setTimeout(() => {
+                        notification.style.opacity = '0';
+                        notification.style.transition = 'opacity 0.3s ease-out';
+                        setTimeout(() => notification.remove(), 300);
+                    }, 5000);
+                }
+            });
+        </script>
 </body>
 
 </html>

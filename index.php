@@ -266,11 +266,6 @@ $ultimoNome = end($nomePartes);
                     <h3>Comunicação Padronizada.</h3>
                     <p>O app padroniza a comunicação da solicitação. O consumidor indica o material por meio de menus estruturados, e o coletor recebe a informação de forma clara e objetiva, minimizando erros e mal-entendidos.</p>
                 </div>
-
-                <div class="feature-card">
-                    <h3>Sistema de Notificação Push.</h3>
-                    <p>Utilizar notificações para alertar o coletor sobre novas demandas em sua área e para informar o consumidor sobre o status da coleta (coletor a caminho, coleta realizada). Isso garante a agilidade da transação.</p>
-                </div>
             </section>
         </div>
         </div>

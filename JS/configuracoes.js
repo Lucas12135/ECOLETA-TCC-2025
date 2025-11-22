@@ -447,23 +447,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // Notificações
-  const notificationBtn = document.querySelector(".notification-btn");
-  const notificationsPopup = document.querySelector(".notifications-popup");
-
-  document.addEventListener("click", function (event) {
-    const isClickInsidePopup = notificationsPopup.contains(event.target);
-    const isClickOnButton = notificationBtn.contains(event.target);
-
-    if (!isClickInsidePopup && !isClickOnButton) {
-      notificationsPopup.classList.remove("show");
-    }
-  });
-
-  notificationBtn.addEventListener("click", function (event) {
-    event.stopPropagation();
-    notificationsPopup.classList.toggle("show");
-  });
-
   // CEP - Máscara e Busca
   const cepInput = document.getElementById("cep");
   if (cepInput) {

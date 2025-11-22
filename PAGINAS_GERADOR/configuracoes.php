@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!empty($_POST['email']) || !empty($_POST['telefone'])) {
             $email = $_POST['email'] ?? '';
             $telefone = $_POST['telefone'] ?? '';
-            
+
             $sql_update = "UPDATE geradores SET email = :email, telefone = :telefone WHERE id = :id";
             $stmt_update = $conn->prepare($sql_update);
             $stmt_update->bindParam(':email', $email);
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                  VALUES (:id, :email, :push)";
             $stmt_config = $conn->prepare($sql_config_update);
         }
-        
+
         $stmt_config->bindParam(':id', $id_gerador, PDO::PARAM_INT);
         $stmt_config->bindParam(':email', $notif_email, PDO::PARAM_INT);
         $stmt_config->bindParam(':push', $notif_push, PDO::PARAM_INT);
@@ -197,53 +197,21 @@ if (!$config) {
                     <p>Gerencie suas preferências e configurações aqui</p>
                 </div>
                 <div class="header-actions">
-                    <div class="action-buttons">
-                        <button class="notification-btn" title="Notificações">
-                            <i class="ri-notification-3-line"></i>
-                            <span class="notification-badge">2</span>
-                        </button>
-                        <!-- Popup de Notificações -->
-                        <div class="notifications-popup">
-                            <div class="notifications-header">
-                                <h3>Notificações</h3>
-                            </div>
-                            <div class="notification-list">
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-check-double-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Sua coleta foi confirmada para amanhã às 10:00</p>
-                                            <span class="notification-time">Há 15 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-truck-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Coletor a caminho do seu endereço</p>
-                                            <span class="notification-time">Há 1 hora</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </header>
             <div class="settings-content">
                 <!-- Mensagem de Feedback -->
                 <?php if ($mensagem): ?>
-                <div class="feedback-message <?php echo $tipo_mensagem; ?>">
-                    <i class="ri-<?php echo $tipo_mensagem === 'sucesso' ? 'check-line' : 'alert-line'; ?>"></i>
-                    <span><?php echo $mensagem; ?></span>
-                </div>
+                    <div class="feedback-message <?php echo $tipo_mensagem; ?>">
+                        <i class="ri-<?php echo $tipo_mensagem === 'sucesso' ? 'check-line' : 'alert-line'; ?>"></i>
+                        <span><?php echo $mensagem; ?></span>
+                    </div>
                 <?php endif; ?>
 
                 <!-- Informações da Conta -->
                 <div class="settings-section">
                     <h2>Informações da Conta</h2>
-                    <form class="settings-form" method="POST" action="">
+                    <form class="settings-form">
                         <div class="form-group">
                             <label for="email">E-mail</label>
                             <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($gerador['email'] ?? ''); ?>">
@@ -253,274 +221,347 @@ if (!$config) {
                             <input type="tel" id="phone" name="telefone" value="<?php echo htmlspecialchars($gerador['telefone'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
-                            <label for="new-password">Nova Senha</label>
-                            <input type="password" id="new-password" name="new-password">
-                        </div>
-                        <div class="form-group">
-                            <label for="confirm-password">Confirmar Nova Senha</label>
-                            <input type="password" id="confirm-password" name="confirm-password">
+                            <label>Senha</label>
+                            <button type="button" class="change-password-btn" id="changePasswordBtn">
+                                <i class="ri-lock-line"></i> Alterar Senha
+                            </button>
                         </div>
                     </form>
                 </div>
 
-                <!-- Endereço de Coleta Padrão -->
+                <!-- Endereço -->
                 <div class="settings-section">
-                    <h2>Endereço de Coleta Padrão</h2>
-                    <form class="settings-form" method="POST" action="">
+                    <h2>Seu Endereço</h2>
+                    <form class="settings-form">
                         <div class="form-group">
                             <label for="cep">CEP</label>
-                            <input type="text" id="cep" name="cep" placeholder="00000-000" value="<?php echo htmlspecialchars($gerador['cep'] ?? ''); ?>">
+                            <input type="text" id="cep" placeholder="00000-000" value="<?php echo htmlspecialchars($gerador['cep'] ?? ''); ?>" maxlength="9">
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="rua">Rua</label>
-                                <input type="text" id="rua" name="rua" placeholder="Nome da rua" value="<?php echo htmlspecialchars($gerador['rua'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="numero">Número</label>
-                                <input type="text" id="numero" name="numero" placeholder="Nº" value="<?php echo htmlspecialchars($gerador['numero'] ?? ''); ?>">
-                            </div>
+                        <div class="form-group">
+                            <label for="rua">Rua</label>
+                            <input type="text" id="rua" placeholder="Rua das Flores" value="<?php echo htmlspecialchars($gerador['rua'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="numero">Número</label>
+                            <input type="text" id="numero" placeholder="123" value="<?php echo htmlspecialchars($gerador['numero'] ?? ''); ?>">
                         </div>
                         <div class="form-group">
                             <label for="complemento">Complemento</label>
-                            <input type="text" id="complemento" name="complemento" placeholder="Apto, bloco, etc (opcional)" value="<?php echo htmlspecialchars($gerador['complemento'] ?? ''); ?>">
+                            <input type="text" id="complemento" placeholder="Apto 456, Fundos" value="<?php echo htmlspecialchars($gerador['complemento'] ?? ''); ?>">
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="bairro">Bairro</label>
-                                <input type="text" id="bairro" name="bairro" placeholder="Bairro" value="<?php echo htmlspecialchars($gerador['bairro'] ?? ''); ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="cidade">Cidade</label>
-                                <input type="text" id="cidade" name="cidade" placeholder="Cidade" value="<?php echo htmlspecialchars($gerador['cidade'] ?? ''); ?>">
-                            </div>
+                        <div class="form-group">
+                            <label for="bairro">Bairro</label>
+                            <input type="text" id="bairro" placeholder="Centro" value="<?php echo htmlspecialchars($gerador['bairro'] ?? ''); ?>">
                         </div>
-                    </form>
-                </div>
-
-                <!-- Preferências de Notificação -->
-                <div class="settings-section">
-                    <h2>Preferências de Notificação</h2>
-                    <form method="POST" action="">
-                        <div class="notification-preferences">
-                            <div class="preference-item">
-                                <div class="preference-info">
-                                    <i class="ri-mail-line"></i>
-                                    <div>
-                                        <h3>Notificações por E-mail</h3>
-                                        <p>Receber atualizações sobre coletas por e-mail</p>
-                                    </div>
-                                </div>
-                                <label class="switch">
-                                    <input type="checkbox" id="notif_email" name="notif_email" <?php echo (!empty($config) && $config['notificacoes_email']) ? 'checked' : ''; ?>>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="preference-item">
-                                <div class="preference-info">
-                                    <i class="ri-smartphone-line"></i>
-                                    <div>
-                                        <h3>Notificações Push</h3>
-                                        <p>Receber notificações no navegador</p>
-                                    </div>
-                                </div>
-                                <label class="switch">
-                                    <input type="checkbox" id="notif_push" name="notif_push" <?php echo (!empty($config) && $config['notificacoes_push']) ? 'checked' : ''; ?>>
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" placeholder="São Paulo" value="<?php echo htmlspecialchars($gerador['cidade'] ?? ''); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <input type="text" id="estado" placeholder="SP" value="<?php echo htmlspecialchars($gerador['estado'] ?? ''); ?>" maxlength="2">
                         </div>
                     </form>
                 </div>
-
-                <!-- Horários Preferenciais -->
-                <div class="settings-section">
-                    <h2>Horários Preferenciais para Coleta</h2>
-                    <div class="schedule-container">
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="monday" checked>
-                            <span class="day-name">Segunda-feira</span>
-                            <div class="time-inputs">
-                                <input type="time" value="08:00">
-                                <span>até</span>
-                                <input type="time" value="18:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="tuesday" checked>
-                            <span class="day-name">Terça-feira</span>
-                            <div class="time-inputs">
-                                <input type="time" value="08:00">
-                                <span>até</span>
-                                <input type="time" value="18:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="wednesday" checked>
-                            <span class="day-name">Quarta-feira</span>
-                            <div class="time-inputs">
-                                <input type="time" value="08:00">
-                                <span>até</span>
-                                <input type="time" value="18:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="thursday" checked>
-                            <span class="day-name">Quinta-feira</span>
-                            <div class="time-inputs">
-                                <input type="time" value="08:00">
-                                <span>até</span>
-                                <input type="time" value="18:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="friday" checked>
-                            <span class="day-name">Sexta-feira</span>
-                            <div class="time-inputs">
-                                <input type="time" value="08:00">
-                                <span>até</span>
-                                <input type="time" value="18:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="saturday">
-                            <span class="day-name">Sábado</span>
-                            <div class="time-inputs">
-                                <input type="time" value="08:00">
-                                <span>até</span>
-                                <input type="time" value="12:00">
-                            </div>
-                        </div>
-                        <div class="day-schedule">
-                            <input type="checkbox" class="day-toggle" id="sunday">
-                            <span class="day-name">Domingo</span>
-                            <div class="time-inputs">
-                                <input type="time" value="08:00">
-                                <span>até</span>
-                                <input type="time" value="12:00">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quantidade Média de Óleo -->
-                <div class="settings-section">
-                    <h2>Quantidade Média de Óleo por Coleta</h2>
-                    <div class="oil-quantity">
-                        <div class="quantity-options">
-                            <div class="quantity-option active">
-                                <i class="ri-drop-line"></i>
-                                <span>Até 2L</span>
-                            </div>
-                            <div class="quantity-option">
-                                <i class="ri-contrast-drop-line"></i>
-                                <span>2L - 5L</span>
-                            </div>
-                            <div class="quantity-option">
-                                <i class="ri-contrast-drop-2-line"></i>
-                                <span>5L - 10L</span>
-                            </div>
-                            <div class="quantity-option">
-                                <i class="ri-drop-fill"></i>
-                                <span>Mais de 10L</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Botões de Ação -->
                 <div class="action-buttons">
-                    <form method="POST" action="" style="display: contents;">
-                        <button type="submit" class="save-btn">Salvar Alterações</button>
-                    </form>
-                    <button class="cancel-btn" onclick="location.reload()">Cancelar</button>
+                    <button class="save-btn">Salvar Alterações</button>
+                    <button class="cancel-btn">Cancelar</button>
                     <button class="logout-btn" onclick="window.location.href='../logout.php'"><i class="ri-logout-box-line"></i> Sair</button>
                 </div>
             </div>
         </main>
-    </div>
-    <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-<div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+
+        <!-- Modal de Alterar Senha -->
+        <div id="changePasswordModal" class="modal">
+            <div class="modal-content">
+                <button class="close-modal-btn">&times;</button>
+                <h2>Alterar Senha</h2>
+
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="newPassword">Nova Senha</label>
+                        <input type="password" id="newPassword" name="newPassword" placeholder="Digite sua nova senha" required>
+                        <small class="password-hint">Mínimo 8 caracteres, incluindo maiúscula, minúscula, número e caractere especial</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar Nova Senha</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirme sua nova senha" required>
+                    </div>
+
+                    <div id="passwordError" class="error-message" style="display: none;"></div>
+
+                    <div class="modal-buttons">
+                        <button type="button" class="btn-cancel" onclick="document.getElementById('changePasswordModal').style.display='none'">Cancelar</button>
+                        <button type="submit" class="btn-save">Alterar Senha</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+    <div class="right">
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
+        </div>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
 
 
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-hide feedback message after 5 seconds
-            const feedbackMessage = document.querySelector('.feedback-message');
-            if (feedbackMessage) {
-                setTimeout(() => {
-                    feedbackMessage.style.opacity = '0';
-                    feedbackMessage.style.transition = 'opacity 0.3s ease-out';
-                    setTimeout(() => feedbackMessage.remove(), 300);
-                }, 5000);
-            }
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Modal de Alterar Senha
+                const changePasswordBtn = document.getElementById('changePasswordBtn');
+                const changePasswordModal = document.getElementById('changePasswordModal');
+                const closeModalBtn = document.querySelector('.close-modal-btn');
+                const changePasswordForm = document.getElementById('changePasswordForm');
+                const passwordError = document.getElementById('passwordError');
+                const newPasswordInput = document.getElementById('newPassword');
+                const confirmPasswordInput = document.getElementById('confirmPassword');
 
-            // Quantity options
-            const quantityOptions = document.querySelectorAll('.quantity-option');
-            quantityOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    quantityOptions.forEach(opt => opt.classList.remove('active'));
-                    option.classList.add('active');
+                // Abrir modal
+                if (changePasswordBtn) {
+                    changePasswordBtn.addEventListener('click', function() {
+                        changePasswordModal.style.display = 'block';
+                        newPasswordInput.focus();
+                    });
+                }
+
+                // Fechar modal ao clicar no X
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', function() {
+                        changePasswordModal.style.display = 'none';
+                        passwordError.style.display = 'none';
+                    });
+                }
+
+                // Fechar modal ao clicar fora
+                window.addEventListener('click', function(event) {
+                    if (event.target === changePasswordModal) {
+                        changePasswordModal.style.display = 'none';
+                        passwordError.style.display = 'none';
+                    }
+                });
+
+                // Validar e enviar senha
+                if (changePasswordForm) {
+                    changePasswordForm.addEventListener('submit', async function(e) {
+                        e.preventDefault();
+
+                        const newPassword = newPasswordInput.value.trim();
+                        const confirmPassword = confirmPasswordInput.value.trim();
+
+                        // Limpar mensagem de erro anterior
+                        passwordError.style.display = 'none';
+                        passwordError.textContent = '';
+
+                        // Validações
+                        if (newPassword.length < 8) {
+                            showError('A senha deve ter no mínimo 8 caracteres.');
+                            return;
+                        }
+
+                        if (!/[A-Z]/.test(newPassword)) {
+                            showError('A senha deve conter pelo menos uma letra maiúscula.');
+                            return;
+                        }
+
+                        if (!/[a-z]/.test(newPassword)) {
+                            showError('A senha deve conter pelo menos uma letra minúscula.');
+                            return;
+                        }
+
+                        if (!/[0-9]/.test(newPassword)) {
+                            showError('A senha deve conter pelo menos um número.');
+                            return;
+                        }
+
+                        if (!/[^A-Za-z0-9]/.test(newPassword)) {
+                            showError('A senha deve conter pelo menos um caractere especial.');
+                            return;
+                        }
+
+                        if (newPassword !== confirmPassword) {
+                            showError('As senhas não coincidem. Tente novamente.');
+                            return;
+                        }
+
+                        // Enviar para backend
+                        try {
+                            const response = await fetch('../BANCO/change_password.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: new URLSearchParams({
+                                    nova_senha: newPassword
+                                })
+                            });
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                alert('Senha alterada com sucesso!');
+                                changePasswordModal.style.display = 'none';
+                                changePasswordForm.reset();
+                            } else {
+                                showError(data.message || 'Erro ao alterar a senha.');
+                            }
+                        } catch (error) {
+                            showError('Erro de conexão ao alterar a senha.');
+                            console.error('Erro:', error);
+                        }
+                    });
+                }
+
+                function showError(message) {
+                    passwordError.textContent = message;
+                    passwordError.style.display = 'block';
+                }
+
+                // Função para mostrar notificação de feedback
+                function showNotification(message, type) {
+                    // Remover notificação anterior se existir
+                    const existingMessage = document.querySelector('.feedback-message');
+                    if (existingMessage) {
+                        existingMessage.remove();
+                    }
+
+                    // Criar novo elemento de notificação
+                    const notification = document.createElement('div');
+                    notification.className = `feedback-message ${type}`;
+                    notification.innerHTML = `
+                        <i class="ri-${type === 'sucesso' ? 'check-line' : 'alert-line'}"></i>
+                        <span>${message}</span>
+                    `;
+
+                    // Inserir após o header
+                    const header = document.querySelector('.content-header');
+                    header.parentElement.insertBefore(notification, header.nextSibling);
+
+                    // Auto-hide após 5 segundos
+                    setTimeout(() => {
+                        notification.style.opacity = '0';
+                        notification.style.transition = 'opacity 0.3s ease-out';
+                        setTimeout(() => notification.remove(), 300);
+                    }, 5000);
+                }
+
+                // Função para salvar configurações
+                async function handleSaveSettings() {
+                    try {
+                        // Coletar dados de conta
+                        const email = document.getElementById('email')?.value || '';
+                        const phone = document.getElementById('phone')?.value || '';
+
+                        // Coletar dados de endereço
+                        const endereco = {
+                            cep: document.getElementById('cep')?.value || '',
+                            rua: document.getElementById('rua')?.value || '',
+                            numero: document.getElementById('numero')?.value || '',
+                            complemento: document.getElementById('complemento')?.value || '',
+                            bairro: document.getElementById('bairro')?.value || '',
+                            cidade: document.getElementById('cidade')?.value || '',
+                            estado: document.getElementById('estado')?.value || '',
+                        };
+
+                        // Preparar dados para envio
+                        const payload = {
+                            email,
+                            phone,
+                            endereco,
+                        };
+
+                        // Enviar para o servidor
+                        const response = await fetch('../BANCO/update_gerador_config.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(payload),
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            showNotification('Configurações salvas com sucesso!', 'sucesso');
+                        } else {
+                            showNotification(data.message || 'Erro ao salvar configurações', 'erro');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao salvar:', error);
+                        showNotification('Erro ao processar a solicitação', 'erro');
+                    }
+                }
+
+                // Botão Salvar Alterações
+                const saveBtn = document.querySelector('.save-btn');
+                if (saveBtn) {
+                    saveBtn.addEventListener('click', handleSaveSettings);
+                }
+
+                // Botão Cancelar
+                const cancelBtn = document.querySelector('.cancel-btn');
+                if (cancelBtn) {
+                    cancelBtn.addEventListener('click', function() {
+                        location.reload();
+                    });
+                }
+
+                // Auto-hide feedback message after 5 seconds
+                const feedbackMessage = document.querySelector('.feedback-message');
+                if (feedbackMessage) {
+                    setTimeout(() => {
+                        feedbackMessage.style.opacity = '0';
+                        feedbackMessage.style.transition = 'opacity 0.3s ease-out';
+                        setTimeout(() => feedbackMessage.remove(), 300);
+                    }, 5000);
+                }
+
+                // Quantity options
+                const quantityOptions = document.querySelectorAll('.quantity-option');
+                quantityOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        quantityOptions.forEach(opt => opt.classList.remove('active'));
+                        option.classList.add('active');
+                    });
+                });
+
+                // Day schedule toggles
+                const dayToggles = document.querySelectorAll('.day-toggle');
+                dayToggles.forEach(toggle => {
+                    toggle.addEventListener('change', (e) => {
+                        const timeInputs = e.target.parentElement.querySelector('.time-inputs');
+                        timeInputs.style.opacity = e.target.checked ? '1' : '0.5';
+                        const inputs = timeInputs.querySelectorAll('input');
+                        inputs.forEach(input => input.disabled = !e.target.checked);
+                    });
+                });
+
+                // CEP Auto-complete (exemplo básico)
+                const cepInput = document.getElementById('cep');
+                cepInput.addEventListener('blur', function() {
+                    const cep = this.value.replace(/\D/g, '');
+                    if (cep.length === 8) {
+                        // Aqui você pode adicionar integração com API de CEP
+                        console.log('Buscar endereço para CEP:', cep);
+                    }
                 });
             });
-
-            // Day schedule toggles
-            const dayToggles = document.querySelectorAll('.day-toggle');
-            dayToggles.forEach(toggle => {
-                toggle.addEventListener('change', (e) => {
-                    const timeInputs = e.target.parentElement.querySelector('.time-inputs');
-                    timeInputs.style.opacity = e.target.checked ? '1' : '0.5';
-                    const inputs = timeInputs.querySelectorAll('input');
-                    inputs.forEach(input => input.disabled = !e.target.checked);
-                });
-            });
-
-            // Notificações
-            const notificationBtn = document.querySelector('.notification-btn');
-            const notificationsPopup = document.querySelector('.notifications-popup');
-
-            document.addEventListener('click', function(event) {
-                const isClickInsidePopup = notificationsPopup.contains(event.target);
-                const isClickOnButton = notificationBtn.contains(event.target);
-
-                if (!isClickInsidePopup && !isClickOnButton) {
-                    notificationsPopup.classList.remove('show');
-                }
-            });
-
-            notificationBtn.addEventListener('click', function(event) {
-                event.stopPropagation();
-                notificationsPopup.classList.toggle('show');
-            });
-
-            // CEP Auto-complete (exemplo básico)
-            const cepInput = document.getElementById('cep');
-            cepInput.addEventListener('blur', function() {
-                const cep = this.value.replace(/\D/g, '');
-                if (cep.length === 8) {
-                    // Aqui você pode adicionar integração com API de CEP
-                    console.log('Buscar endereço para CEP:', cep);
-                }
-            });
-        });
-    </script>
-    <script src="../JS/navbar.js"></script>
-    <script src="../JS/libras.js"></script>
+        </script>
+        <script src="../JS/navbar.js"></script>
+        <script src="../JS/libras.js"></script>
 </body>
 
 </html>

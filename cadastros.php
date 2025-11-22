@@ -96,18 +96,17 @@
         <div class="cadastros-grid">
             <article class="cadastro-card cadastro-gerador">
                 <div class="card-content">
-                    <h2>Gerador de Óleo</h2>
-                    <p>Sou um gerador de óleo e quero agendar coletas.</p>
+                    <h2>Produtor de Óleo usado</h2>
+                    <p>Sou um produtor de óleo e quero agendar coletas para descartar o óleo usado de forma correta.</p>
                 </div>
                 <div class="card-actions">
                     <a href="CADASTRO_GERADOR/login.php" class="card-cta">Cadastre-se</a>
                 </div>
             </article>
-
             <article class="cadastro-card cadastro-coletor">
                 <div class="card-content">
                     <h2>Coletor</h2>
-                    <p>Quero me cadastrar como coletor afiliado para recolher óleo de geradores.</p>
+                    <p>Quero me cadastrar como coletor afiliado para recolher óleo de produtores.</p>
                 </div>
                 <div class="card-actions">
                     <a href="CADASTRO_COLETOR/login.php" class="card-cta">Cadastre-se</a>
@@ -116,25 +115,25 @@
         </div>
     </main>
     <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
         </div>
-    </div>
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script src="JS/libras.js"></script>
-    
+
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script src="JS/libras.js"></script>
+
 </body>
 
 </html>

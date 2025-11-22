@@ -131,47 +131,6 @@ $foto_url = $coletor['foto_perfil'] ? '../uploads/profile_photos/' . $coletor['f
                     <p>Confira suas informações e configurações do seu perfil.</p>
                 </div>
                 <div class="header-actions">
-                    <div class="action-buttons">
-                        <button class="notification-btn" title="Notificações">
-                            <i class="ri-notification-3-line"></i>
-                            <span class="notification-badge">3</span>
-                        </button>
-                        <!-- Popup de Notificações -->
-                        <div class="notifications-popup">
-                            <div class="notifications-header">
-                                <h3>Notificações</h3>
-                            </div>
-                            <div class="notification-list">
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-calendar-check-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Nova coleta agendada para hoje às 14:30</p>
-                                            <span class="notification-time">Há 5 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-map-pin-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Alteração no endereço de coleta - Rua das Palmeiras, 789</p>
-                                            <span class="notification-time">Há 30 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-message-3-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Mensagem do gerador sobre a coleta #123</p>
-                                            <span class="notification-time">Há 1 hora</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </header>
             <div class="profile-content">
@@ -288,24 +247,6 @@ $foto_url = $coletor['foto_perfil'] ? '../uploads/profile_photos/' . $coletor['f
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Gerenciar notificações
-                const notificationBtn = document.querySelector('.notification-btn');
-                const notificationsPopup = document.querySelector('.notifications-popup');
-
-                document.addEventListener('click', function(event) {
-                    const isClickInsidePopup = notificationsPopup.contains(event.target);
-                    const isClickOnButton = notificationBtn.contains(event.target);
-
-                    if (!isClickInsidePopup && !isClickOnButton) {
-                        notificationsPopup.classList.remove('show');
-                    }
-                });
-
-                notificationBtn.addEventListener('click', function(event) {
-                    event.stopPropagation();
-                    notificationsPopup.classList.toggle('show');
-                });
-
                 // Botão de editar perfil
                 const editBtn = document.querySelector('.btn-edit-profile');
                 const editModal = document.getElementById('editProfileModal');

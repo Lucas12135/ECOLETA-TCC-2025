@@ -47,17 +47,20 @@ try {
 }
 
 // Função auxiliar para formatar data
-function formatarData($data) {
+function formatarData($data)
+{
     return date('d/m/Y', strtotime($data));
 }
 
 // Função auxiliar para formatar hora
-function formatarHora($data) {
+function formatarHora($data)
+{
     return date('H:i', strtotime($data));
 }
 
 // Função auxiliar para formatar status
-function formatarStatus($status) {
+function formatarStatus($status)
+{
     $statusMap = [
         'concluida' => ['label' => 'Concluída', 'class' => 'status-concluida'],
         'em_andamento' => ['label' => 'Em Andamento', 'class' => 'status-andamento'],
@@ -147,47 +150,6 @@ function formatarStatus($status) {
                     <p>Confira seu histórico de coletas</p>
                 </div>
                 <div class="header-actions">
-                    <div class="action-buttons">
-                        <button class="notification-btn" title="Notificações">
-                            <i class="ri-notification-3-line"></i>
-                            <span class="notification-badge">3</span>
-                        </button>
-                        <!-- Popup de Notificações -->
-                        <div class="notifications-popup">
-                            <div class="notifications-header">
-                                <h3>Notificações</h3>
-                            </div>
-                            <div class="notification-list">
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-calendar-check-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Nova coleta agendada para hoje às 14:30</p>
-                                            <span class="notification-time">Há 5 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-map-pin-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Alteração no endereço de coleta - Rua das Palmeiras, 789</p>
-                                            <span class="notification-time">Há 30 minutos</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <i class="ri-message-3-line notification-icon"></i>
-                                        <div class="notification-text">
-                                            <p>Mensagem do gerador sobre a coleta #123</p>
-                                            <span class="notification-time">Há 1 hora</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </header>
 
@@ -240,27 +202,27 @@ function formatarStatus($status) {
                                     <span class="detail-value"><?php echo number_format($coleta['quantidade_coletada'], 2); ?> litros</span>
                                 </div>
                                 <?php if ($coleta['valor_ganho']): ?>
-                                <div class="detail-row">
-                                    <span class="detail-label">Ganho:</span>
-                                    <span class="detail-value" style="color: #4CAF50; font-weight: bold;">
-                                        R$ <?php echo number_format($coleta['valor_ganho'], 2, ',', '.'); ?>
-                                    </span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Status do Pagamento:</span>
-                                    <span class="detail-value">
-                                        <?php 
+                                    <div class="detail-row">
+                                        <span class="detail-label">Ganho:</span>
+                                        <span class="detail-value" style="color: #4CAF50; font-weight: bold;">
+                                            R$ <?php echo number_format($coleta['valor_ganho'], 2, ',', '.'); ?>
+                                        </span>
+                                    </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Status do Pagamento:</span>
+                                        <span class="detail-value">
+                                            <?php
                                             $status_pag = $coleta['status_pagamento'] ?? 'pendente';
                                             echo $status_pag === 'pago' ? '✓ Pago' : 'Pendente';
-                                        ?>
-                                    </span>
-                                </div>
+                                            ?>
+                                        </span>
+                                    </div>
                                 <?php endif; ?>
                                 <?php if ($coleta['observacoes']): ?>
-                                <div class="detail-row">
-                                    <span class="detail-label">Observações:</span>
-                                    <span class="detail-value"><?php echo htmlspecialchars($coleta['observacoes']); ?></span>
-                                </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Observações:</span>
+                                        <span class="detail-value"><?php echo htmlspecialchars($coleta['observacoes']); ?></span>
+                                    </div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -270,58 +232,42 @@ function formatarStatus($status) {
         </main>
     </div>
     <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-<div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
         </div>
-    </div>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
+            </div>
+        </div>
 
 
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Gerenciar expansão dos itens do histórico
-            const historyItems = document.querySelectorAll('.history-item');
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Gerenciar expansão dos itens do histórico
+                const historyItems = document.querySelectorAll('.history-item');
 
-            historyItems.forEach(item => {
-                const expandButton = item.querySelector('.expand-button');
+                historyItems.forEach(item => {
+                    const expandButton = item.querySelector('.expand-button');
 
-                expandButton.addEventListener('click', () => {
-                    item.classList.toggle('expanded');
+                    expandButton.addEventListener('click', () => {
+                        item.classList.toggle('expanded');
+                    });
                 });
+
+                // Fim de gerenciamento de eventos
             });
-
-            // Gerenciar notificações (reaproveitado do home-coletor.js)
-            const notificationBtn = document.querySelector('.notification-btn');
-            const notificationsPopup = document.querySelector('.notifications-popup');
-
-            document.addEventListener('click', function(event) {
-                const isClickInsidePopup = notificationsPopup.contains(event.target);
-                const isClickOnButton = notificationBtn.contains(event.target);
-
-                if (!isClickInsidePopup && !isClickOnButton) {
-                    notificationsPopup.classList.remove('show');
-                }
-            });
-
-            notificationBtn.addEventListener('click', function(event) {
-                event.stopPropagation();
-                notificationsPopup.classList.toggle('show');
-            });
-        });
-    </script>
-    <script src="../JS/navbar.js"></script>
-    <script src="../JS/libras.js"></script>
+        </script>
+        <script src="../JS/navbar.js"></script>
+        <script src="../JS/libras.js"></script>
 </body>
 
 </html>

@@ -1,61 +1,68 @@
 <?php
 session_start();
-require_once 'conexao.php';
+header('Content-Type: application/json');
 
-// Verifica se o usuário está logado
-if (!isset($_SESSION['usuario_id'])) {
-    http_response_code(401);
+// Validar sessão
+if (!isset($_SESSION['id_usuario'])) {
     echo json_encode(['success' => false, 'message' => 'Usuário não autenticado']);
     exit;
 }
 
-// Verifica se a requisição é do tipo POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Método não permitido']);
-    exit;
-}
+require_once 'conexao.php';
 
-// Recebe e decodifica os dados JSON
-$dados = json_decode(file_get_contents('php://input'), true);
-
-if (!isset($dados['currentPassword']) || !isset($dados['newPassword'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Dados inválidos']);
-    exit;
-}
+$id_usuario = $_SESSION['id_usuario'];
+$nova_senha = isset($_POST['nova_senha']) ? trim($_POST['nova_senha']) : null;
 
 try {
-    // Busca a senha atual do usuário
-    $stmt = $conn->prepare("SELECT senha FROM usuarios WHERE id = ?");
-    $stmt->bind_param("i", $_SESSION['usuario_id']);
+    // Validar entrada
+    if (empty($nova_senha)) {
+        throw new Exception('Senha não fornecida.');
+    }
+
+    // Validar força da senha
+    if (
+        strlen($nova_senha) < 8 ||
+        !preg_match('/[A-Z]/', $nova_senha) ||
+        !preg_match('/[a-z]/', $nova_senha) ||
+        !preg_match('/[0-9]/', $nova_senha) ||
+        !preg_match('/[^A-Za-z0-9]/', $nova_senha)
+    ) {
+        throw new Exception('Senha não atende aos requisitos de segurança.');
+    }
+
+    // Hashear a senha
+    $senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
+
+    // Tentar atualizar na tabela coletores primeiro
+    $stmt = $conn->prepare("UPDATE coletores SET senha = :senha WHERE id = :id");
+    $stmt->bindParam(':senha', $senha_hash, PDO::PARAM_STR);
+    $stmt->bindParam(':id', $id_usuario, PDO::PARAM_INT);
     $stmt->execute();
-    $result = $stmt->get_result();
-    $usuario = $result->fetch_assoc();
 
-    // Verifica se a senha atual está correta
-    if (!password_verify($dados['currentPassword'], $usuario['senha'])) {
-        echo json_encode(['success' => false, 'message' => 'Senha atual incorreta']);
-        exit;
+    $linhas_afetadas = $stmt->rowCount();
+
+    // Se não atualizou na tabela coletores, tenta na tabela geradores
+    if ($linhas_afetadas === 0) {
+        $stmt = $conn->prepare("UPDATE geradores SET senha = :senha WHERE id = :id");
+        $stmt->bindParam(':senha', $senha_hash, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id_usuario, PDO::PARAM_INT);
+        $stmt->execute();
+        $linhas_afetadas = $stmt->rowCount();
     }
 
-    // Hash da nova senha
-    $novaSenhaHash = password_hash($dados['newPassword'], PASSWORD_DEFAULT);
-
-    // Atualiza a senha no banco de dados
-    $stmt = $conn->prepare("UPDATE usuarios SET senha = ? WHERE id = ?");
-    $stmt->bind_param("si", $novaSenhaHash, $_SESSION['usuario_id']);
-    
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Senha alterada com sucesso']);
+    // Verificar se a atualização foi bem-sucedida
+    if ($linhas_afetadas > 0) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Senha alterada com sucesso!'
+        ]);
     } else {
-        throw new Exception("Erro ao atualizar senha");
+        throw new Exception('Nenhuma linha foi atualizada. Tente novamente.');
     }
-
 } catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Erro ao processar a solicitação']);
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
 }
-
-$conn->close();
-?>

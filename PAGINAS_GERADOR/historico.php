@@ -58,12 +58,14 @@ try {
 }
 
 // Função auxiliar para formatar data
-function formatarData($data) {
+function formatarData($data)
+{
     return date('d/m/Y', strtotime($data));
 }
 
 // Função auxiliar para formatar período
-function formatarPeriodo($periodo) {
+function formatarPeriodo($periodo)
+{
     $periodos = [
         'manha' => 'Manhã (8h - 12h)',
         'tarde' => 'Tarde (13h - 17h)'
@@ -152,35 +154,6 @@ function formatarPeriodo($periodo) {
                     <p>Acompanhe suas solicitações de coleta</p>
                 </div>
                 <div class="header-actions">
-                    <div class="action-buttons">
-                        <button class="notification-btn" title="Notificações">
-                            <i class="ri-notification-3-line"></i>
-                            <span class="notification-badge">2</span>
-                        </button>
-                        <!-- Popup de Notificações -->
-                        <div class="notifications-popup">
-                            <div class="notifications-header">
-                                <h3>Notificações</h3>
-                                <button class="mark-all-read">Marcar todas como lidas</button>
-                            </div>
-                            <div class="notification-list">
-                                <div class="notification-item unread">
-                                    <div class="notification-content">
-                                        <span class="notification-title">Coleta Confirmada</span>
-                                        <p>Sua solicitação #12345 foi aceita e será coletada em breve.</p>
-                                        <span class="notification-time">Há 1 hora</span>
-                                    </div>
-                                </div>
-                                <div class="notification-item">
-                                    <div class="notification-content">
-                                        <span class="notification-title">Coleta Realizada</span>
-                                        <p>A coleta #12344 foi concluída com sucesso!</p>
-                                        <span class="notification-time">Há 2 dias</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </header>
 
@@ -206,16 +179,16 @@ function formatarPeriodo($periodo) {
                                 </div>
                                 <div class="history-actions">
                                     <span class="collection-status status-<?php echo $coleta['status']; ?>">
-                                        <?php 
-                                            $status_labels = [
-                                                'solicitada' => 'Solicitada',
-                                                'pendente' => 'Pendente',
-                                                'agendada' => 'Agendada',
-                                                'em_andamento' => 'Em Andamento',
-                                                'concluida' => 'Concluída',
-                                                'cancelada' => 'Cancelada'
-                                            ];
-                                            echo $status_labels[$coleta['status']] ?? $coleta['status'];
+                                        <?php
+                                        $status_labels = [
+                                            'solicitada' => 'Solicitada',
+                                            'pendente' => 'Pendente',
+                                            'agendada' => 'Agendada',
+                                            'em_andamento' => 'Em Andamento',
+                                            'concluida' => 'Concluída',
+                                            'cancelada' => 'Cancelada'
+                                        ];
+                                        echo $status_labels[$coleta['status']] ?? $coleta['status'];
                                         ?>
                                     </span>
                                     <button class="expand-button">
@@ -228,22 +201,22 @@ function formatarPeriodo($periodo) {
                                 <div class="detail-row">
                                     <span class="detail-label">Coletor:</span>
                                     <span class="detail-value">
-                                        <?php 
-                                            if ($coleta['nome_coletor']) {
-                                                echo htmlspecialchars($coleta['nome_coletor']);
-                                            } else {
-                                                echo 'Aguardando confirmação';
-                                            }
+                                        <?php
+                                        if ($coleta['nome_coletor']) {
+                                            echo htmlspecialchars($coleta['nome_coletor']);
+                                        } else {
+                                            echo 'Aguardando confirmação';
+                                        }
                                         ?>
                                     </span>
                                 </div>
                                 <?php if ($coleta['telefone_coletor']): ?>
-                                <div class="detail-row">
-                                    <span class="detail-label">Contato:</span>
-                                    <span class="detail-value">
-                                        <?php echo htmlspecialchars($coleta['telefone_coletor']); ?> / <?php echo htmlspecialchars($coleta['email_coletor']); ?>
-                                    </span>
-                                </div>
+                                    <div class="detail-row">
+                                        <span class="detail-label">Contato:</span>
+                                        <span class="detail-value">
+                                            <?php echo htmlspecialchars($coleta['telefone_coletor']); ?> / <?php echo htmlspecialchars($coleta['email_coletor']); ?>
+                                        </span>
+                                    </div>
                                 <?php endif; ?>
                                 <div class="detail-row">
                                     <span class="detail-label">Local de Coleta:</span>
@@ -257,7 +230,7 @@ function formatarPeriodo($periodo) {
                                         <?php echo formatarData($coleta['data_agendada']); ?> - <?php echo formatarPeriodo($coleta['periodo']); ?>
                                     </span>
                                 </div>
-                                
+
                                 <?php if ($coleta['status'] === 'concluida' && $coleta['id_historico']): ?>
                                     <div style="border-top: 1px solid #e0e0e0; margin-top: 15px; padding-top: 15px;">
                                         <h4 style="margin: 0 0 10px 0; color: #333;">Detalhes da Coleta Realizada:</h4>
@@ -269,20 +242,20 @@ function formatarPeriodo($periodo) {
                                             <span class="detail-label">Quantidade Coletada:</span>
                                             <span class="detail-value"><?php echo number_format($coleta['quantidade_coletada'], 2); ?> litros</span>
                                         </div>
-                                        
+
                                         <?php if ($coleta['id_avaliacao']): ?>
                                             <div style="border-top: 1px solid #f0f0f0; margin-top: 15px; padding-top: 15px;">
                                                 <h4 style="margin: 0 0 10px 0; color: #333;">Sua Avaliação:</h4>
                                                 <div class="detail-row">
                                                     <span class="detail-label">Nota Geral:</span>
                                                     <span class="detail-value">
-                                                        <?php 
-                                                            for ($i = 0; $i < $coleta['nota']; $i++) {
-                                                                echo '<i class="ri-star-fill" style="color: #FFB800;"></i>';
-                                                            }
-                                                            for ($i = $coleta['nota']; $i < 5; $i++) {
-                                                                echo '<i class="ri-star-line" style="color: #ddd;"></i>';
-                                                            }
+                                                        <?php
+                                                        for ($i = 0; $i < $coleta['nota']; $i++) {
+                                                            echo '<i class="ri-star-fill" style="color: #FFB800;"></i>';
+                                                        }
+                                                        for ($i = $coleta['nota']; $i < 5; $i++) {
+                                                            echo '<i class="ri-star-line" style="color: #ddd;"></i>';
+                                                        }
                                                         ?>
                                                     </span>
                                                 </div>
@@ -311,525 +284,498 @@ function formatarPeriodo($periodo) {
         </main>
     </div>
     <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-<div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
         </div>
-    </div>
-
-
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    
-    <!-- Modal de Avaliação -->
-    <div id="modalAvaliacao" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Avaliar Coletor</h2>
-                <button class="modal-close">&times;</button>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div vw-plugin-wrapper>
+                <div class="vw-plugin-top-wrapper"></div>
             </div>
-            <div class="modal-body">
-                <div class="coletor-info">
-                    <p><strong>Coletor:</strong> <span id="nome-coletor-avaliacao">-</span></p>
+        </div>
+
+
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+        <!-- Modal de Avaliação -->
+        <div id="modalAvaliacao" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Avaliar Coletor</h2>
+                    <button class="modal-close">&times;</button>
                 </div>
-                
-                <form id="formAvaliacao">
-                    <div class="form-group">
-                        <label>Avaliação Geral:</label>
-                        <div class="star-rating" id="star-rating">
-                            <i class="ri-star-line star" data-value="1"></i>
-                            <i class="ri-star-line star" data-value="2"></i>
-                            <i class="ri-star-line star" data-value="3"></i>
-                            <i class="ri-star-line star" data-value="4"></i>
-                            <i class="ri-star-line star" data-value="5"></i>
+                <div class="modal-body">
+                    <div class="coletor-info">
+                        <p><strong>Coletor:</strong> <span id="nome-coletor-avaliacao">-</span></p>
+                    </div>
+
+                    <form id="formAvaliacao">
+                        <div class="form-group">
+                            <label>Avaliação Geral:</label>
+                            <div class="star-rating" id="star-rating">
+                                <i class="ri-star-line star" data-value="1"></i>
+                                <i class="ri-star-line star" data-value="2"></i>
+                                <i class="ri-star-line star" data-value="3"></i>
+                                <i class="ri-star-line star" data-value="4"></i>
+                                <i class="ri-star-line star" data-value="5"></i>
+                            </div>
+                            <input type="hidden" id="nota" name="nota" value="0">
                         </div>
-                        <input type="hidden" id="nota" name="nota" value="0">
-                    </div>
 
-                    <div class="form-group">
-                        <label for="pontualidade">Pontualidade:</label>
-                        <div class="rating-scale">
-                            <label class="radio-option">
-                                <input type="radio" name="pontualidade" value="1"> Muito Ruim
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="pontualidade" value="2"> Ruim
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="pontualidade" value="3"> Neutro
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="pontualidade" value="4"> Bom
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="pontualidade" value="5"> Excelente
-                            </label>
+                        <div class="form-group">
+                            <label for="pontualidade">Pontualidade:</label>
+                            <div class="rating-scale">
+                                <label class="radio-option">
+                                    <input type="radio" name="pontualidade" value="1"> Muito Ruim
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="pontualidade" value="2"> Ruim
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="pontualidade" value="3"> Neutro
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="pontualidade" value="4"> Bom
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="pontualidade" value="5"> Excelente
+                                </label>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="profissionalismo">Profissionalismo:</label>
-                        <div class="rating-scale">
-                            <label class="radio-option">
-                                <input type="radio" name="profissionalismo" value="1"> Muito Ruim
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="profissionalismo" value="2"> Ruim
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="profissionalismo" value="3"> Neutro
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="profissionalismo" value="4"> Bom
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="profissionalismo" value="5"> Excelente
-                            </label>
+                        <div class="form-group">
+                            <label for="profissionalismo">Profissionalismo:</label>
+                            <div class="rating-scale">
+                                <label class="radio-option">
+                                    <input type="radio" name="profissionalismo" value="1"> Muito Ruim
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="profissionalismo" value="2"> Ruim
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="profissionalismo" value="3"> Neutro
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="profissionalismo" value="4"> Bom
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="profissionalismo" value="5"> Excelente
+                                </label>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="qualidade_servico">Qualidade do Serviço:</label>
-                        <div class="rating-scale">
-                            <label class="radio-option">
-                                <input type="radio" name="qualidade_servico" value="1"> Muito Ruim
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="qualidade_servico" value="2"> Ruim
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="qualidade_servico" value="3"> Neutro
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="qualidade_servico" value="4"> Bom
-                            </label>
-                            <label class="radio-option">
-                                <input type="radio" name="qualidade_servico" value="5"> Excelente
-                            </label>
+                        <div class="form-group">
+                            <label for="qualidade_servico">Qualidade do Serviço:</label>
+                            <div class="rating-scale">
+                                <label class="radio-option">
+                                    <input type="radio" name="qualidade_servico" value="1"> Muito Ruim
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="qualidade_servico" value="2"> Ruim
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="qualidade_servico" value="3"> Neutro
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="qualidade_servico" value="4"> Bom
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="qualidade_servico" value="5"> Excelente
+                                </label>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="comentario">Comentário (opcional):</label>
-                        <textarea id="comentario" name="comentario" rows="4" placeholder="Deixe seu comentário sobre a coleta..."></textarea>
-                    </div>
+                        <div class="form-group">
+                            <label for="comentario">Comentário (opcional):</label>
+                            <textarea id="comentario" name="comentario" rows="4" placeholder="Deixe seu comentário sobre a coleta..."></textarea>
+                        </div>
 
-                    <input type="hidden" id="id_historico" name="id_historico">
-                    <input type="hidden" id="id_coletor" name="id_coletor">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="btnCancelarAvaliacao">Cancelar</button>
-                <button class="btn btn-primary" id="btnConfirmarAvaliacao">Enviar Avaliação</button>
+                        <input type="hidden" id="id_historico" name="id_historico">
+                        <input type="hidden" id="id_coletor" name="id_coletor">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="btnCancelarAvaliacao">Cancelar</button>
+                    <button class="btn btn-primary" id="btnConfirmarAvaliacao">Enviar Avaliação</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
+        <style>
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 1000;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.4);
+            }
 
-        .modal.show {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+            .modal.show {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
-        .modal-content {
-            background-color: #fefefe;
-            padding: 0;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
+            .modal-content {
+                background-color: #fefefe;
+                padding: 0;
+                border-radius: 10px;
+                width: 90%;
+                max-width: 600px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+                max-height: 90vh;
+                overflow-y: auto;
+            }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                border-bottom: 1px solid #e0e0e0;
+            }
 
-        .modal-header h2 {
-            margin: 0;
-            font-size: 20px;
-            color: #333;
-        }
+            .modal-header h2 {
+                margin: 0;
+                font-size: 20px;
+                color: #333;
+            }
 
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #999;
-        }
+            .modal-close {
+                background: none;
+                border: none;
+                font-size: 28px;
+                cursor: pointer;
+                color: #999;
+            }
 
-        .modal-body {
-            padding: 20px;
-        }
+            .modal-body {
+                padding: 20px;
+            }
 
-        .coletor-info {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
+            .coletor-info {
+                background-color: #f9f9f9;
+                padding: 15px;
+                border-radius: 5px;
+                margin-bottom: 20px;
+            }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+            .form-group {
+                margin-bottom: 20px;
+            }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #333;
-        }
+            .form-group label {
+                display: block;
+                margin-bottom: 10px;
+                font-weight: 600;
+                color: #333;
+            }
 
-        .star-rating {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
+            .star-rating {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
 
-        .star-rating .star {
-            font-size: 30px;
-            cursor: pointer;
-            color: #ddd;
-            transition: color 0.2s;
-        }
+            .star-rating .star {
+                font-size: 30px;
+                cursor: pointer;
+                color: #ddd;
+                transition: color 0.2s;
+            }
 
-        .star-rating .star:hover,
-        .star-rating .star.active {
-            color: #FFB800;
-        }
+            .star-rating .star:hover,
+            .star-rating .star.active {
+                color: #FFB800;
+            }
 
-        .rating-scale {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+            .rating-scale {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
 
-        .radio-option {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.2s;
-        }
+            .radio-option {
+                display: flex;
+                align-items: center;
+                padding: 8px;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: background-color 0.2s;
+            }
 
-        .radio-option:hover {
-            background-color: #f0f0f0;
-        }
+            .radio-option:hover {
+                background-color: #f0f0f0;
+            }
 
-        .radio-option input[type="radio"] {
-            margin-right: 10px;
-        }
+            .radio-option input[type="radio"] {
+                margin-right: 10px;
+            }
 
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-family: inherit;
-            box-sizing: border-box;
-        }
+            .form-group textarea {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-family: inherit;
+                box-sizing: border-box;
+            }
 
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-        }
+            .form-group textarea:focus {
+                outline: none;
+                border-color: #4CAF50;
+                box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+            }
 
-        .modal-footer {
-            padding: 20px;
-            border-top: 1px solid #e0e0e0;
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
+            .modal-footer {
+                padding: 20px;
+                border-top: 1px solid #e0e0e0;
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+            }
 
-        .modal-footer .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
+            .modal-footer .btn {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s;
+            }
 
-        .modal-footer .btn-secondary {
-            background-color: #f0f0f0;
-            color: #333;
-        }
+            .modal-footer .btn-secondary {
+                background-color: #f0f0f0;
+                color: #333;
+            }
 
-        .modal-footer .btn-secondary:hover {
-            background-color: #e0e0e0;
-        }
+            .modal-footer .btn-secondary:hover {
+                background-color: #e0e0e0;
+            }
 
-        .modal-footer .btn-primary {
-            background-color: #4CAF50;
-            color: white;
-        }
+            .modal-footer .btn-primary {
+                background-color: #4CAF50;
+                color: white;
+            }
 
-        .modal-footer .btn-primary:hover {
-            background-color: #45a049;
-        }
+            .modal-footer .btn-primary:hover {
+                background-color: #45a049;
+            }
 
-        .btn-avaliar,
-        .btn-editar-avaliacao {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-            margin-top: 10px;
-        }
+            .btn-avaliar,
+            .btn-editar-avaliacao {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s;
+                margin-top: 10px;
+            }
 
-        .btn-avaliar:hover,
-        .btn-editar-avaliacao:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-        }
-    </style>
+            .btn-avaliar:hover,
+            .btn-editar-avaliacao:hover {
+                background-color: #45a049;
+                transform: translateY(-2px);
+            }
+        </style>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Gerenciar expansão dos itens do histórico
-            const historyItems = document.querySelectorAll('.history-item');
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Gerenciar expansão dos itens do histórico
+                const historyItems = document.querySelectorAll('.history-item');
 
-            historyItems.forEach(item => {
-                const expandButton = item.querySelector('.expand-button');
+                historyItems.forEach(item => {
+                    const expandButton = item.querySelector('.expand-button');
 
-                expandButton.addEventListener('click', () => {
-                    item.classList.toggle('expanded');
-                });
-            });
-
-            // Modal de avaliação
-            const modal = document.getElementById('modalAvaliacao');
-            const starRating = document.getElementById('star-rating');
-            const notaInput = document.getElementById('nota');
-            const stars = starRating.querySelectorAll('.star');
-
-            stars.forEach(star => {
-                star.addEventListener('click', () => {
-                    const value = star.getAttribute('data-value');
-                    notaInput.value = value;
-                    
-                    stars.forEach(s => {
-                        s.classList.remove('active');
-                        if (s.getAttribute('data-value') <= value) {
-                            s.classList.add('active');
-                        }
+                    expandButton.addEventListener('click', () => {
+                        item.classList.toggle('expanded');
                     });
                 });
 
-                star.addEventListener('mouseover', () => {
-                    const value = star.getAttribute('data-value');
-                    stars.forEach(s => {
-                        s.style.color = s.getAttribute('data-value') <= value ? '#FFB800' : '#ddd';
+                // Modal de avaliação
+                const modal = document.getElementById('modalAvaliacao');
+                const starRating = document.getElementById('star-rating');
+                const notaInput = document.getElementById('nota');
+                const stars = starRating.querySelectorAll('.star');
+
+                stars.forEach(star => {
+                    star.addEventListener('click', () => {
+                        const value = star.getAttribute('data-value');
+                        notaInput.value = value;
+
+                        stars.forEach(s => {
+                            s.classList.remove('active');
+                            if (s.getAttribute('data-value') <= value) {
+                                s.classList.add('active');
+                            }
+                        });
+                    });
+
+                    star.addEventListener('mouseover', () => {
+                        const value = star.getAttribute('data-value');
+                        stars.forEach(s => {
+                            s.style.color = s.getAttribute('data-value') <= value ? '#FFB800' : '#ddd';
+                        });
                     });
                 });
-            });
 
-            starRating.addEventListener('mouseleave', () => {
-                stars.forEach(s => {
-                    s.style.color = s.classList.contains('active') ? '#FFB800' : '#ddd';
+                starRating.addEventListener('mouseleave', () => {
+                    stars.forEach(s => {
+                        s.style.color = s.classList.contains('active') ? '#FFB800' : '#ddd';
+                    });
                 });
-            });
 
-            // Abrir modal de avaliação (novo)
-            document.querySelectorAll('.btn-avaliar').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const historicoId = btn.getAttribute('data-historico-id');
-                    const coletorId = btn.getAttribute('data-coletor-id');
-                    const coletorNome = btn.getAttribute('data-coletor-nome');
+                // Abrir modal de avaliação (novo)
+                document.querySelectorAll('.btn-avaliar').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const historicoId = btn.getAttribute('data-historico-id');
+                        const coletorId = btn.getAttribute('data-coletor-id');
+                        const coletorNome = btn.getAttribute('data-coletor-nome');
 
-                    document.getElementById('id_historico').value = historicoId;
-                    document.getElementById('id_coletor').value = coletorId;
-                    document.getElementById('nome-coletor-avaliacao').textContent = coletorNome;
-                    
-                    // Limpar formulário
-                    document.getElementById('formAvaliacao').reset();
-                    notaInput.value = 0;
-                    stars.forEach(s => s.classList.remove('active'));
+                        document.getElementById('id_historico').value = historicoId;
+                        document.getElementById('id_coletor').value = coletorId;
+                        document.getElementById('nome-coletor-avaliacao').textContent = coletorNome;
 
-                    modal.classList.add('show');
+                        // Limpar formulário
+                        document.getElementById('formAvaliacao').reset();
+                        notaInput.value = 0;
+                        stars.forEach(s => s.classList.remove('active'));
+
+                        modal.classList.add('show');
+                    });
                 });
-            });
 
-            // Abrir modal de avaliação (editar existente)
-            document.querySelectorAll('.btn-editar-avaliacao').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const historicoId = btn.getAttribute('data-historico-id');
-                    const coletorId = btn.getAttribute('data-coletor-id');
-                    const coletorNome = btn.parentElement.parentElement.parentElement.querySelector('.detail-label + .detail-value')?.textContent || 'Coletor';
+                // Abrir modal de avaliação (editar existente)
+                document.querySelectorAll('.btn-editar-avaliacao').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const historicoId = btn.getAttribute('data-historico-id');
+                        const coletorId = btn.getAttribute('data-coletor-id');
+                        const coletorNome = btn.parentElement.parentElement.parentElement.querySelector('.detail-label + .detail-value')?.textContent || 'Coletor';
 
-                    // Buscar dados da avaliação existente
-                    fetch('../api/buscar_avaliacao.php?id_historico=' + historicoId)
+                        // Buscar dados da avaliação existente
+                        fetch('../api/buscar_avaliacao.php?id_historico=' + historicoId)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success && data.avaliacao) {
+                                    const av = data.avaliacao;
+
+                                    // Preencher form com dados existentes
+                                    document.getElementById('id_historico').value = historicoId;
+                                    document.getElementById('id_coletor').value = coletorId;
+                                    document.getElementById('nome-coletor-avaliacao').textContent = coletorNome;
+
+                                    // Restaurar nota
+                                    notaInput.value = av.nota;
+                                    stars.forEach(s => {
+                                        s.classList.remove('active');
+                                        if (s.getAttribute('data-value') <= av.nota) {
+                                            s.classList.add('active');
+                                        }
+                                    });
+
+                                    // Restaurar outros campos
+                                    document.querySelector('input[name="pontualidade"][value="' + av.pontualidade + '"]').checked = true;
+                                    document.querySelector('input[name="profissionalismo"][value="' + av.profissionalismo + '"]').checked = true;
+                                    document.querySelector('input[name="qualidade_servico"][value="' + av.qualidade_servico + '"]').checked = true;
+                                    document.getElementById('comentario').value = av.comentario || '';
+
+                                    modal.classList.add('show');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Erro ao buscar avaliação:', error);
+                                alert('Erro ao carregar avaliação');
+                            });
+                    });
+                });
+
+                // Fechar modal
+                document.querySelector('.modal-close').addEventListener('click', () => {
+                    modal.classList.remove('show');
+                });
+
+                document.getElementById('btnCancelarAvaliacao').addEventListener('click', () => {
+                    modal.classList.remove('show');
+                });
+
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('show');
+                    }
+                });
+
+                // Enviar avaliação
+                document.getElementById('btnConfirmarAvaliacao').addEventListener('click', () => {
+                    const nota = notaInput.value;
+                    const pontualidade = document.querySelector('input[name="pontualidade"]:checked')?.value;
+                    const profissionalismo = document.querySelector('input[name="profissionalismo"]:checked')?.value;
+                    const qualidadeServico = document.querySelector('input[name="qualidade_servico"]:checked')?.value;
+                    const comentario = document.getElementById('comentario').value;
+                    const historicoId = document.getElementById('id_historico').value;
+                    const coletorId = document.getElementById('id_coletor').value;
+
+                    if (!nota || nota == 0) {
+                        alert('Por favor, selecione uma avaliação geral');
+                        return;
+                    }
+
+                    if (!pontualidade || !profissionalismo || !qualidadeServico) {
+                        alert('Por favor, complete todos os critérios de avaliação');
+                        return;
+                    }
+
+                    fetch('../api/avaliar_coletor.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                id_historico: historicoId,
+                                id_coletor: coletorId,
+                                nota: nota,
+                                pontualidade: pontualidade,
+                                profissionalismo: profissionalismo,
+                                qualidade_servico: qualidadeServico,
+                                comentario: comentario
+                            })
+                        })
                         .then(response => response.json())
                         .then(data => {
-                            if (data.success && data.avaliacao) {
-                                const av = data.avaliacao;
-                                
-                                // Preencher form com dados existentes
-                                document.getElementById('id_historico').value = historicoId;
-                                document.getElementById('id_coletor').value = coletorId;
-                                document.getElementById('nome-coletor-avaliacao').textContent = coletorNome;
-                                
-                                // Restaurar nota
-                                notaInput.value = av.nota;
-                                stars.forEach(s => {
-                                    s.classList.remove('active');
-                                    if (s.getAttribute('data-value') <= av.nota) {
-                                        s.classList.add('active');
-                                    }
-                                });
-                                
-                                // Restaurar outros campos
-                                document.querySelector('input[name="pontualidade"][value="' + av.pontualidade + '"]').checked = true;
-                                document.querySelector('input[name="profissionalismo"][value="' + av.profissionalismo + '"]').checked = true;
-                                document.querySelector('input[name="qualidade_servico"][value="' + av.qualidade_servico + '"]').checked = true;
-                                document.getElementById('comentario').value = av.comentario || '';
-                                
-                                modal.classList.add('show');
+                            if (data.success) {
+                                alert('Avaliação enviada com sucesso!');
+                                modal.classList.remove('show');
+                                location.reload();
+                            } else {
+                                alert('Erro ao enviar avaliação: ' + (data.message || 'Tente novamente'));
                             }
                         })
                         .catch(error => {
-                            console.error('Erro ao buscar avaliação:', error);
-                            alert('Erro ao carregar avaliação');
+                            console.error('Erro:', error);
+                            alert('Erro ao processar a solicitação');
                         });
                 });
+
             });
-
-            // Fechar modal
-            document.querySelector('.modal-close').addEventListener('click', () => {
-                modal.classList.remove('show');
-            });
-
-            document.getElementById('btnCancelarAvaliacao').addEventListener('click', () => {
-                modal.classList.remove('show');
-            });
-
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('show');
-                }
-            });
-
-            // Enviar avaliação
-            document.getElementById('btnConfirmarAvaliacao').addEventListener('click', () => {
-                const nota = notaInput.value;
-                const pontualidade = document.querySelector('input[name="pontualidade"]:checked')?.value;
-                const profissionalismo = document.querySelector('input[name="profissionalismo"]:checked')?.value;
-                const qualidadeServico = document.querySelector('input[name="qualidade_servico"]:checked')?.value;
-                const comentario = document.getElementById('comentario').value;
-                const historicoId = document.getElementById('id_historico').value;
-                const coletorId = document.getElementById('id_coletor').value;
-
-                if (!nota || nota == 0) {
-                    alert('Por favor, selecione uma avaliação geral');
-                    return;
-                }
-
-                if (!pontualidade || !profissionalismo || !qualidadeServico) {
-                    alert('Por favor, complete todos os critérios de avaliação');
-                    return;
-                }
-
-                fetch('../api/avaliar_coletor.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        id_historico: historicoId,
-                        id_coletor: coletorId,
-                        nota: nota,
-                        pontualidade: pontualidade,
-                        profissionalismo: profissionalismo,
-                        qualidade_servico: qualidadeServico,
-                        comentario: comentario
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Avaliação enviada com sucesso!');
-                        modal.classList.remove('show');
-                        location.reload();
-                    } else {
-                        alert('Erro ao enviar avaliação: ' + (data.message || 'Tente novamente'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    alert('Erro ao processar a solicitação');
-                });
-            });
-
-            // Gerenciar notificações
-            const notificationBtn = document.querySelector('.notification-btn');
-            const notificationsPopup = document.querySelector('.notifications-popup');
-            const markAllReadBtn = document.querySelector('.mark-all-read');
-
-            document.addEventListener('click', function(event) {
-                const isClickInsidePopup = notificationsPopup.contains(event.target);
-                const isClickOnButton = notificationBtn.contains(event.target);
-
-                if (!isClickInsidePopup && !isClickOnButton) {
-                    notificationsPopup.classList.remove('show');
-                }
-            });
-
-            notificationBtn.addEventListener('click', function(event) {
-                event.stopPropagation();
-                notificationsPopup.classList.toggle('show');
-            });
-
-            markAllReadBtn.addEventListener('click', function() {
-                const unreadNotifications = document.querySelectorAll('.notification-item.unread');
-                unreadNotifications.forEach(notification => {
-                    notification.classList.remove('unread');
-                });
-                const badge = document.querySelector('.notification-badge');
-                badge.style.display = 'none';
-            });
-        });
-    </script>
-    <script src="../JS/navbar.js"></script>
-    <script src="../JS/libras.js"></script>
+        </script>
+        <script src="../JS/navbar.js"></script>
+        <script src="../JS/libras.js"></script>
 </body>
 
 </html>
