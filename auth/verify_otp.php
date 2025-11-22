@@ -9,16 +9,21 @@ try {
         exit;
     }
 
-    $email   = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    // Receber email e código do formulário
+    $email   = trim($_POST['email'] ?? '');
     $code    = trim($_POST['code'] ?? '');
-    $purpose = $_POST['purpose'] ?? 'cadastro_gerador';
+    $purpose = trim($_POST['purpose'] ?? 'cadastro_gerador');
 
-    if (!$email) {
+    // Validar email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
         echo 'E-mail inválido.';
         exit;
     }
 
+    // Validar código
     if (!preg_match('/^[0-9]{6}$/', $code)) {
+        http_response_code(400);
         echo 'Código inválido. Use exatamente 6 dígitos.';
         exit;
     }
@@ -42,13 +47,8 @@ try {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$row) {
+        http_response_code(400);
         echo 'Nenhum código válido encontrado ou o código expirou.';
-        exit;
-    }
-
-    // Checa tentativas restantes
-    if ((int) $row['attempts_left'] <= 0) {
-        echo 'Você excedeu o número de tentativas. Solicite um novo código.';
         exit;
     }
 
@@ -64,6 +64,7 @@ try {
         ");
         $stmt->execute([':id' => $row['id']]);
 
+        http_response_code(400);
         echo 'Código incorreto. Verifique e tente novamente.';
         exit;
     }
@@ -81,14 +82,13 @@ try {
         $_SESSION['cadastro'] = [];
     }
 
-    // NÃO mexe na senha aqui – ela já foi salva na sessão no login.php
-    // Só garante o e-mail e o flag de verificado
+    // Salva o email verificado na sessão
     $_SESSION['cadastro']['email']            = $email;
     $_SESSION['cadastro']['email_verificado'] = true;
 
-    // Se já existir um gerador com esse e-mail, só marca como verificado
+    // Verifica se já existe um gerador com esse e-mail
     $stmt = $conn->prepare("
-        SELECT id, email_verificado
+        SELECT id
         FROM geradores
         WHERE email = :e
         LIMIT 1
@@ -97,29 +97,19 @@ try {
     $gerador = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($gerador) {
-        if ((int) $gerador['email_verificado'] === 0) {
-            $up = $conn->prepare("
-                UPDATE geradores
-                SET email_verificado = 1
-                WHERE id = :id
-            ");
-            $up->execute([':id' => $gerador['id']]);
-        }
-
-        // guarda o id para o registro.php poder “continuar” o cadastro
+        // Gerador já existe, salva o ID na sessão
         $_SESSION['cadastro']['gerador_id'] = $gerador['id'];
     }
 
     // ===== FLUXO PARA CADASTRO DE GERADOR =====
     if ($purpose === 'cadastro_gerador') {
-        // Aqui a SENHA continua sendo a que você salvou em $_SESSION['cadastro']['senha']
-        // no CADASTRO_GERADOR/login.php. Não fazemos nada com ela aqui, só usamos depois.
+        // Redireciona para o formulário de registro
         header('Location: ../CADASTRO_GERADOR/registro.php');
         exit;
     }
 
     // Se tiver outros purposes (recuperação de senha, coletor etc) trata aqui depois.
-    header('Location: /');
+    header('Location: ../index.php');
     exit;
 
 } catch (PDOException $e) {

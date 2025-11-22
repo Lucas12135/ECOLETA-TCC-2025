@@ -317,14 +317,24 @@ $purpose = $_GET['purpose'] ?? 'cadastro_gerador';
 
           const text = (await resp.text()).trim();
 
+          // Se status NÃO foi 2xx, há um erro
           if (!resp.ok) {
             codeError.textContent = text || 'Não foi possível validar o código. Tente novamente.';
           } else {
-            // Erros como "código expirado", "inválido" etc vindo do verify_otp.php
+            // Status 200-299, mas pode haver mensagem de erro na resposta
             if (text) {
-              codeError.textContent = text;
-            } else {
-              codeError.textContent = 'Não foi possível validar o código. Tente novamente.';
+              // Verifica se a resposta parece ser um erro
+              const isError = text.toLowerCase().includes('erro') || 
+                            text.toLowerCase().includes('inválido') || 
+                            text.toLowerCase().includes('expirou') ||
+                            text.toLowerCase().includes('não');
+              
+              if (isError) {
+                codeError.textContent = text;
+              } else {
+                // Sem erro, mensagem passou ou redirecionamento
+                codeError.textContent = '';
+              }
             }
           }
         } catch (err) {
