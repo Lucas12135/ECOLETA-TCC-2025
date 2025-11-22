@@ -111,6 +111,18 @@ try {
         
         $stmt_ganhos->execute();
         
+        // 4. Atualizar estatísticas do coletor
+        $stmt_stats = $conn->prepare("
+            UPDATE coletores 
+            SET coletas = coletas + 1,
+                total_oleo = total_oleo + :quantidade_oleo
+            WHERE id = :id_coletor
+        ");
+        
+        $stmt_stats->bindParam(':quantidade_oleo', $quantidade_coletada);
+        $stmt_stats->bindParam(':id_coletor', $id_coletor);
+        $stmt_stats->execute();
+        
         // Confirmar transação
         $conn->commit();
         

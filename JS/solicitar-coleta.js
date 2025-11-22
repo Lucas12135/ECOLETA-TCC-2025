@@ -121,37 +121,42 @@ tipoColetaInputs.forEach(input => {
     });
 });
 
-// Carregar coletores baseado na localização
+// Carregar coletores baseado no CEP
 function carregarColetores() {
-    const cidade = document.getElementById('cidade').value.trim();
-    const bairro = document.getElementById('bairro').value.trim();
+    const cep = document.getElementById('cep').value.trim();
     
-    if (!cidade) {
+    if (!cep) {
         document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Preencha o CEP primeiro para carregar os coletores disponíveis</p>';
         return;
     }
     
-    document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Carregando coletores...</p>';
+    // Validar formato do CEP
+    const cepLimpo = cep.replace(/\D/g, '');
+    if (cepLimpo.length < 5) {
+        document.getElementById('coletores-list').innerHTML = '<p style="color: #d32f2f; text-align: center; padding: 20px;">CEP inválido. Por favor, corrija.</p>';
+        return;
+    }
+    
+    document.getElementById('coletores-list').innerHTML = '<div style="display: flex; justify-content: center; align-items: center; padding: 40px; color: #666;"><i class="ri-loader-4-line" style="animation: spin 1s linear infinite; font-size: 24px; margin-right: 10px;"></i>Carregando coletores disponíveis...</div>';
     
     // Fazer requisição ao servidor PHP
-    fetch('../api/get_coletores_por_localizacao.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: 'cidade=' + encodeURIComponent(cidade) + '&bairro=' + encodeURIComponent(bairro)
+    fetch('../api/get_coletores_por_cep.php?cep=' + encodeURIComponent(cep))
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro ao conectar com o servidor');
+        }
+        return response.json();
     })
-    .then(response => response.json())
     .then(data => {
         if (data.success && data.coletores && data.coletores.length > 0) {
             exibirColetores(data.coletores);
         } else {
-            document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Nenhum coletor disponível nesta região</p>';
+            document.getElementById('coletores-list').innerHTML = '<p style="color: #999; text-align: center; padding: 20px;"><i class="ri-information-line"></i> Nenhum coletor disponível nesta região no momento.</p>';
         }
     })
     .catch(error => {
         console.error('Erro ao carregar coletores:', error);
-        document.getElementById('coletores-list').innerHTML = '<p style="color: #d32f2f; text-align: center; padding: 20px;">Erro ao carregar coletores. Tente novamente.</p>';
+        document.getElementById('coletores-list').innerHTML = '<p style="color: #d32f2f; text-align: center; padding: 20px;"><i class="ri-error-warning-line"></i> Erro ao carregar coletores. Tente novamente.</p>';
     });
 }
 
@@ -163,25 +168,37 @@ function exibirColetores(coletores) {
     coletores.forEach(coletor => {
         const card = document.createElement('div');
         card.className = 'coletor-card';
+        
+        // Formatar avaliação
+        const avaliacao = coletor.media_avaliacao ? parseFloat(coletor.media_avaliacao).toFixed(1) : 'Sem avaliações';
+        const estrelas = coletor.media_avaliacao ? '★'.repeat(Math.floor(coletor.media_avaliacao)) : '';
+        
         card.innerHTML = `
             <div class="coletor-card-header">
-                <img src="${coletor.foto_perfil ? '../uploads/profile_photos/' + coletor.foto_perfil : '../img/default-avatar.png'}" 
-                     alt="${coletor.nome_completo}" class="coletor-foto">
+                <img src="${coletor.foto || '../img/avatar-default.png'}" alt="${coletor.nome}" class="coletor-foto" onerror="this.src='../img/avatar-default.png'">
+                <div class="coletor-rating">
+                    <i class="ri-star-fill"></i>
+                    <span>${avaliacao}</span>
+                </div>
             </div>
             <div class="coletor-card-body">
-                <h3>${coletor.nome_completo}</h3>
-                <p class="coletor-localizacao"><i class="ri-map-pin-line"></i> ${coletor.localizacao}</p>
-                <div class="coletor-info">
-                    <div class="rating">
-                        <i class="ri-star-fill"></i>
-                        <span>${coletor.avaliacao_media} (${coletor.total_avaliacoes})</span>
+                <h3>${coletor.nome || 'Coletor'}</h3>
+                <p class="coletor-city"><i class="ri-map-pin-line"></i> ${coletor.cidade || 'N/A'}, ${coletor.estado || 'N/A'}</p>
+                <div class="coletor-stats">
+                    <div class="stat">
+                        <i class="ri-award-line"></i>
+                        <span>${coletor.total_coletas || 0} ${coletor.total_coletas === 1 ? 'coleta' : 'coletas'}</span>
                     </div>
-                    ${coletor.meio_transporte ? '<div><i class="ri-e-bike-2-line"></i> ' + coletor.meio_transporte + '</div>' : ''}
                 </div>
-                ${coletor.experiencia ? '<p class="coletor-experiencia"><i class="ri-award-line"></i> ' + coletor.experiencia + ' anos</p>' : ''}
+                ${coletor.telefone || coletor.email ? `
+                <div class="coletor-contact">
+                    ${coletor.telefone ? `<a href="tel:${coletor.telefone}" title="Ligar para ${coletor.nome}"><i class="ri-phone-line"></i></a>` : ''}
+                    ${coletor.email ? `<a href="mailto:${coletor.email}" title="Enviar email"><i class="ri-mail-line"></i></a>` : ''}
+                </div>
+                ` : ''}
             </div>
-            <button type="button" class="btn-select-coletor" data-id="${coletor.id}" data-nome="${coletor.nome_completo}">
-                Selecionar
+            <button type="button" class="btn-select-coletor" data-id="${coletor.id}" data-nome="${coletor.nome}">
+                <i class="ri-check-line"></i> Selecionar
             </button>
         `;
         container.appendChild(card);
@@ -198,25 +215,41 @@ function exibirColetores(coletores) {
 function selecionarColetor(id, nome) {
     document.getElementById('coletor_id').value = id;
     
-    // Destacar coletor selecionado
+    // Destacar coletor selecionado e remover seleção anterior
     document.querySelectorAll('.coletor-card').forEach(card => {
         card.classList.remove('selected');
-        if (card.querySelector('[data-id="' + id + '"]')) {
-            card.classList.add('selected');
+        const btn = card.querySelector('.btn-select-coletor');
+        if (btn) {
+            btn.innerHTML = '<i class="ri-check-line"></i> Selecionar';
         }
     });
+    
+    // Adicionar seleção ao card clicado
+    const cardSelecionado = document.querySelector(`[data-id="${id}"]`).closest('.coletor-card');
+    if (cardSelecionado) {
+        cardSelecionado.classList.add('selected');
+        const btnSelecionado = cardSelecionado.querySelector('.btn-select-coletor');
+        if (btnSelecionado) {
+            btnSelecionado.innerHTML = '<i class="ri-check-circle-fill"></i> Selecionado';
+        }
+    }
     
     // Remover mensagem antiga se existir
     const msgAntiga = document.querySelector('.success-message');
     if (msgAntiga) msgAntiga.remove();
     
-    // Mostrar mensagem
+    // Mostrar mensagem de confirmação
     const msgDiv = document.createElement('div');
     msgDiv.className = 'success-message';
-    msgDiv.innerHTML = '<i class="ri-check-circle-line"></i> Coletor ' + nome + ' selecionado!';
+    msgDiv.innerHTML = '<i class="ri-check-circle-line"></i> Coletor <strong>' + nome + '</strong> selecionado com sucesso!';
     document.getElementById('coletor-selection').insertBefore(msgDiv, document.getElementById('coletores-list'));
     
-    setTimeout(() => msgDiv.remove(), 3000);
+    // Auto-remover após 4 segundos
+    setTimeout(() => {
+        if (msgDiv.parentNode) {
+            msgDiv.remove();
+        }
+    }, 4000);
 }
 
 // Recarregar coletores quando cidade/bairro mudarem

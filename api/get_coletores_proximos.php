@@ -101,13 +101,12 @@ try {
                 e.bairro,
                 e.cidade,
                 e.estado,
-                cc.raio_atuacao,
-                cc.disponibilidade,
-                cc.meio_transporte
+                COALESCE(cc.raio_atuacao, 10) as raio_atuacao,
+                COALESCE(cc.disponibilidade, 'disponivel') as disponibilidade,
+                COALESCE(cc.meio_transporte, 'Não informado') as meio_transporte
             FROM coletores c
             LEFT JOIN enderecos e ON c.id_endereco = e.id
-            LEFT JOIN coletores_config cc ON cc.id_coletor = c.id
-            WHERE cc.disponibilidade = 'disponivel'";
+            LEFT JOIN coletores_config cc ON cc.id_coletor = c.id";
 
     $stmt = $conn->prepare($sql);
     $stmt->execute();

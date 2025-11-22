@@ -357,10 +357,13 @@ a {
 .collection-item {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   padding: 1rem;
   background-color: var(--background);
   border-radius: 8px;
   transition: all 0.3s ease;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .collection-item:hover {
@@ -372,17 +375,42 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  flex: 1;
+  min-width: 200px;
 }
 
 .time {
   font-weight: 600;
   color: var(--verde-escuro);
+  white-space: nowrap;
+}
+
+.period {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.location {
+  font-size: 0.875rem;
+  color: #666;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .details {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+  min-width: auto;
+}
+
+.quantity {
+  font-weight: 600;
+  color: var(--verde-escuro);
+  white-space: nowrap;
+  min-width: 50px;
 }
 
 .details .view-map-btn {
@@ -396,6 +424,7 @@ a {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  flex-shrink: 0;
 }
 
 .details .view-map-btn:hover {
@@ -411,6 +440,8 @@ a {
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
   font-size: 0.875rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .status.pending {
@@ -444,10 +475,141 @@ a {
   min-height: 200px;
 }
 
+.upcoming-days {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.upcoming-day {
+  background-color: var(--background);
+  border-radius: 12px;
+  padding: 1rem;
+  border-left: 4px solid var(--cor-secondaria);
+}
+
+.day-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(34, 62, 42, 0.1);
+}
+
+.day-header h4 {
+  color: var(--verde-escuro);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.day-name {
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.day-collections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.upcoming-collection-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem;
+  background-color: white;
+  border-radius: 8px;
+  border: 1px solid rgba(34, 62, 42, 0.05);
+  transition: all 0.2s ease;
+}
+
+.upcoming-collection-item:hover {
+  border-color: var(--cor-secondaria);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.collection-time {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 70px;
+  font-weight: 600;
+  color: var(--verde-escuro);
+}
+
+.collection-time i {
+  color: var(--cor-secondaria);
+  font-size: 1rem;
+}
+
+.collection-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.collection-info p {
+  margin: 0;
+  padding: 0.2rem 0;
+}
+
+.generator {
+  font-weight: 600;
+  color: var(--verde-escuro);
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collection-info .location {
+  color: #666;
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.collection-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  min-width: 60px;
+}
+
+.collection-amount span:first-child {
+  font-weight: 600;
+  color: var(--verde-escuro);
+  font-size: 1rem;
+}
+
+.collection-amount .period {
+  font-size: 0.75rem;
+  color: #999;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
   .collections-container {
     grid-template-columns: 1fr;
+  }
+
+  .collection-item {
+    flex-wrap: wrap;
+  }
+
+  .time-location {
+    flex-basis: 100%;
+    min-width: 100%;
+  }
+
+  .details {
+    flex-basis: 100%;
+    justify-content: flex-start;
   }
 }
 
@@ -467,5 +629,30 @@ a {
 
   .info-cards {
     grid-template-columns: 1fr;
+  }
+
+  .collection-item {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .time-location {
+    flex-basis: auto;
+    min-width: auto;
+  }
+
+  .details {
+    flex-basis: auto;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .upcoming-collection-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .collection-amount {
+    align-items: flex-start;
   }
 }

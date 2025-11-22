@@ -426,15 +426,22 @@ textarea {
 /* Mensagem de sucesso */
 .success-message {
     background-color: #d4edda;
-    border: 1px solid #c3e6cb;
     color: #155724;
-    padding: 0.75rem 1rem;
+    border: 2px solid #28a745;
     border-radius: 8px;
+    padding: 16px;
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 12px;
     animation: slideIn 0.3s ease-out;
+    font-weight: 500;
+}
+
+.success-message i {
+    color: #28a745;
+    font-size: 20px;
+    flex-shrink: 0;
 }
 
 @keyframes slideIn {
@@ -773,46 +780,79 @@ label[for]:not([for="complemento"]):not([for="observacoes"])::after {
     overflow: hidden;
     transition: all 0.3s ease;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .coletor-card:hover {
-    border-color: #4CAF50;
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
-    transform: translateY(-2px);
+    border-color: var(--cor-secondaria);
+    box-shadow: 0 8px 16px rgba(255, 206, 70, 0.2);
+    transform: translateY(-6px);
 }
 
 .coletor-card.selected {
-    border-color: #4CAF50;
-    background-color: #f1f8f4;
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    border-color: var(--cor-secondaria);
+    border-width: 3px;
+    background-color: rgba(255, 206, 70, 0.08);
+    box-shadow: 0 0 20px rgba(255, 206, 70, 0.3);
 }
 
 .coletor-card-header {
-    padding: 20px;
-    text-align: center;
+    position: relative;
+    height: 180px;
+    overflow: hidden;
     background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
 }
 
 .coletor-foto {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border: 3px solid white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.coletor-card:hover .coletor-foto {
+    transform: scale(1.05);
+}
+
+.coletor-rating {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--cor-amarelo-escuro);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.coletor-rating i {
+    font-size: 14px;
 }
 
 .coletor-card-body {
     padding: 15px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .coletor-card-body h3 {
     margin: 0 0 10px 0;
     font-size: 1.1rem;
-    color: #333;
+    color: var(--verde-escuro);
+    font-weight: 600;
+    word-break: break-word;
 }
 
-.coletor-localizacao {
+.coletor-city {
     color: #666;
     font-size: 0.9rem;
     margin: 8px 0;
@@ -821,69 +861,229 @@ label[for]:not([for="complemento"]):not([for="observacoes"])::after {
     gap: 5px;
 }
 
-.coletor-localizacao i {
-    color: #4CAF50;
+.coletor-city i {
+    color: var(--cor-secondaria);
+    font-size: 14px;
 }
 
-.coletor-info {
+.coletor-stats {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    gap: 12px;
     margin: 12px 0;
-    font-size: 0.9rem;
-    color: #666;
+    flex-wrap: wrap;
 }
 
-.rating {
+.stat {
+    font-size: 13px;
+    color: #666;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
 }
 
-.rating i {
-    color: #ffc107;
+.stat i {
+    color: var(--cor-secondaria);
+    font-size: 14px;
 }
 
-.coletor-experiencia {
-    color: #666;
-    font-size: 0.85rem;
-    margin: 8px 0 0 0;
+.coletor-contact {
     display: flex;
-    align-items: center;
-    gap: 5px;
+    gap: 10px;
+    margin: 12px 0 0 0;
+    flex-wrap: wrap;
 }
 
-.coletor-experiencia i {
-    color: #4CAF50;
+.coletor-contact a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    color: #666;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.2s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.coletor-contact a:hover {
+    background-color: var(--cor-secondaria);
+    color: var(--verde-escuro);
+    border-color: var(--cor-secondaria);
+    transform: scale(1.1);
 }
 
 .btn-select-coletor {
-    width: 100%;
-    padding: 12px;
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--cor-secondaria);
+    color: var(--verde-escuro);
     border: none;
-    border-radius: 0 0 10px 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .btn-select-coletor:hover {
-    background-color: #45a049;
+    background-color: #e6b83d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 206, 70, 0.3);
 }
 
 .coletor-card.selected .btn-select-coletor {
-    background-color: #2e7d32;
+    background-color: var(--verde-escuro);
+    color: var(--cor-secondaria);
 }
 
-.coletor-card.selected .btn-select-coletor::before {
-    content: "✓ ";
+.coletor-card.selected .btn-select-coletor:hover {
+    background-color: #1a2e1f;
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
     .coletores-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Estilos melhorados para cards de coletores */
+.coletor-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.coletor-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+}
+
+.coletor-card.selected {
+    border: 3px solid #4CAF50;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+.coletor-card-header {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+.coletor-foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.coletor-rating {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #FFB800;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.coletor-city {
+    color: #666;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.coletor-stats {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+}
+
+.stat {
+    font-size: 13px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat i {
+    color: #4CAF50;
+}
+
+.coletor-contact {
+    display: flex;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.coletor-contact a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    color: #666;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.coletor-contact a:hover {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: slideDown 0.3s ease;
+    font-weight: 500;
+}
+
+.success-message i {
+    color: #28a745;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

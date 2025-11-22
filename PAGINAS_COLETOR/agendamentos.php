@@ -370,243 +370,7 @@ function formatarData($data) {
     </div>
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Gerenciar expansão dos itens de agendamento
-            const agendamentoItems = document.querySelectorAll('.agendamento-item');
-            const maps = {};
-
-            agendamentoItems.forEach(item => {
-                const header = item.querySelector('.agendamento-header');
-                const mapContainer = item.querySelector('.map-container');
-                const mapId = mapContainer?.id;
-
-                header.addEventListener('click', (e) => {
-                    if (!e.target.closest('button')) {
-                        item.classList.toggle('expanded');
-
-                        if (mapId && !maps[mapId] && item.classList.contains('expanded')) {
-                            // Inicializar mapa quando expandido pela primeira vez
-                            const map = new google.maps.Map(mapContainer, {
-                                center: {
-                                    lat: -23.550520,
-                                    lng: -46.633308
-                                }, // Coordenadas exemplo
-                                zoom: 15
-                            });
-
-                            const marker = new google.maps.Marker({
-                                position: {
-                                    lat: -23.550520,
-                                    lng: -46.633308
-                                },
-                                map: map,
-                                title: 'Local da Coleta'
-                            });
-
-                            maps[mapId] = map;
-                        }
-                    }
-                });
-            });
-
-            // Gerenciar notificações
-            const notificationBtn = document.querySelector('.notification-btn');
-            const notificationsPopup = document.querySelector('.notifications-popup');
-
-            document.addEventListener('click', function(event) {
-                const isClickInsidePopup = notificationsPopup.contains(event.target);
-                const isClickOnButton = notificationBtn.contains(event.target);
-
-                if (!isClickInsidePopup && !isClickOnButton) {
-                    notificationsPopup.classList.remove('show');
-                }
-            });
-
-            notificationBtn.addEventListener('click', function(event) {
-                event.stopPropagation();
-                notificationsPopup.classList.toggle('show');
-            });
-
-            // Gerenciar botões de ação
-            document.querySelectorAll('.btn-aceitar').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const item = e.target.closest('.agendamento-item');
-                    const coletaId = btn.getAttribute('data-coleta-id');
-                    
-                    if (confirm('Você deseja aceitar esta solicitação de coleta?')) {
-                        fetch('../api/aceitar_coleta.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                id_coleta: coletaId
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert('Coleta aceita com sucesso!');
-                                location.reload();
-                            } else {
-                                alert('Erro ao aceitar coleta: ' + (data.message || 'Tente novamente'));
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erro:', error);
-                            alert('Erro ao processar a solicitação');
-                        });
-                    }
-                });
-            });
-
-            document.querySelectorAll('.btn-concluir').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const coletaId = btn.getAttribute('data-coleta-id');
-                    const quantidade = btn.getAttribute('data-quantidade');
-                    
-                    // Abrir modal
-                    const modal = document.getElementById('modalConcluir');
-                    document.getElementById('coleta_id_input').value = '#' + coletaId;
-                    document.getElementById('hidden_coleta_id').value = coletaId;
-                    document.getElementById('quantidade_coletada').value = '';
-                    document.getElementById('quantidade_coletada').placeholder = 'Solicitado: ' + quantidade + ' litros';
-                    document.getElementById('observacoes_coleta').value = '';
-                    
-                    modal.classList.add('show');
-                });
-            });
-
-            // Fechar modal
-            document.getElementById('modalConcluir').addEventListener('click', (e) => {
-                if (e.target.id === 'modalConcluir') {
-                    document.getElementById('modalConcluir').classList.remove('show');
-                }
-            });
-
-            document.querySelector('.modal-close').addEventListener('click', () => {
-                document.getElementById('modalConcluir').classList.remove('show');
-            });
-
-            document.getElementById('btnCancelarModal').addEventListener('click', () => {
-                document.getElementById('modalConcluir').classList.remove('show');
-            });
-
-            // Confirmar conclusão
-            document.getElementById('btnConfirmarConclusao').addEventListener('click', () => {
-                const coletaId = document.getElementById('hidden_coleta_id').value;
-                const quantidadeColetada = document.getElementById('quantidade_coletada').value;
-                const observacoes = document.getElementById('observacoes_coleta').value;
-                
-                if (!quantidadeColetada) {
-                    alert('Por favor, informe a quantidade de óleo coletada');
-                    return;
-                }
-                
-                fetch('../api/concluir_coleta.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        id_coleta: coletaId,
-                        quantidade_coletada: quantidadeColetada,
-                        observacoes: observacoes
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Coleta concluída com sucesso!');
-                        document.getElementById('modalConcluir').classList.remove('show');
-                        location.reload();
-                    } else {
-                        alert('Erro ao concluir coleta: ' + (data.message || 'Tente novamente'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    alert('Erro ao processar a solicitação');
-                });
-            });
-
-            document.querySelectorAll('.btn-recusar').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const coletaId = btn.getAttribute('data-coleta-id');
-                    
-                    if (confirm('Você deseja recusar esta solicitação de coleta?')) {
-                        fetch('../api/recusar_coleta.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                id_coleta: coletaId
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert('Coleta recusada');
-                                location.reload();
-                            } else {
-                                alert('Erro ao recusar coleta: ' + (data.message || 'Tente novamente'));
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erro:', error);
-                            alert('Erro ao processar a solicitação');
-                        });
-                    }
-                });
-            });
-
-            document.querySelectorAll('.btn-cancelar').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const coletaId = btn.getAttribute('data-coleta-id');
-                    
-                    if (confirm('Tem certeza que deseja cancelar este agendamento?')) {
-                        fetch('../api/cancelar_coleta.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                                id_coleta: coletaId
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert('Agendamento cancelado');
-                                location.reload();
-                            } else {
-                                alert('Erro ao cancelar agendamento: ' + (data.message || 'Tente novamente'));
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Erro:', error);
-                            alert('Erro ao processar a solicitação');
-                        });
-                    }
-                });
-            });
-
-            document.querySelectorAll('.btn-ver-mapa').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const item = e.target.closest('.agendamento-item');
-                    item.classList.add('expanded');
-                    // Forçar a expansão do item para mostrar o mapa
-                });
-            });
-        });
-    </script>
+    <script src="../JS/agendamentos.js"></script>
     <div class="right">
       <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
@@ -643,7 +407,7 @@ function formatarData($data) {
                     
                     <div class="form-group">
                         <label for="quantidade_coletada">Quantidade de Óleo Coletada (litros)</label>
-                        <input type="number" id="quantidade_coletada" name="quantidade_coletada" min="0" step="0.5" required placeholder="Digite a quantidade coletada">
+                        <input type="number" id="quantidade_coletada" name="quantidade_coletada" min="0" step="0.5" required placeholder="Digite a quantidade coletada" max="999">
                     </div>
                     
                     <div class="form-group">
@@ -657,6 +421,39 @@ function formatarData($data) {
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="btnCancelarModal">Cancelar</button>
                 <button class="btn btn-primary" id="btnConfirmarConclusao">Concluir Coleta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Confirmação Geral -->
+    <div id="modalConfirmacao" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalConfirmacaoTitulo">Confirmação</h2>
+                <button class="modal-close" data-modal="modalConfirmacao">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modalConfirmacaoMensagem"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btnCancelarConfirmacao">Cancelar</button>
+                <button class="btn btn-primary" id="btnConfirmarAcao">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Sucesso/Erro -->
+    <div id="modalResultado" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalResultadoTitulo">Sucesso</h2>
+                <button class="modal-close" data-modal="modalResultado">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalResultadoConteudo"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnFecharResultado">Fechar</button>
             </div>
         </div>
     </div>
@@ -757,6 +554,12 @@ function formatarData($data) {
             box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
         }
 
+        .modal-body p {
+            margin: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
         .modal-footer {
             padding: 20px;
             border-top: 1px solid #e0e0e0;
@@ -790,6 +593,36 @@ function formatarData($data) {
 
         .modal-footer .btn-primary:hover {
             background-color: #45a049;
+        }
+
+        .modal-resultado-sucesso {
+            background-color: #f1f8f4;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-resultado-sucesso i {
+            color: #4CAF50;
+            font-size: 24px;
+        }
+
+        .modal-resultado-erro {
+            background-color: #fef1f1;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-resultado-erro i {
+            color: #f44336;
+            font-size: 24px;
         }
 
         @keyframes fadeIn {

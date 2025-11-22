@@ -30,8 +30,7 @@ try {
                 e.cep
             FROM coletores c
             LEFT JOIN enderecos e ON c.id_endereco = e.id
-            WHERE c.status = 'ativo'
-            AND e.cidade LIKE :cidade";
+            WHERE e.cidade LIKE :cidade";
     
     $params = [':cidade' => '%' . $cidade . '%'];
     
@@ -75,6 +74,7 @@ try {
     ]);
     
 } catch (Exception $e) {
+    error_log('Erro ao buscar coletores por localização: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'success' => false,
