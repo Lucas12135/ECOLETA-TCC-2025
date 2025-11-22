@@ -314,10 +314,11 @@ async function buscarEnderecoPorCEP(cep) {
     }
 
     // Preenchendo os campos com os dados do CEP
-    document.getElementById("street").value = data.logradouro || "";
-    document.getElementById("neighborhood").value = data.bairro || "";
-    document.getElementById("city").value = data.localidade || "";
-    document.getElementById("state").value = data.uf || "";
+    // IDs corretos conforme HTML: rua, numero, complemento, bairro, cidade, estado
+    document.getElementById("rua").value = data.logradouro || "";
+    document.getElementById("bairro").value = data.bairro || "";
+    document.getElementById("cidade").value = data.localidade || "";
+    document.getElementById("estado").value = data.uf || "";
   } catch (error) {
     console.error("Erro ao buscar CEP:", error);
     alert("Erro ao buscar CEP. Verifique sua conexão.");

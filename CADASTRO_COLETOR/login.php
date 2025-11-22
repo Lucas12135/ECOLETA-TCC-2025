@@ -4,57 +4,118 @@ session_start();
 $errors = [];
 include_once '../BANCO/conexao.php'; // deve fornecer a variável $conn como PDO
 
-// Inicializa somente se NÃO existir
+// Garante estrutura de sessão para o fluxo de cadastro
 if (!isset($_SESSION['cadastro'])) {
   $_SESSION['cadastro'] = [];
 }
 
 if (!empty($_POST)) {
-  // === Validação do e-mail ===
-  if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-    $errors['email'] = 'Digite um email válido.';
+  if (!isset($conn) || !$conn) {
+    $errors['db'] = 'Não foi possível conectar ao banco de dados.';
   } else {
-    $email = trim($_POST['email']);
 
-    // Verifica se o e-mail já existe no banco (usando PDO)
-    $stmt = $conn->prepare("SELECT id FROM coletores WHERE email = :email LIMIT 1");
-    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-    $stmt->execute();
+    // ===========================
+    // VALIDAÇÃO DE E-MAIL
+    // ===========================
+    if (empty($_POST['email']) || !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+      $errors['email'] = 'Digite um email válido.';
+    } else {
+      $email = trim($_POST['email']);
 
-    if ($stmt->fetch()) {
-      $errors['email'] = 'Este email já está em uso.';
+      // Verifica se já existe um coletor com este e-mail
+      $stmt = $conn->prepare("SELECT id FROM coletores WHERE email = :email LIMIT 1");
+      $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+      $stmt->execute();
+
+      if ($stmt->fetch()) {
+        // aqui é tela de CADASTRO, então email já usado é erro
+        $errors['email'] = 'Este email já está em uso.';
+      }
     }
-  }
 
-  // === Validação da senha ===
-  if (empty($_POST['senha'])) {
-    $errors['senha'] = 'Digite uma senha.';
-  } else {
-    $senha = $_POST['senha'];
-    if (
-      strlen($senha) < 8 ||
-      !preg_match('/[A-Z]/', $senha) ||
-      !preg_match('/[a-z]/', $senha) ||
-      !preg_match('/[0-9]/', $senha) ||
-      !preg_match('/[^A-Za-z0-9]/', $senha)
-    ) {
-      $errors['senha'] = '* A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.';
+    // ===========================
+    // VALIDAÇÃO DE SENHA
+    // ===========================
+    if (empty($_POST['senha'])) {
+      $errors['senha'] = 'Digite uma senha.';
+    } else {
+      $senha = $_POST['senha'];
+
+      if (
+        strlen($senha) < 8 ||
+        !preg_match('/[A-Z]/', $senha) ||
+        !preg_match('/[a-z]/', $senha) ||
+        !preg_match('/[0-9]/', $senha) ||
+        !preg_match('/[^A-Za-z0-9]/', $senha)
+      ) {
+        $errors['senha'] = '* A senha deve ter no mínimo 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um número e um caractere especial.';
+      }
     }
-  }
 
-  // === Validação do tipo ===
-  if (empty($_POST['tipo'])) {
-    $errors['tipo'] = 'Selecione o tipo de coletor.';
-  }
+    // ===========================
+    // VALIDAÇÃO CONFIRMAÇÃO
+    // ===========================
+    if (empty($_POST['confirmar_senha'])) {
+      $errors['confirmar_senha'] = 'Por favor, confirme sua senha.';
+    } elseif (!empty($_POST['senha']) && $_POST['senha'] !== $_POST['confirmar_senha']) {
+      $errors['confirmar_senha'] = 'As senhas não coincidem.';
+    }
 
-  // === Se não houver erros, prossegue ===
-  if (empty($errors)) {
-    $_SESSION['cadastro']['email'] = $_POST['email'];
-    $_SESSION['cadastro']['tipo'] = $_POST['tipo'];
-    $_SESSION['cadastro']['senha'] = $_POST['senha'];
+    // ===========================
+    // VALIDAÇÃO DO TIPO
+    // ===========================
+    if (empty($_POST['tipo'])) {
+      $errors['tipo'] = 'Selecione o tipo de coletor.';
+    }
 
-    header('Location: registro.php');
-    exit;
+    // ===========================
+    // SE NÃO HOUVE ERROS:
+    //  1) guarda e-mail/senha na sessão
+    //  2) dispara OTP para o e-mail
+    //  3) redireciona para tela de inserir código
+    // ===========================
+    if (empty($errors)) {
+
+      // Garante que $email, $senha e $tipo existam
+      $email = trim($_POST['email']);
+      $senha = $_POST['senha'];
+      $tipo = $_POST['tipo'];
+
+      // Guarda no "wizard" de cadastro
+      $_SESSION['cadastro']['email'] = $email;
+      $_SESSION['cadastro']['senha'] = $senha;
+      $_SESSION['cadastro']['tipo'] = $tipo;
+
+      // Guarda dados para fluxo de OTP
+      $_SESSION['otp_email']   = $email;
+      $_SESSION['otp_purpose'] = 'cadastro_coletor';
+
+      // Disparo do OTP via endpoint HTTP
+      $otpUrl   = 'http://localhost/ECOLETA/ECOLETA-TCC-2025/auth/request_otp.php';
+      $postData = http_build_query([
+        'email'   => $email,
+        'purpose' => 'cadastro_coletor'
+      ]);
+
+      $context = stream_context_create([
+        'http' => [
+          'method'  => 'POST',
+          'header'  => "Content-Type: application/x-www-form-urlencoded\r\n" .
+            "Content-Length: " . strlen($postData) . "\r\n",
+          'content' => $postData,
+          'timeout' => 5
+        ]
+      ]);
+
+      // Tenta enviar o OTP
+      $response = @file_get_contents($otpUrl, false, $context);
+
+      // Log opcional para debug (remove em produção):
+      // error_log("OTP Response: " . $response);
+
+      header('Location: ../auth/view/otp_verify_coletor.php?email=' . urlencode($email) . '&origin=cadastro_coletor');
+      exit;
+    }
   }
 }
 ?>
@@ -71,6 +132,84 @@ if (!empty($_POST)) {
   <link rel="stylesheet" href="../CSS/login.css">
   <link rel="stylesheet" href="../CSS/global.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .form-box .password-field {
+      position: relative;
+      width: 100%;
+    }
+
+    /* input com espaço pro ícone à direita */
+    .form-box .password-field input[type="password"],
+    .form-box .password-field input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      padding-right: 2.75rem;
+      /* espaço pro botão */
+      margin-bottom: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: "Poppins", sans-serif;
+      color: #223e2a;
+      background-color: #fff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      line-height: normal;
+      letter-spacing: normal;
+    }
+
+    .form-box .password-field input[type="password"]:focus,
+    .form-box .password-field input[type="text"]:focus {
+      outline: none;
+      border-color: #ffce46;
+      box-shadow: 0 0 0 3px rgba(255, 206, 70, 0.2);
+    }
+
+    /* BOTÃO FIXO – não se mexe em hover/click */
+    .form-box .pw-toggle {
+      all: unset;
+      position: absolute;
+      right: .6rem;
+      top: 50%;
+      transform: translateY(-50%);
+      /* central fixo */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.9rem;
+      height: 1.9rem;
+      cursor: pointer;
+      color: #6b7280;
+      border-radius: .5rem;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .form-box .pw-toggle:hover {
+      background: #f3f4f6;
+      color: #374151;
+      transform: translateY(-50%);
+      /* continua no mesmo lugar */
+    }
+
+    .form-box .pw-toggle:active {
+      /* sem “pulinho” ao clicar */
+      transform: translateY(-50%);
+    }
+
+    .form-box .pw-toggle:focus-visible {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+
+    .form-box .pw-toggle svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      display: block;
+    }
+
+    /* se quiser manter, pode deixar vazio mesmo */
+    .form-box button[type="submit"] {}
+  </style>
 </head>
 
 <body>
@@ -187,9 +326,26 @@ if (!empty($_POST)) {
           <?php if (isset($errors['email'])): ?>
             <div class="input-error"><?= $errors['email'] ?></div>
           <?php endif; ?>
-          <input type="password" id="senha" name="senha" placeholder="Insira a sua melhor senha" required>
+          <div class="password-field">
+            <input type="password" id="senha" name="senha" placeholder="Insira a sua melhor senha" required
+              value="<?= isset($_POST['senha']) ? htmlspecialchars($_POST['senha']) : '' ?>">
+            <button type="button" class="pw-toggle" aria-label="Mostrar senha"
+              aria-pressed="false" data-target="senha" title="Mostrar/ocultar senha">
+              <svg viewBox="0 0 24 24" aria-hidden="true"></svg>
+            </button>
+          </div>
           <?php if (isset($errors['senha'])): ?>
             <div class="input-error"><?= $errors['senha'] ?></div>
+          <?php endif; ?>
+          <div class="password-field">
+            <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme sua senha" required
+              value="<?= isset($_POST['confirmar_senha']) ? htmlspecialchars($_POST['confirmar_senha']) : '' ?>">
+            <button type="button" class="pw-toggle" aria-label="Mostrar senha"
+              aria-pressed="false" data-target="confirmar_senha" title="Mostrar/ocultar senha">
+              <svg viewBox="0 0 24 24" aria-hidden="true"></svg>
+            </button>
+          </div> <?php if (isset($errors['confirmar_senha'])): ?>
+            <div class="input-error"><?= $errors['confirmar_senha'] ?></div>
           <?php endif; ?>
           <select id="tipo" name="tipo" required>
             <option value="" disabled <?= !isset($_POST['tipo']) ? 'selected' : '' ?>>Selecione o tipo de coletor</option>

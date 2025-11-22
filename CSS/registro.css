@@ -366,6 +366,35 @@ div[vw-access-button] {
   display: block;
 }
 
+/* ========== ESTILOS PARA PÁGINA DE CONFIRMAÇÃO ========== */
+.confirmation-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.confirmation-content h3 {
+  font-size: 2rem;
+  color: var(--cor-botao);
+  font-weight: 700;
+  margin: 20px 0 15px 0;
+}
+
+.confirmation-content p {
+  font-size: 1.1rem;
+  color: var(--cor-texto-primaria);
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+.confirmation-content .subtitle {
+  color: var(--cor-quaternaria);
+  font-weight: 600;
+  margin-top: 15px;
+}
+
 /* ========== RESPONSIVIDADE AJUSTADA ========== */
 @media (max-height: 700px) {
   header {

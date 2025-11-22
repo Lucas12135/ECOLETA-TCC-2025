@@ -17,42 +17,58 @@ unset($_SESSION['cadastro_completo']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmação de Cadastro</title>
+    <title>Confirmação de Cadastro - Coletor</title>
     <link rel="icon" href="../img/logo.png" type="image/png">
-    <link rel="stylesheet" href="../CSS/final.css">
+    <link rel="stylesheet" href="../CSS/registro.css">
     <link rel="stylesheet" href="../CSS/global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-
-    <!-- Header -->
-    <div class="header">
-        <div class="header-logo">
-            <img src="../img/logo.png" alt="Logo Portal de cadastro - Coletor" class="logo-image">
-        </div>
-        <span class="header-text">Portal de Cadastro</span>
-    </div>
-
-    <div class="container">
-        <div class="main-content">
-            <!-- Card de Ilustração -->
-            <div class="illustration-card">
-                <img src="../img/icone2.jpeg" alt="Ilustração do Coletor" class="illustration">
-            </div>
-
-            <!-- Card de Confirmação -->
-            <div class="confirmation-card">
-                <h2>Obrigado por se juntar à<br>Equipe de Coletores Ecoleta</h2>
-                <h3>Parabéns!</h3>
-                <p>A Ecoleta espera por você</p>
-                <button id="visitProfileBtn" class="profile-button">Ir para Home</button>
+    <!-- ========== ESTRUTURA DO HEADER AUMENTADO ========== -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-placeholder">
+                    <img src="../img/logo.png" alt="Logo Portal de cadastro - Coletor">
+                </div>
+                <span class="logo-text">Portal de cadastro - Coletor</span>
             </div>
         </div>
-    </div>
+    </header>
 
+    <!-- ========== CONTEUDO PRINCIPAL ========== -->
+    <main>
+        <div class="left">
+            <div class="image-container">
+                <img src="../img/icone2.jpeg" alt="Ilustração de confirmação de cadastro">
+            </div>
+        </div>
+
+        <div class="right">
+            <div class="form-box">
+                <h2>Cadastro Confirmado!</h2>
+                <div class="confirmation-content">
+                    <h3>Parabéns!</h3>
+                    <p>Obrigado por se juntar à equipe de coletores Ecoleta</p>
+                    <p class="subtitle">A Ecoleta espera por você</p>
+                    <button id="visitProfileBtn" class="btn-continue" style="margin-top: 30px; width: 100%;">Ir para Home</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script src="../JS/libras.js"></script>
     <script>
         document.getElementById('visitProfileBtn').addEventListener('click', function() {
-            window.location.href = "../index.php";
+            window.location.href = "../PAGINAS_COLETOR/home.php";
         });
     </script>
 </body>

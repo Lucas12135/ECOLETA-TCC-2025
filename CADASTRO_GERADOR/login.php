@@ -83,7 +83,7 @@ if (!empty($_POST)) {
             $_SESSION['otp_purpose'] = 'cadastro_gerador';
 
             // Disparo do OTP via endpoint HTTP
-            $otpUrl   = 'http://localhost/Ecoleta/auth/request_otp.php';
+            $otpUrl   = 'http://localhost/ECOLETA/ECOLETA-TCC-2025/auth/request_otp.php';
             $postData = http_build_query([
                 'email'   => $email,
                 'purpose' => 'cadastro_gerador'
@@ -93,7 +93,7 @@ if (!empty($_POST)) {
                 'http' => [
                     'method'  => 'POST',
                     'header'  => "Content-Type: application/x-www-form-urlencoded\r\n" .
-                                 "Content-Length: " . strlen($postData) . "\r\n",
+                        "Content-Length: " . strlen($postData) . "\r\n",
                     'content' => $postData,
                     'timeout' => 5
                 ]
@@ -101,7 +101,7 @@ if (!empty($_POST)) {
 
             // Tenta enviar o OTP
             $response = @file_get_contents($otpUrl, false, $context);
-            
+
             // Log opcional para debug (remove em produção):
             // error_log("OTP Response: " . $response);
 
@@ -125,80 +125,81 @@ if (!empty($_POST)) {
 
     <style>
         .form-box .password-field {
-    position: relative;
-    width: 100%;
-}
+            position: relative;
+            width: 100%;
+        }
 
-/* input com espaço pro ícone à direita */
-.form-box .password-field input[type="password"],
-.form-box .password-field input[type="text"] {
-    width: 100%;
-    padding: 12px;
-    padding-right: 2.75rem; /* espaço pro botão */
-    margin-bottom: 12px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: "Poppins", sans-serif;
-    color: #223e2a;
-    background-color: #fff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    line-height: normal;
-    letter-spacing: normal;
-}
+        /* input com espaço pro ícone à direita */
+        .form-box .password-field input[type="password"],
+        .form-box .password-field input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            padding-right: 2.75rem;
+            /* espaço pro botão */
+            margin-bottom: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: "Poppins", sans-serif;
+            color: #223e2a;
+            background-color: #fff;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            line-height: normal;
+            letter-spacing: normal;
+        }
 
-.form-box .password-field input[type="password"]:focus,
-.form-box .password-field input[type="text"]:focus {
-    outline: none;
-    border-color: #ffce46;
-    box-shadow: 0 0 0 3px rgba(255, 206, 70, 0.2);
-}
+        .form-box .password-field input[type="password"]:focus,
+        .form-box .password-field input[type="text"]:focus {
+            outline: none;
+            border-color: #ffce46;
+            box-shadow: 0 0 0 3px rgba(255, 206, 70, 0.2);
+        }
 
-/* BOTÃO FIXO – não se mexe em hover/click */
-.form-box .pw-toggle {
-    all: unset;
-    position: absolute;
-    right: .6rem;
-    top: 50%;
-    transform: translateY(-50%); /* central fixo */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.9rem;
-    height: 1.9rem;
-    cursor: pointer;
-    color: #6b7280;
-    border-radius: .5rem;
-    user-select: none;
-    -webkit-user-select: none;
-}
+        /* BOTÃO FIXO – não se mexe em hover/click */
+        .form-box .pw-toggle {
+            all: unset;
+            position: absolute;
+            right: .6rem;
+            top: 50%;
+            transform: translateY(-50%);
+            /* central fixo */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.9rem;
+            height: 1.9rem;
+            cursor: pointer;
+            color: #6b7280;
+            border-radius: .5rem;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-.form-box .pw-toggle:hover {
-    background: #f3f4f6;
-    color: #374151;
-    transform: translateY(-50%); /* continua no mesmo lugar */
-}
+        .form-box .pw-toggle:hover {
+            background: #f3f4f6;
+            color: #374151;
+            transform: translateY(-50%);
+            /* continua no mesmo lugar */
+        }
 
-.form-box .pw-toggle:active {
-    /* sem “pulinho” ao clicar */
-    transform: translateY(-50%);
-}
+        .form-box .pw-toggle:active {
+            /* sem “pulinho” ao clicar */
+            transform: translateY(-50%);
+        }
 
-.form-box .pw-toggle:focus-visible {
-    outline: 2px solid #2563eb;
-    outline-offset: 2px;
-}
+        .form-box .pw-toggle:focus-visible {
+            outline: 2px solid #2563eb;
+            outline-offset: 2px;
+        }
 
-.form-box .pw-toggle svg {
-    width: 1.25rem;
-    height: 1.25rem;
-    display: block;
-}
+        .form-box .pw-toggle svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            display: block;
+        }
 
-/* se quiser manter, pode deixar vazio mesmo */
-.form-box button[type="submit"] {
-}
-
+        /* se quiser manter, pode deixar vazio mesmo */
+        .form-box button[type="submit"] {}
     </style>
 </head>
 
@@ -313,16 +314,16 @@ if (!empty($_POST)) {
 
                 <form method="POST" action="#" novalidate>
                     <input type="email" id="email" name="email" placeholder="Digite seu melhor email para contato" required
-                           value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
+                        value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>">
                     <?php if (isset($errors['email'])): ?>
                         <div class="input-error">⚠️ <?= htmlspecialchars($errors['email']) ?></div>
                     <?php endif; ?>
 
                     <div class="password-field">
                         <input type="password" id="senha" name="senha" placeholder="Insira a sua melhor senha" required
-                               value="<?= isset($_POST['senha']) ? htmlspecialchars($_POST['senha']) : '' ?>">
+                            value="<?= isset($_POST['senha']) ? htmlspecialchars($_POST['senha']) : '' ?>">
                         <button type="button" class="pw-toggle" aria-label="Mostrar senha"
-                                aria-pressed="false" data-target="senha" title="Mostrar/ocultar senha">
+                            aria-pressed="false" data-target="senha" title="Mostrar/ocultar senha">
                             <svg viewBox="0 0 24 24" aria-hidden="true"></svg>
                         </button>
                     </div>
@@ -332,9 +333,9 @@ if (!empty($_POST)) {
 
                     <div class="password-field">
                         <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Confirme sua senha" required
-                               value="<?= isset($_POST['confirmar_senha']) ? htmlspecialchars($_POST['confirmar_senha']) : '' ?>">
+                            value="<?= isset($_POST['confirmar_senha']) ? htmlspecialchars($_POST['confirmar_senha']) : '' ?>">
                         <button type="button" class="pw-toggle" aria-label="Mostrar senha"
-                                aria-pressed="false" data-target="confirmar_senha" title="Mostrar/ocultar senha">
+                            aria-pressed="false" data-target="confirmar_senha" title="Mostrar/ocultar senha">
                             <svg viewBox="0 0 24 24" aria-hidden="true"></svg>
                         </button>
                     </div>
@@ -357,87 +358,94 @@ if (!empty($_POST)) {
             </div>
         </div>
     </main>
-    
+
     <div class="right">
-      <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
-          <title>accessibility</title>
-          <g>
-            <circle cx="24" cy="7" r="4" />
-            <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
-          </g>
-        </svg>
-      </div>
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div class="vw-plugin-top-wrapper"></div>
-    </div>
+        <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" fill="white">
+                <title>accessibility</title>
+                <g>
+                    <circle cx="24" cy="7" r="4" />
+                    <path d="M40,13H8a2,2,0,0,0,0,4H19.9V27L15.1,42.4a2,2,0,0,0,1.3,2.5H17a2,2,0,0,0,1.9-1.4L23.8,28h.4l4.9,15.6A2,2,0,0,0,31,45h.6a2,2,0,0,0,1.3-2.5L28.1,27V17H40a2,2,0,0,0,0-4Z" />
+                </g>
+            </svg>
+        </div>
+        <div vw class="enabled">
+            <div vw-access-button class="active"></div>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
 
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script src="../JS/libras.js"></script>
-    <script src="../JS/login.js"></script>
-    <script src="../JS/login-validacao.js"></script>
+        <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script src="../JS/libras.js"></script>
+        <script src="../JS/login.js"></script>
+        <script src="../JS/login-validacao.js"></script>
 
-    <script>
-    (function () {
-      const ICON_EYE = `
+        <script>
+            (function() {
+                const ICON_EYE = `
         <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/>
       `;
-      const ICON_EYE_OFF = `
+                const ICON_EYE_OFF = `
         <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.78 21.78 0 0 1 5.06-6.04M9.9 4.24A10.78 10.78 0 0 1 12 4c7 0 11 8 11 8a21.8 21.8 0 0 1-4.35 5.94" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M1 1l22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
       `;
 
-      function setIcon(btn, visible) {
-        const svg = btn.querySelector('svg');
-        svg.innerHTML = visible ? ICON_EYE : ICON_EYE_OFF;
-      }
+                function setIcon(btn, visible) {
+                    const svg = btn.querySelector('svg');
+                    svg.innerHTML = visible ? ICON_EYE : ICON_EYE_OFF;
+                }
 
-      function toggleVisibility(input, btn) {
-        const show = input.type === 'password';
-        input.type = show ? 'text' : 'password';
-        setIcon(btn, show);
-        btn.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
-        btn.setAttribute('aria-pressed', show ? 'true' : 'false');
-      }
+                function toggleVisibility(input, btn) {
+                    const show = input.type === 'password';
+                    input.type = show ? 'text' : 'password';
+                    setIcon(btn, show);
+                    btn.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+                    btn.setAttribute('aria-pressed', show ? 'true' : 'false');
+                }
 
-      document.querySelectorAll('.pw-toggle').forEach(btn => {
-        const input = document.getElementById(btn.dataset.target);
-        if (!input) return;
+                document.querySelectorAll('.pw-toggle').forEach(btn => {
+                    const input = document.getElementById(btn.dataset.target);
+                    if (!input) return;
 
-        setIcon(btn, false);
-        btn.setAttribute('aria-pressed', 'false');
+                    setIcon(btn, false);
+                    btn.setAttribute('aria-pressed', 'false');
 
-        btn.addEventListener('click', () => toggleVisibility(input, btn));
+                    btn.addEventListener('click', () => toggleVisibility(input, btn));
 
-        let holdTimer = null, wasPassword = true;
+                    let holdTimer = null,
+                        wasPassword = true;
 
-        const pressStart = () => {
-          wasPassword = (input.type === 'password');
-          if (wasPassword) {
-            holdTimer = setTimeout(() => {
-              input.type = 'text';
-              setIcon(btn, true);
-              btn.setAttribute('aria-label', 'Ocultar senha');
-            }, 150);
-          }
-        };
-        const pressEnd = () => {
-          if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
-          if (wasPassword && input.type === 'text') {
-            input.type = 'password';
-            setIcon(btn, false);
-            btn.setAttribute('aria-label', 'Mostrar senha');
-            btn.setAttribute('aria-pressed', 'false');
-          }
-        };
+                    const pressStart = () => {
+                        wasPassword = (input.type === 'password');
+                        if (wasPassword) {
+                            holdTimer = setTimeout(() => {
+                                input.type = 'text';
+                                setIcon(btn, true);
+                                btn.setAttribute('aria-label', 'Ocultar senha');
+                            }, 150);
+                        }
+                    };
+                    const pressEnd = () => {
+                        if (holdTimer) {
+                            clearTimeout(holdTimer);
+                            holdTimer = null;
+                        }
+                        if (wasPassword && input.type === 'text') {
+                            input.type = 'password';
+                            setIcon(btn, false);
+                            btn.setAttribute('aria-label', 'Mostrar senha');
+                            btn.setAttribute('aria-pressed', 'false');
+                        }
+                    };
 
-        btn.addEventListener('mousedown', pressStart);
-        btn.addEventListener('touchstart', pressStart, { passive: true });
-        ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt => btn.addEventListener(evt, pressEnd));
-      });
-    })();
-    </script>
+                    btn.addEventListener('mousedown', pressStart);
+                    btn.addEventListener('touchstart', pressStart, {
+                        passive: true
+                    });
+                    ['mouseup', 'mouseleave', 'touchend', 'touchcancel'].forEach(evt => btn.addEventListener(evt, pressEnd));
+                });
+            })();
+        </script>
 </body>
+
 </html>
