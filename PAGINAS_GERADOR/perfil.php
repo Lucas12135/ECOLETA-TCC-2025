@@ -207,10 +207,6 @@ function e($v)
                         $foto = $gerador['foto_perfil'] ? '../uploads/profile_photos/' . htmlspecialchars($gerador['foto_perfil']) : '../img/profile-placeholder.jpg';
                         ?>
                         <img src="<?= e($foto) ?>" alt="Foto de Perfil" id="profilePhoto" class="profile-photo">
-                        <button class="change-photo-btn" onclick="document.getElementById('photoInput').click()">
-                            <i class="ri-camera-line"></i>
-                        </button>
-                        <input type="file" id="photoInput" hidden accept="image/*" onchange="updateProfilePhoto(this)">
                     </div>
                 </div>
                 <div class="profile-info">

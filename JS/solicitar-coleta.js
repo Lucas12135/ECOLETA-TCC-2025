@@ -284,5 +284,89 @@ document.querySelector('.collection-form').addEventListener('submit', function(e
     return true;
 });
 
+// ============================================
+// FUNCIONALIDADE: USAR ENDEREÇO PADRÃO
+// ============================================
+
+// Aguardar o carregamento completo da página
+document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('usar_endereco_padrao');
+    
+    // Verificar se o checkbox existe e não está desabilitado
+    if (!checkbox || checkbox.disabled) {
+        return;
+    }
+    
+    // Lista de campos de endereço
+    const camposEndereco = [
+        'cep',
+        'rua',
+        'numero',
+        'complemento',
+        'bairro',
+        'cidade'
+    ];
+    
+    // Função para habilitar/desabilitar campos usando readonly
+    function toggleCamposEndereco(bloquear) {
+        camposEndereco.forEach(campo => {
+            const elemento = document.getElementById(campo);
+            if (elemento) {
+                if (bloquear) {
+                    elemento.setAttribute('readonly', 'readonly');
+                    elemento.style.backgroundColor = '#f5f5f5';
+                    elemento.style.cursor = 'not-allowed';
+                } else {
+                    elemento.removeAttribute('readonly');
+                    elemento.style.backgroundColor = '';
+                    elemento.style.cursor = '';
+                }
+            }
+        });
+    }
+    
+    // Adicionar evento ao checkbox
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            // Buscar valores dos campos hidden
+            const defaultCep = document.getElementById('default_cep').value;
+            const defaultRua = document.getElementById('default_rua').value;
+            const defaultNumero = document.getElementById('default_numero').value;
+            const defaultComplemento = document.getElementById('default_complemento').value;
+            const defaultBairro = document.getElementById('default_bairro').value;
+            const defaultCidade = document.getElementById('default_cidade').value;
+            const defaultEstado = document.getElementById('default_estado').value;
+            
+            // Preencher campos visíveis
+            document.getElementById('cep').value = defaultCep;
+            document.getElementById('rua').value = defaultRua;
+            document.getElementById('numero').value = defaultNumero;
+            document.getElementById('complemento').value = defaultComplemento;
+            document.getElementById('bairro').value = defaultBairro;
+            document.getElementById('cidade').value = defaultCidade;
+            document.getElementById('estado').value = defaultEstado;
+            
+            // Desabilitar campos
+            toggleCamposEndereco(true);
+            
+            // Disparar evento de blur no CEP para carregar o mapa e coletores
+            const cepInput = document.getElementById('cep');
+            const event = new Event('blur', { bubbles: true });
+            cepInput.dispatchEvent(event);
+        } else {
+            // Habilitar campos
+            toggleCamposEndereco(false);
+            
+            // Limpar todos os campos
+            document.getElementById('cep').value = '';
+            document.getElementById('rua').value = '';
+            document.getElementById('numero').value = '';
+            document.getElementById('complemento').value = '';
+            document.getElementById('bairro').value = '';
+            document.getElementById('cidade').value = '';
+        }
+    });
+});
+
 // Inicializar mapa quando a página carregar
 window.addEventListener('load', initMap);
