@@ -52,6 +52,24 @@ try {
 
     $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+    // Estatísticas do GERADOR
+    $sql_stats = "
+    SELECT 
+        COUNT(*) AS total_coletas,
+        COALESCE(SUM(hc.quantidade_coletada), 0) AS total_oleo
+    FROM historico_coletas hc
+    WHERE hc.id_gerador = :id
+      AND hc.status = 'concluida'
+";
+    $stmt = $db->prepare($sql_stats);
+    $stmt->bindValue(':id', $usuarioId, PDO::PARAM_INT);
+    $stmt->execute();
+    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $total_coletas = $stats['total_coletas'];
+    $total_oleo = $stats['total_oleo'];
+
+
     /* ==============================================
        4) Carregar dados do gerador no banco
        Campos comuns: id, nome_completo, email, telefone, cpf,
@@ -228,21 +246,21 @@ function e($v)
                         <div class="stat-card">
                             <i class="ri-oil-line"></i>
                             <div class="stat-info">
-                                <span class="stat-value">25L</span>
+                                <span class="stat-value"><?= number_format($total_oleo, 2, ',', '.') ?>L</span>
                                 <span class="stat-label">Óleo Reciclado</span>
                             </div>
                         </div>
                         <div class="stat-card">
                             <i class="ri-recycle-line"></i>
                             <div class="stat-info">
-                                <span class="stat-value">12</span>
+                                <span class="stat-value"><?= $total_coletas ?></span>
                                 <span class="stat-label">Coletas Realizadas</span>
                             </div>
                         </div>
                         <div class="stat-card">
                             <i class="ri-water-flash-line"></i>
                             <div class="stat-info">
-                                <span class="stat-value">500 mil L</span>
+                                <span class="stat-value"><?= number_format($total_oleo * 25000, 0, ',', '.') ?>L</span>
                                 <span class="stat-label">Água Preservada</span>
                             </div>
                         </div>
@@ -464,7 +482,7 @@ function e($v)
                 }
             });
         });
-        
+
         // Stubs dos seus scripts
         function toggleMobileMenu() {
             document.body.classList.toggle('menu-open');
@@ -482,9 +500,8 @@ function e($v)
     </script>
     <script src="../JS/navbar.js"></script>
     <script src="../JS/perfil.js"></script>
-    <script src="../JS/acessibilidade.js"></script><script src="../JS/libras.js"></script>
+    <script src="../JS/acessibilidade.js"></script>
+    <script src="../JS/libras.js"></script>
 </body>
 
 </html>
-
-
