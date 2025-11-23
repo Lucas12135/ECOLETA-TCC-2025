@@ -17,6 +17,7 @@ include_once('../BANCO/conexao.php');
 try {
     $stmt_check = $conn->prepare("
         SELECT c.*, 
+               col.id as id_coletor,
                col.nome_completo as coletor_nome, 
                col.telefone as coletor_telefone,
                col.foto_perfil as coletor_foto
@@ -515,7 +516,7 @@ function corStatus($status) {
 
                     <?php if ($coleta_ativa['coletor_nome']): ?>
                     <div class="coletor-info">
-                        <img src="<?php echo $coleta_ativa['coletor_foto'] ? '../uploads/fotos/' . $coleta_ativa['coletor_foto'] : '../img/avatar-default.png'; ?>" 
+                        <img src="<?php echo $coleta_ativa['coletor_foto'] ? '../uploads/profile_photos/' . $coleta_ativa['coletor_foto'] : '../img/avatar-default.png'; ?>" 
                              alt="<?php echo htmlspecialchars($coleta_ativa['coletor_nome']); ?>" 
                              class="coletor-foto"
                              onerror="this.src='../img/avatar-default.png'">
@@ -525,6 +526,9 @@ function corStatus($status) {
                                 <i class="ri-phone-line"></i> 
                                 <?php echo htmlspecialchars($coleta_ativa['coletor_telefone'] ?? 'Não informado'); ?>
                             </p>
+                            <button class="btn-ver-perfil-solicitar" onclick="abrirPerfilColetor(<?php echo $coleta_ativa['id_coletor']; ?>)" style="margin-top: 10px; padding: 8px 15px; background-color: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; transition: all 0.3s; font-size: 14px;">
+                                <i class="ri-eye-line"></i> Ver Perfil
+                            </button>
                         </div>
                     </div>
                     <?php else: ?>
@@ -816,10 +820,300 @@ function corStatus($status) {
             <button class="accessibility-reset-btn">Restaurar Padrões</button>
         </div>
         <!-- Botão de Libras Separado -->
-        <div class="libras-button" id="librasButton" onclick="toggleLibras(event)" title="Libras">
+        <div class="libras-button" id="librasButton" onclick="toggleAccessibility(event)" title="Libras">
             👋
         </div>
     </div>
+
+    <!-- Modal de Perfil do Coletor -->
+    <div id="modalPerfilColetor" class="modal-perfil-coletor">
+        <div class="modal-perfil-content">
+            <button class="modal-perfil-close">&times;</button>
+            <div id="perfilColetorConteudo" class="perfil-coletor-conteudo">
+                <div style="text-align: center; padding: 40px;">
+                    <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #3b82f6; border-radius: 50%; border-top: 4px solid transparent; animation: spin 1s linear infinite;"></div>
+                    <p style="margin-top: 15px; color: #666;">Carregando perfil...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-perfil-coletor {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-perfil-coletor.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-perfil-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-perfil-close {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-perfil-close:hover {
+            color: #333;
+        }
+
+        .perfil-coletor-conteudo {
+            padding-top: 20px;
+        }
+
+        .perfil-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .perfil-foto {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 4px solid #3b82f6;
+        }
+
+        .perfil-nome {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .perfil-tipo {
+            font-size: 14px;
+            color: #64748b;
+            background-color: #e0f2fe;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .perfil-info-section {
+            margin-bottom: 25px;
+        }
+
+        .perfil-info-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .perfil-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .perfil-info-label {
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .perfil-info-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .perfil-avaliacao {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .perfil-stars {
+            font-size: 18px;
+            color: #ffc107;
+        }
+
+        .perfil-transporte {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .perfil-transporte-icon {
+            font-size: 24px;
+        }
+
+        .perfil-transporte-info {
+            flex: 1;
+        }
+
+        .perfil-transporte-label {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .perfil-transporte-valor {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-ver-perfil-solicitar:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <script>
+        function abrirPerfilColetor(idColetor) {
+            const modal = document.getElementById('modalPerfilColetor');
+            const conteudo = document.getElementById('perfilColetorConteudo');
+            
+            modal.classList.add('show');
+
+            fetch(`../api/get_perfil_coletor.php?id=${idColetor}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucesso) {
+                        const coletor = data.coletor;
+                        const estrelas = Array(5).fill('<i class="ri-star-fill"></i>').slice(0, Math.round(coletor.avaliacao_media)).join('');
+                        const estrelasBrancas = Array(5 - Math.round(coletor.avaliacao_media)).fill('<i class="ri-star-line"></i>').join('');
+
+                        const tipoTransporte = {
+                            'carro': '🚗 Carro',
+                            'moto': '🏍️ Motocicleta',
+                            'bicicleta': '🚴 Bicicleta',
+                            'van': '🚐 Van',
+                            'caminhao': '🚚 Caminhão'
+                        };
+
+                        conteudo.innerHTML = `
+                            <div class="perfil-coletor-conteudo">
+                                <div class="perfil-header">
+                                    <img src="${coletor.foto_url ? '../' + coletor.foto_url : '../img/avatar-default.png'}" alt="${coletor.nome_completo}" class="perfil-foto" onerror="this.src='../img/avatar-default.png'">>>
+                                    <div class="perfil-nome">${coletor.nome_completo}</div>
+                                    <div class="perfil-tipo">${coletor.tipo_coletor === 'pessoa_fisica' ? 'Pessoa Física' : 'Pessoa Jurídica'}</div>
+                                </div>
+
+                                <div class="perfil-info-section">
+                                    <div class="perfil-info-title">
+                                        <i class="ri-phone-line"></i> Contato
+                                    </div>
+                                    <div class="perfil-info-item">
+                                        <span class="perfil-info-label">Telefone</span>
+                                        <span class="perfil-info-value">${coletor.telefone}</span>
+                                    </div>
+                                    <div class="perfil-info-item">
+                                        <span class="perfil-info-label">Email</span>
+                                        <span class="perfil-info-value">${coletor.email}</span>
+                                    </div>
+                                </div>
+
+                                <div class="perfil-info-section">
+                                    <div class="perfil-info-title">
+                                        <i class="ri-star-line"></i> Avaliação
+                                    </div>
+                                    <div class="perfil-avaliacao">
+                                        <div class="perfil-stars">${estrelas}${estrelasBrancas}</div>
+                                        <div style="margin-top: 8px; color: #333; font-weight: 600;">
+                                            ${parseFloat(coletor.avaliacao_media).toFixed(1)} / 5.0 (${coletor.total_avaliacoes} avaliações)
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="perfil-info-section">
+                                    <div class="perfil-info-title">
+                                        <i class="ri-truck-line"></i> Meio de Transporte
+                                    </div>
+                                    <div class="perfil-transporte">
+                                        <div class="perfil-transporte-icon">${tipoTransporte[coletor.meio_transporte]?.split(' ')[0] || '🚗'}</div>
+                                        <div class="perfil-transporte-info">
+                                            <div class="perfil-transporte-label">Transporta com</div>
+                                            <div class="perfil-transporte-valor">${tipoTransporte[coletor.meio_transporte] || coletor.meio_transporte}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="perfil-info-section">
+                                    <div class="perfil-info-title">
+                                        <i class="ri-history-line"></i> Estatísticas
+                                    </div>
+                                    <div class="perfil-info-item">
+                                        <span class="perfil-info-label">Total de Coletas</span>
+                                        <span class="perfil-info-value">${coletor.coletas}</span>
+                                    </div>
+                                    <div class="perfil-info-item">
+                                        <span class="perfil-info-label">Óleo Total Coletado</span>
+                                        <span class="perfil-info-value">${parseFloat(coletor.total_oleo).toFixed(1)}L</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        conteudo.innerHTML = `<div style="text-align: center; padding: 40px; color: #e74c3c;"><i class="ri-error-warning-line" style="font-size: 48px; display: block; margin-bottom: 15px;"></i><p>${data.mensagem}</p></div>`;
+                    }
+                })
+                .catch(error => {
+                    conteudo.innerHTML = `<div style="text-align: center; padding: 40px; color: #e74c3c;"><i class="ri-error-warning-line" style="font-size: 48px; display: block; margin-bottom: 15px;"></i><p>Erro ao carregar perfil</p></div>`;
+                });
+        }
+
+        document.querySelector('.modal-perfil-close').addEventListener('click', () => {
+            document.getElementById('modalPerfilColetor').classList.remove('show');
+        });
+
+        document.getElementById('modalPerfilColetor').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalPerfilColetor')) {
+                document.getElementById('modalPerfilColetor').classList.remove('show');
+            }
+        });
+    </script>
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
     <script>

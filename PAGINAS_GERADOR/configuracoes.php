@@ -395,7 +395,7 @@ if (!$config) {
         </div>
 
         <!-- Botão de Libras Separado -->
-        <div class="libras-button" id="librasButton" onclick="toggleLibras(event)" title="Libras">
+        <div class="libras-button" id="librasButton" onclick="toggleAccessibility(event)" title="Libras">
             👋
         </div>
         <div vw class="enabled">

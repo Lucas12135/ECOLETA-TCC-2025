@@ -264,8 +264,8 @@ function escapeHtml(text) {
 
 // Função para ver perfil do coletor
 function verPerfilColetor(id_coletor) {
-  // Redirecionar para página de perfil ou abrir modal
-  window.location.href = `PAGINAS_COLETOR/perfil.php?id=${id_coletor}`;
+  // Abrir modal do perfil do coletor
+  abrirPerfilColetor(id_coletor);
 }
 
 // Event listener para o botão de busca

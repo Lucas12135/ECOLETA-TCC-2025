@@ -230,7 +230,14 @@ function formatarData($data)
                                                     <span class="detail-value"><?php echo htmlspecialchars($coleta['observacoes']); ?></span>
                                                 </div>
                                             <?php endif; ?>
-                                            <div class="map-container" id="map-<?php echo $coleta['id']; ?>" data-lat="" data-lng="">
+                                            <div class="map-container" id="map-<?php echo $coleta['id']; ?>" 
+                                                 data-rua="<?php echo htmlspecialchars($coleta['rua']); ?>"
+                                                 data-numero="<?php echo htmlspecialchars($coleta['numero']); ?>"
+                                                 data-bairro="<?php echo htmlspecialchars($coleta['bairro']); ?>"
+                                                 data-cidade="<?php echo htmlspecialchars($coleta['cidade']); ?>"
+                                                 data-estado="<?php echo htmlspecialchars($coleta['estado']); ?>"
+                                                 data-cep="<?php echo htmlspecialchars($coleta['cep']); ?>"
+                                                 style="width: 100%; height: 300px; margin-top: 15px; border-radius: 8px; grid-column: 1 / -1;">
                                                 <!-- Mapa será carregado aqui -->
                                             </div>
                                         </div>
@@ -317,7 +324,14 @@ function formatarData($data)
                                                     <span class="detail-value"><?php echo htmlspecialchars($coleta['observacoes']); ?></span>
                                                 </div>
                                             <?php endif; ?>
-                                            <div class="map-container" id="map-<?php echo $coleta['id']; ?>" data-lat="" data-lng="">
+                                            <div class="map-container" id="map-<?php echo $coleta['id']; ?>" 
+                                                 data-rua="<?php echo htmlspecialchars($coleta['rua']); ?>"
+                                                 data-numero="<?php echo htmlspecialchars($coleta['numero']); ?>"
+                                                 data-bairro="<?php echo htmlspecialchars($coleta['bairro']); ?>"
+                                                 data-cidade="<?php echo htmlspecialchars($coleta['cidade']); ?>"
+                                                 data-estado="<?php echo htmlspecialchars($coleta['estado']); ?>"
+                                                 data-cep="<?php echo htmlspecialchars($coleta['cep']); ?>"
+                                                 style="width: 100%; height: 300px; margin-top: 15px; border-radius: 8px; grid-column: 1 / -1;">
                                                 <!-- Mapa será carregado aqui -->
                                             </div>
                                         </div>
@@ -331,7 +345,118 @@ function formatarData($data)
         </main>
     </div>
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places,directions"></script>
+    <script>
+        // Função para inicializar mapas de rotas
+        function initializeRouteMaps() {
+            const maps = document.querySelectorAll('[id^="map-"]');
+            maps.forEach(mapElement => {
+                const coletaId = mapElement.id.replace('map-', '');
+                const rua = mapElement.getAttribute('data-rua');
+                const numero = mapElement.getAttribute('data-numero');
+                const bairro = mapElement.getAttribute('data-bairro');
+                const cidade = mapElement.getAttribute('data-cidade');
+                const estado = mapElement.getAttribute('data-estado');
+                const cep = mapElement.getAttribute('data-cep');
+
+                if (rua && cidade && estado) {
+                    const endereco = `${rua}, ${numero}, ${bairro}, ${cidade}, ${estado}, ${cep}`;
+                    displayRoute(mapElement, endereco);
+                }
+            });
+        }
+
+        // Função para exibir rota no mapa
+        function displayRoute(mapElement, endereco) {
+            const map = new google.maps.Map(mapElement, {
+                zoom: 14,
+                mapTypeControl: false,
+                fullscreenControl: false
+            });
+
+            const geocoder = new google.maps.Geocoder();
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+                suppressMarkers: false
+            });
+
+            // Geocodificar o endereço de destino
+            geocoder.geocode({ address: endereco }, function(results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    const destinationLocation = results[0].geometry.location;
+                    
+                    // Tenta obter localização do usuário
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            function(position) {
+                                const userLocation = new google.maps.LatLng(
+                                    position.coords.latitude,
+                                    position.coords.longitude
+                                );
+
+                                // Calcular rota
+                                const request = {
+                                    origin: userLocation,
+                                    destination: destinationLocation,
+                                    travelMode: google.maps.TravelMode.DRIVING
+                                };
+
+                                directionsService.route(request, function(result, status) {
+                                    if (status === google.maps.DirectionsStatus.OK) {
+                                        directionsRenderer.setDirections(result);
+                                        
+                                        // Mostrar informações da rota
+                                        const route = result.routes[0];
+                                        const leg = route.legs[0];
+                                        
+                                        const infoWindow = new google.maps.InfoWindow({
+                                            content: `
+                                                <div style="font-family: Poppins, sans-serif; max-width: 300px;">
+                                                    <h4 style="margin: 5px 0; color: #22c55e;">Rota para Coleta</h4>
+                                                    <p style="margin: 8px 0; font-size: 13px;">
+                                                        <strong>Distância:</strong> ${leg.distance.text}<br>
+                                                        <strong>Tempo estimado:</strong> ${leg.duration.text}
+                                                    </p>
+                                                    <p style="margin: 8px 0; font-size: 12px; color: #666;">
+                                                        ${leg.end_address}
+                                                    </p>
+                                                </div>
+                                            `
+                                        });
+                                        
+                                        // Abrir infowindow no destino
+                                        infoWindow.setPosition(destinationLocation);
+                                        infoWindow.open(map);
+                                    }
+                                });
+                            },
+                            function() {
+                                // Se não conseguir localização do usuário, só mostrar destino
+                                map.setCenter(destinationLocation);
+                                new google.maps.Marker({
+                                    position: destinationLocation,
+                                    map: map,
+                                    title: 'Local da Coleta'
+                                });
+                            }
+                        );
+                    } else {
+                        // Se geolocalização não disponível, só mostrar destino
+                        map.setCenter(destinationLocation);
+                        new google.maps.Marker({
+                            position: destinationLocation,
+                            map: map,
+                            title: 'Local da Coleta'
+                        });
+                    }
+                }
+            });
+        }
+
+        // Inicializar mapas quando página carregar
+        document.addEventListener('DOMContentLoaded', initializeRouteMaps);
+    </script>
     <script src="../JS/agendamentos.js"></script>
     <div class="right">
         <div class="accessibility-button" onclick="toggleAccessibility(event)" title="Ferramentas de Acessibilidade">
@@ -420,7 +545,7 @@ function formatarData($data)
             <button class="accessibility-reset-btn">Restaurar Padrões</button>
         </div>
         <!-- Botão de Libras Separado -->
-        <div class="libras-button" id="librasButton" onclick="toggleLibras(event)" title="Libras">
+        <div class="libras-button" id="librasButton" onclick="toggleAccessibility(event)" title="Libras">
             👋
         </div>
         <div vw class="enabled">

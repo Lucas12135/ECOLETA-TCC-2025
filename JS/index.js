@@ -86,7 +86,7 @@ function createInfoWindowHTML(coletor) {
           <div style="font-size:13px; color:#555;">${tempo}</div>
         </div>
       </div>
-      <button onclick="window.location='perfil_coletor.php?id=${coletor.id}'"
+      <button onclick="abrirPerfilColetor(${coletor.id})"
         style="margin-top:12px; width:100%; padding:8px; border:none; background:#2ecc71; color:white; border-radius:8px; cursor:pointer; font-weight:700;">
         Ver Perfil
       </button>

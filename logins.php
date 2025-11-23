@@ -114,6 +114,16 @@
                     <a href="LOGINS/login-coletor/login.php" class="card-cta">Entrar</a>
                 </div>
             </article>
+
+            <article class="cadastro-card" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+                <div class="card-content" style="color: white;">
+                    <h2 style="color: white;">Administrador</h2>
+                    <p style="color: rgba(255,255,255,0.9);">Sou um administrador do sistema e quero acessar o painel de controle.</p>
+                </div>
+                <div class="card-actions">
+                    <a href="LOGINS/login-admin/login.php" class="card-cta" style="background: white; color: #7c3aed;">Entrar Admin</a>
+                </div>
+            </article>
         </div>
     </main>
 <div class="right">

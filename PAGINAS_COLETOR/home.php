@@ -455,7 +455,7 @@ function obterDiaSemana($data)
             <button class="accessibility-reset-btn">Restaurar Padrões</button>
         </div>
         <!-- Botão de Libras Separado -->
-        <div class="libras-button" id="librasButton" onclick="toggleLibras(event)" title="Libras">
+        <div class="libras-button" id="librasButton" onclick="toggleAccessibility(event)" title="Libras">
             👋
         </div>
         <div vw class="enabled">
@@ -467,10 +467,11 @@ function obterDiaSemana($data)
 
 
         <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+        <script src="../JS/acessibilidade.js"></script><script src="../JS/libras.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
         <script src="../JS/home-coletor.js"></script>
-        <script src="../JS/acessibilidade.js"></script><script src="../JS/libras.js"></script>
-<script src="../JS/acessibilidade.js"></script><script src="../JS/acessibilidade.js"></script></body>
+        
+    </body>
 
 </html>
 
