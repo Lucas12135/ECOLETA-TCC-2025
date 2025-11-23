@@ -1,0 +1,1060 @@
+/* ========== PAINEL DE ACESSIBILIDADE ========== */
+
+/* Importa fonte Dyslexia */
+@import url('https://opendyslexic.org/OpenDyslexic-Fonts/fonts.css');
+
+/* Container isolado para evitar contexto de empilhamento dos filtros */
+.accessibility-buttons-container {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+  z-index: 10000;
+  /* Isola o container de contextos de empilhamento do body */
+  will-change: transform;
+}
+
+.accessibility-buttons-container * {
+  pointer-events: auto;
+}
+
+.accessibility-button {
+  position: fixed !important;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #ffce46;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 206, 70, 0.4);
+  transition: all 0.3s ease;
+  z-index: 10002;
+  border: 3px solid white;
+  overflow: hidden;
+  gap: 10px;
+  visibility: visible !important;
+}
+
+.accessibility-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 206, 70, 0.6);
+}
+
+.accessibility-button svg {
+  width: 25px;
+  height: 25px;
+  fill: white;
+}
+
+.accessibility-button span {
+  display: none;
+  color: #223e2a;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Painel de Acessibilidade */
+.accessibility-panel {
+  position: fixed !important;
+  bottom: 90px;
+  right: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 10001;
+  min-width: 250px;
+  max-width: 280px;
+  max-height: 500px;
+  border: 2px solid #ffce46;
+  animation: slideUp 0.3s ease-out;
+  overflow-y: auto;
+  will-change: transform;
+  visibility: visible !important;
+}
+
+.accessibility-panel.active {
+  display: flex;
+}
+
+/* Estilo da barra de rolagem */
+.accessibility-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.accessibility-panel::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.accessibility-panel::-webkit-scrollbar-thumb {
+  background: #386043;
+  border-radius: 10px;
+}
+
+.accessibility-panel::-webkit-scrollbar-thumb:hover {
+  background: #223e2a;
+}
+
+/* Firefox */
+.accessibility-panel {
+  scrollbar-color: #386043 #f1f1f1;
+  scrollbar-width: thin;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.accessibility-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #ffce46;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.accessibility-header h3 {
+  margin: 0;
+  color: #223e2a;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.accessibility-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #223e2a;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.accessibility-close:hover {
+  color: #ffce46;
+  transform: rotate(90deg);
+}
+
+/* Grupo de Opções */
+.accessibility-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.accessibility-group-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #386043;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+
+/* Slider para Tamanho de Texto */
+.size-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.size-label {
+  font-size: 11px;
+  color: #4c4c4c;
+  min-width: 55px;
+}
+
+.size-slider {
+  flex: 1;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #e0e0e0, #386043);
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Contraste WCAG AA para o slider */
+body.wcag-aa .size-slider {
+  background: linear-gradient(to right, #333333, #0066cc) !important;
+}
+
+/* Contraste WCAG AAA para o slider */
+body.wcag-aaa .size-slider {
+  background: linear-gradient(to right, #000000, #0033cc) !important;
+}
+
+.size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffce46;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+}
+
+.size-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffce46;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  border: 2px solid white;
+}
+
+.size-value {
+  font-size: 11px;
+  color: #4c4c4c;
+  font-weight: 600;
+  min-width: 28px;
+  text-align: center;
+}
+
+/* Botões de Opções */
+.accessibility-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.accessibility-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background-color: #f8f4e7;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  color: #4c4c4c;
+  font-weight: 500;
+}
+
+.accessibility-option:hover {
+  background-color: #fff;
+  border-color: #386043;
+  color: #223e2a;
+}
+
+.accessibility-option.active {
+  background-color: #386043;
+  color: white;
+  border-color: #386043;
+}
+
+.accessibility-option select {
+  width: 100%;
+  padding: 8px 10px;
+  background-color: #f8f4e7;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #4c4c4c;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.accessibility-option select:hover {
+  background-color: #fff;
+  border-color: #386043;
+  color: #223e2a;
+}
+
+.accessibility-option select:focus {
+  outline: 2px solid #386043;
+  outline-offset: 1px;
+}
+
+.accessibility-option input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #ffce46;
+}
+
+/* ========== CONTRASTE WCAG AA (4.5:1 ratio) ========== */
+/* Atende a critérios de acessibilidade WCAG AA para texto normal */
+body.wcag-aa {
+  background-color: #ffffff !important;
+  color: #1a1a1a !important;
+}
+
+body.wcag-aa * {
+  background-color: #ffffff !important;
+  color: #1a1a1a !important;
+  border-color: #333333 !important;
+}
+
+/* Exceções para painel de acessibilidade - manter estilos originais */
+body.wcag-aa .accessibility-panel,
+body.wcag-aa .accessibility-overlay,
+body.wcag-aa .accessibility-button,
+body.wcag-aa .libras-button {
+  background-color: inherit !important;
+  color: inherit !important;
+  border-color: inherit !important;
+}
+
+body.wcag-aa .accessibility-panel *,
+body.wcag-aa .libras-button {
+  background-color: inherit !important;
+  color: inherit !important;
+  border-color: inherit !important;
+}
+
+/* Restaurar estilos visuais do botão de acessibilidade durante contraste */
+body.wcag-aa .accessibility-button {
+  background-color: #ffce46 !important;
+  border: 3px solid #000 !important;
+}
+
+body.wcag-aa .accessibility-button svg {
+  filter: none !important;
+}
+
+body.wcag-aa .accessibility-button svg path,
+body.wcag-aa .accessibility-button svg circle,
+body.wcag-aa .accessibility-button svg rect {
+  fill: #fff !important;
+  stroke: #fff !important;
+}
+
+/* Painel com fundo branco durante contraste */
+body.wcag-aa .accessibility-panel {
+  background-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  color: #000000 !important;
+}
+
+body.wcag-aa .accessibility-panel label,
+body.wcag-aa .accessibility-panel h3,
+body.wcag-aa .accessibility-panel p {
+  color: #000000 !important;
+}
+
+/* Proteção para ícones e SVGs */
+body.wcag-aa svg,
+body.wcag-aa img {
+  background-color: transparent !important;
+  filter: none !important;
+}
+
+body.wcag-aa svg path,
+body.wcag-aa svg circle,
+body.wcag-aa svg rect {
+  fill: inherit !important;
+  stroke: inherit !important;
+}
+
+/* Seções específicas */
+body.wcag-aa .hero-section {
+  background-color: #f5f5f5 !important;
+}
+
+body.wcag-aa .feature-card {
+  background-color: #f9f9f9 !important;
+  border-color: #333333 !important;
+}
+
+body.wcag-aa .coluna-esquerda,
+body.wcag-aa .coluna-direita {
+  background-color: #ffffff !important;
+}
+
+body.wcag-aa header {
+  background-color: #ffffff !important;
+}
+
+body.wcag-aa .header-container {
+  background-color: #f5f5f5 !important;
+  border-color: #333333 !important;
+}
+
+body.wcag-aa h1,
+body.wcag-aa h2,
+body.wcag-aa h3,
+body.wcag-aa h4,
+body.wcag-aa h5,
+body.wcag-aa h6 {
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+body.wcag-aa p,
+body.wcag-aa span,
+body.wcag-aa li,
+body.wcag-aa td,
+body.wcag-aa th {
+  color: #1a1a1a !important;
+}
+
+body.wcag-aa a {
+  color: #1a1a1a !important;
+  text-decoration: none !important;
+  font-weight: 400 !important;
+}
+
+body.wcag-aa a:visited {
+  color: #1a1a1a !important;
+}
+
+body.wcag-aa button,
+body.wcag-aa input[type="button"],
+body.wcag-aa input[type="submit"],
+body.wcag-aa input[type="reset"],
+body.wcag-aa .btn,
+body.wcag-aa [role="button"] {
+  background-color: #0066cc !important;
+  color: #ffffff !important;
+  border: 2px solid #0066cc !important;
+  font-weight: 600 !important;
+}
+
+body.wcag-aa button:hover,
+body.wcag-aa input[type="button"]:hover,
+body.wcag-aa input[type="submit"]:hover {
+  background-color: #004499 !important;
+  border-color: #004499 !important;
+}
+
+body.wcag-aa input,
+body.wcag-aa textarea,
+body.wcag-aa select {
+  background-color: #ffffff !important;
+  color: #1a1a1a !important;
+  border: 2px solid #333333 !important;
+}
+
+body.wcag-aa input::placeholder,
+body.wcag-aa textarea::placeholder {
+  color: #666666 !important;
+}
+
+body.wcag-aa input:focus,
+body.wcag-aa textarea:focus,
+body.wcag-aa select:focus {
+  outline: 3px solid #0066cc !important;
+  outline-offset: 2px !important;
+}
+
+body.wcag-aa input[type="checkbox"],
+body.wcag-aa input[type="radio"] {
+  border: 2px solid #333333 !important;
+  accent-color: #0066cc !important;
+}
+
+/* Proteção do painel e botões WCAG AA - manter estilos originais */
+body.wcag-aa .accessibility-button svg {
+  filter: none !important;
+}
+
+body.wcag-aa .accessibility-button svg path,
+body.wcag-aa .accessibility-button svg circle {
+  fill: white !important;
+  stroke: white !important;
+}
+
+/* ========== CONTRASTE WCAG AAA (7:1 ratio) ========== */
+/* Atende a critérios de acessibilidade WCAG AAA para máxima clareza */
+body.wcag-aaa {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.wcag-aaa * {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+  box-shadow: none !important;
+}
+
+/* Exceções para painel de acessibilidade */
+body.wcag-aaa .accessibility-panel,
+body.wcag-aaa .accessibility-overlay,
+body.wcag-aaa .accessibility-button,
+body.wcag-aaa .libras-button,
+body.wcag-aaa .accessibility-panel * {
+  background-color: inherit !important;
+  color: inherit !important;
+  border-color: inherit !important;
+  box-shadow: inherit !important;
+}
+
+/* Proteção para ícones e SVGs */
+body.wcag-aaa svg,
+body.wcag-aaa img {
+  background-color: transparent !important;
+  filter: none !important;
+}
+
+body.wcag-aaa svg path,
+body.wcag-aaa svg circle,
+body.wcag-aaa svg rect {
+  fill: inherit !important;
+  stroke: inherit !important;
+}
+
+/* Seções específicas */
+body.wcag-aaa .hero-section {
+  background-color: #f0f0f0 !important;
+}
+
+body.wcag-aaa .feature-card {
+  background-color: #f8f8f8 !important;
+  border-color: #000000 !important;
+}
+
+body.wcag-aaa .coluna-esquerda,
+body.wcag-aaa .coluna-direita {
+  background-color: #ffffff !important;
+}
+
+body.wcag-aaa header {
+  background-color: #ffffff !important;
+}
+
+body.wcag-aaa .header-container {
+  background-color: #f0f0f0 !important;
+  border-color: #000000 !important;
+}
+
+body.wcag-aaa h1,
+body.wcag-aaa h2,
+body.wcag-aaa h3,
+body.wcag-aaa h4,
+body.wcag-aaa h5,
+body.wcag-aaa h6 {
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+body.wcag-aaa p,
+body.wcag-aaa span,
+body.wcag-aaa li,
+body.wcag-aaa td,
+body.wcag-aaa th {
+  color: #000000 !important;
+}
+
+body.wcag-aaa a {
+  color: #0033cc !important;
+  text-decoration: underline !important;
+  font-weight: 700 !important;
+}
+
+body.wcag-aaa a:visited {
+  color: #551111 !important;
+}
+
+body.wcag-aaa button,
+body.wcag-aaa input[type="button"],
+body.wcag-aaa input[type="submit"],
+body.wcag-aaa input[type="reset"],
+body.wcag-aaa .btn,
+body.wcag-aaa [role="button"] {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 3px solid #000000 !important;
+  font-weight: 700 !important;
+}
+
+body.wcag-aaa button:hover,
+body.wcag-aaa input[type="button"]:hover,
+body.wcag-aaa input[type="submit"]:hover {
+  background-color: #333333 !important;
+  border-color: #000000 !important;
+}
+
+body.wcag-aaa input,
+body.wcag-aaa textarea,
+body.wcag-aaa select {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 3px solid #000000 !important;
+}
+
+body.wcag-aaa input::placeholder,
+body.wcag-aaa textarea::placeholder {
+  color: #333333 !important;
+}
+
+body.wcag-aaa input:focus,
+body.wcag-aaa textarea:focus,
+body.wcag-aaa select:focus {
+  outline: 3px solid #000000 !important;
+  outline-offset: 3px !important;
+  box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px #000000 !important;
+}
+
+body.wcag-aaa input[type="checkbox"],
+body.wcag-aaa input[type="radio"] {
+  border: 3px solid #000000 !important;
+  accent-color: #0033cc !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* Proteção do painel e botões WCAG AAA */
+body.wcag-aaa .accessibility-button,
+body.wcag-aaa .accessibility-panel,
+body.wcag-aaa .libras-button {
+  background-color: #ffce46 !important;
+  color: #000 !important;
+  border-color: #000 !important;
+  border-width: 3px !important;
+}
+
+body.wcag-aaa .accessibility-panel {
+  background-color: white !important;
+  border: 3px solid #000 !important;
+  box-shadow: 0 0 0 2px #ffce46 !important;
+}
+
+body.wcag-aaa .accessibility-button svg {
+  filter: none !important;
+}
+
+body.wcag-aaa .accessibility-button svg path,
+body.wcag-aaa .accessibility-button svg circle {
+  fill: white !important;
+  stroke: white !important;
+}
+
+body.wcag-aaa .accessibility-option {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.wcag-aaa .accessibility-option.active {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Isolação crítica: os filtros não devem afetar position: fixed */
+/* Quando adicionar filtros, crie um pseudo-elemento separado ou use transform */
+html {
+  filter: none !important;
+}
+
+/* Estilo para Fonte sem Serifa */
+body.sans-serif-font p,
+body.sans-serif-font span:not([class*="ri-"]):not([class*="icon"]),
+body.sans-serif-font h1,
+body.sans-serif-font h2,
+body.sans-serif-font h3,
+body.sans-serif-font h4,
+body.sans-serif-font h5,
+body.sans-serif-font h6,
+body.sans-serif-font li,
+body.sans-serif-font td,
+body.sans-serif-font th,
+body.sans-serif-font label:not(.accessibility-option),
+body.sans-serif-font a,
+body.sans-serif-font button:not(.accessibility-button):not(.libras-button),
+body.sans-serif-font input,
+body.sans-serif-font textarea,
+body.sans-serif-font select {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+/* Fonte Dyslexia-Friendly */
+body.dyslexia-font p,
+body.dyslexia-font span:not([class*="ri-"]):not([class*="icon"]),
+body.dyslexia-font h1,
+body.dyslexia-font h2,
+body.dyslexia-font h3,
+body.dyslexia-font h4,
+body.dyslexia-font h5,
+body.dyslexia-font h6,
+body.dyslexia-font li,
+body.dyslexia-font td,
+body.dyslexia-font th,
+body.dyslexia-font label:not(.accessibility-option),
+body.dyslexia-font a,
+body.dyslexia-font button:not(.accessibility-button):not(.libras-button),
+body.dyslexia-font input,
+body.dyslexia-font textarea,
+body.dyslexia-font select {
+  font-family: 'OpenDyslexic', Arial, sans-serif !important;
+}
+
+/* Espaçamento aumentado */
+body.increased-spacing {
+  letter-spacing: 0.15em !important;
+  line-height: 1.8 !important;
+}
+
+body.increased-spacing * {
+  letter-spacing: 0.15em !important;
+  line-height: 1.8 !important;
+}
+
+body.increased-spacing svg,
+body.increased-spacing i,
+body.increased-spacing [class*="icon"],
+body.increased-spacing [class*="ri-"] {
+  letter-spacing: normal !important;
+  line-height: normal !important;
+}
+
+/* Modo Invertido - Usando filter invert com proteção dos elementos fixos */
+body.inverted-mode {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Proteção do painel de acessibilidade contra invert */
+body.inverted-mode .accessibility-panel {
+  filter: invert(1) hue-rotate(180deg) !important;
+  background-color: white !important;
+  color: #223e2a !important;
+  border-color: #ffce46 !important;
+}
+
+body.inverted-mode .accessibility-panel .accessibility-header h3 {
+  color: #223e2a !important;
+}
+
+body.inverted-mode .accessibility-panel .accessibility-group-title {
+  color: #386043 !important;
+}
+
+body.inverted-mode .accessibility-panel .accessibility-option {
+  background-color: #f8f4e7 !important;
+  color: #4c4c4c !important;
+  border-color: #e0e0e0 !important;
+}
+
+body.inverted-mode .accessibility-panel .accessibility-option:hover {
+  background-color: #fff !important;
+  border-color: #386043 !important;
+  color: #223e2a !important;
+}
+
+body.inverted-mode .accessibility-panel .accessibility-option.active {
+  background-color: #386043 !important;
+  color: white !important;
+  border-color: #386043 !important;
+}
+
+body.inverted-mode .accessibility-panel .size-label {
+  color: #4c4c4c !important;
+}
+
+body.inverted-mode .accessibility-panel .size-value {
+  color: #4c4c4c !important;
+}
+
+body.inverted-mode .accessibility-panel input[type="checkbox"] {
+  accent-color: #ffce46 !important;
+}
+
+body.inverted-mode .accessibility-panel .accessibility-reset-btn {
+  background-color: #e74c3c !important;
+  color: white !important;
+  border-color: #c0392b !important;
+}
+
+/* Proteção do botão de acessibilidade contra invert */
+body.inverted-mode .accessibility-button {
+  filter: invert(1) hue-rotate(180deg) !important;
+  background-color: #ffce46 !important;
+  color: white !important;
+  border-color: white !important;
+}
+
+body.inverted-mode .accessibility-button svg {
+  fill: white !important;
+}
+
+/* Proteção do botão de libras contra invert */
+body.inverted-mode .libras-button {
+  filter: invert(1) hue-rotate(180deg) !important;
+  background-color: #386043 !important;
+  border-color: white !important;
+}
+
+/* Proteção do overlay */
+body.inverted-mode .accessibility-overlay {
+  filter: none !important;
+}
+
+/* Fonte Monoespacida */
+body.monospace-font p,
+body.monospace-font span:not([class*="ri-"]):not([class*="icon"]),
+body.monospace-font h1,
+body.monospace-font h2,
+body.monospace-font h3,
+body.monospace-font h4,
+body.monospace-font h5,
+body.monospace-font h6,
+body.monospace-font li,
+body.monospace-font td,
+body.monospace-font th,
+body.monospace-font label:not(.accessibility-option),
+body.monospace-font a,
+body.monospace-font button:not(.accessibility-button):not(.libras-button),
+body.monospace-font input,
+body.monospace-font textarea,
+body.monospace-font select {
+  font-family: 'Courier New', Courier, monospace !important;
+}
+
+/* Linha guia de leitura */
+body.reading-guide {
+  position: relative;
+}
+
+body.reading-guide::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    rgba(255, 206, 70, 0.6) 30%, 
+    rgba(255, 206, 70, 0.4) 50%, 
+    rgba(255, 206, 70, 0.6) 70%, 
+    transparent 100%);
+  pointer-events: none;
+  z-index: 9000;
+  transform: translateY(-50%);
+}
+
+/* Linha guia com contraste WCAG AA */
+body.wcag-aa.reading-guide::before {
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    rgba(0, 102, 204, 0.8) 30%, 
+    rgba(0, 102, 204, 0.6) 50%, 
+    rgba(0, 102, 204, 0.8) 70%, 
+    transparent 100%) !important;
+}
+
+/* Linha guia com contraste WCAG AAA */
+body.wcag-aaa.reading-guide::before {
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    rgba(0, 51, 204, 0.9) 30%, 
+    rgba(0, 51, 204, 0.7) 50%, 
+    rgba(0, 51, 204, 0.9) 70%, 
+    transparent 100%) !important;
+}
+
+/* Foco expandido */
+body.expanded-focus *:focus {
+  outline: 4px solid #ffce46 !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
+}
+
+body.expanded-focus a:focus,
+body.expanded-focus button:focus,
+body.expanded-focus input:focus,
+body.expanded-focus select:focus,
+body.expanded-focus textarea:focus {
+  outline: 4px solid #ffce46 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(255, 206, 70, 0.2) !important;
+}
+
+/* Cursor maior */
+body.large-cursor {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="8" fill="none" stroke="%23ffce46" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="%23ffce46"/></svg>') 16 16, auto !important;
+}
+
+body.large-cursor * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="%23ffce46" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="%23ffce46"/></svg>') 16 16, auto !important;
+}
+
+body.large-cursor a,
+body.large-cursor button,
+body.large-cursor input[type="button"],
+body.large-cursor input[type="submit"],
+body.large-cursor [role="button"] {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="%23ffce46" stroke-width="3"/><circle cx="16" cy="16" r="4" fill="%23ffce46"/></svg>') 16 16, pointer !important;
+}
+
+/* Botão de Libras Separado */
+.libras-button {
+  position: fixed !important;
+  bottom: 90px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #386043;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(56, 100, 67, 0.4);
+  transition: all 0.3s ease;
+  z-index: 10001;
+  border: 3px solid white;
+  font-size: 28px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden !important;
+}
+
+.libras-button.show {
+  opacity: 1;
+  pointer-events: auto;
+  bottom: 100px;
+  visibility: visible !important;
+}
+
+.libras-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(56, 100, 67, 0.6);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .accessibility-panel {
+    min-width: 250px;
+    max-width: 280px;
+    bottom: 85px;
+    right: 10px;
+  }
+
+  .accessibility-button {
+    bottom: 15px;
+    right: 15px;
+    width: 55px;
+    height: 55px;
+  }
+
+  .accessibility-button svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .accessibility-panel {
+    min-width: 100vw;
+    max-width: 100vw;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    border-radius: 16px 16px 0 0;
+    padding: 15px;
+  }
+
+  .accessibility-button {
+    bottom: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .accessibility-button svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* Overlay para fechar painel */
+.accessibility-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  z-index: 9999;
+  display: none;
+  pointer-events: none;
+}
+
+.accessibility-overlay.active {
+  display: block;
+  pointer-events: auto;
+}
+
+/* Texto de Preview */
+.accessibility-preview {
+  padding: 12px;
+  background-color: #f8f4e7;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  color: #4c4c4c;
+  margin-top: 5px;
+}
+
+/* Animação de reset */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.accessibility-button.pulse {
+  animation: pulse 0.6s ease-in-out;
+}
+
+/* Botão de Reset */
+.accessibility-reset-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: 2px solid #c0392b;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 5px;
+}
+
+.accessibility-reset-btn:hover {
+  background-color: #c0392b;
+  transform: scale(1.02);
+}
+
+.accessibility-reset-btn:active {
+  transform: scale(0.98);
+}
