@@ -1,7 +1,17 @@
 // Libras
 new window.VLibras.Widget("https://vlibras.gov.br/app");
 
-function toggleAccessibility(event) {
+// Mostra o botão de libras quando o painel está pronto
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const librasButton = document.querySelector('.libras-button');
+    if (librasButton) {
+      librasButton.classList.add('show');
+    }
+  }, 500);
+});
+
+function toggleLibras(event) {
   if (event) event.stopPropagation();
 
   const vlibrasButton = document.querySelector("div[vw-access-button]");
@@ -9,6 +19,9 @@ function toggleAccessibility(event) {
     vlibrasButton.click();
   }
 }
+
+// Torna disponível globalmente
+window.toggleLibras = toggleLibras;
 
 // Função para voltar à tela anterior
 function goBack() {

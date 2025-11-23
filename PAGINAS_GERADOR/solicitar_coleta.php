@@ -179,6 +179,7 @@ function corStatus($status) {
     <link rel="stylesheet" href="../CSS/solicitar-coleta.css">
     <link rel="stylesheet" href="../CSS/navbar.css">
     <link rel="stylesheet" href="../CSS/libras.css">
+    <link rel="stylesheet" href="../CSS/acessibilidade.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
@@ -738,6 +739,86 @@ function corStatus($status) {
                 </g>
             </svg>
         </div>
+        <!-- Painel de Acessibilidade -->
+        <div class="accessibility-overlay"></div>
+        <div class="accessibility-panel">
+            <div class="accessibility-header">
+                <h3>Acessibilidade</h3>
+                <button class="accessibility-close">×</button>
+            </div>
+            <div class="accessibility-group">
+                <div class="accessibility-group-title">Tamanho de Texto</div>
+                <div class="size-control">
+                    <span class="size-label">A</span>
+                    <input type="range" class="size-slider" min="50" max="150" value="100">
+                    <span class="size-label" style="font-weight: bold;">A</span>
+                    <span class="size-value">100%</span>
+                </div>
+            </div>
+            <div class="accessibility-group">
+                <div class="accessibility-group-title">Visão</div>
+                <div class="accessibility-options">
+                    <label class="accessibility-option">
+                        <select id="contrast-level">
+                            <option value="none">Sem Contraste</option>
+                            <option value="wcag-aa">Contraste WCAG AA</option>
+                        </select>
+                    </label>
+                    <label class="accessibility-option">
+                        <input type="checkbox" id="inverted-mode">
+                        <span>Modo Invertido</span>
+                    </label>
+                    <label class="accessibility-option">
+                        <input type="checkbox" id="reading-guide">
+                        <span>Linha Guia de Leitura</span>
+                    </label>
+                </div>
+            </div>
+            <div class="accessibility-group">
+                <div class="accessibility-group-title">Fonte</div>
+                <div class="accessibility-options">
+                    <label class="accessibility-option">
+                        <input type="checkbox" id="sans-serif">
+                        <span>Fonte Sem Serifa</span>
+                    </label>
+                    <label class="accessibility-option">
+                        <input type="checkbox" id="dyslexia-font">
+                        <span>Fonte Dislexia</span>
+                    </label>
+                    <label class="accessibility-option">
+                        <input type="checkbox" id="monospace-font">
+                        <span>Fonte Monoespacida</span>
+                    </label>
+                </div>
+            </div>
+            <div class="accessibility-group">
+                <div class="accessibility-group-title">Espaçamento</div>
+                <div class="accessibility-options">
+                    <label class="accessibility-option">
+                        <input type="checkbox" id="increased-spacing">
+                        <span>Aumentar Espaçamento</span>
+                    </label>
+                </div>
+            </div>
+            <div class="accessibility-group">
+                <div class="accessibility-group-title">Navegação</div>
+                <div class="accessibility-options">
+                    <label class="accessibility-option">
+                        <input type="checkbox" id="expanded-focus">
+                        <span>Foco Expandido</span>
+                    </label>
+                    <label class="accessibility-option">
+                        <input type="checkbox" id="large-cursor">
+                        <span>Cursor Maior</span>
+                    </label>
+                </div>
+            </div>
+            <button class="accessibility-reset-btn">Restaurar Padrões</button>
+        </div>
+        <!-- Botão de Libras Separado -->
+        <div class="libras-button" id="librasButton" onclick="toggleLibras(event)" title="Libras">
+            👋
+        </div>
     </div>
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
@@ -749,7 +830,9 @@ function corStatus($status) {
     <script src="../JS/solicitar-coleta.js"></script>
     <?php endif; ?>
     <script src="../JS/navbar.js"></script>
-    <script src="../JS/libras.js"></script>
+    <script src="../JS/acessibilidade.js"></script><script src="../JS/libras.js"></script>
 </body>
 
 </html>
+
+

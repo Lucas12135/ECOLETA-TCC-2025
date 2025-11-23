@@ -377,6 +377,31 @@ document.addEventListener("DOMContentLoaded", () => {
     new window.VLibras.Widget("https://vlibras.gov.br/app");
   } catch (_) {}
 
+  // Mostra o botão de libras quando o painel está pronto
+  setTimeout(() => {
+    const librasButton = document.querySelector('.libras-button');
+    if (librasButton) {
+      librasButton.classList.add('show');
+    }
+  }, 500);
+
+  function toggleAccessibility(event) {
+    if (event) event.stopPropagation();
+
+    const target = event.currentTarget;
+    
+    // Se clicou no botão de libras
+    if (target.classList.contains('libras-button')) {
+      const vlibrasButton = document.querySelector('div[vw-access-button]');
+      if (vlibrasButton) {
+        vlibrasButton.click();
+      }
+    }
+  }
+
+  // Attach toggleAccessibility ao escopo global
+  window.toggleAccessibility = toggleAccessibility;
+
   // elementos (alguns já acessados em initAutocomplete; aqui garantimos)
   const loginBtn = document.getElementById("open-login-modal-btn");
   const closeBtn = document.querySelector(".close-btn");
