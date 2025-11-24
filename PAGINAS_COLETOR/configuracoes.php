@@ -411,7 +411,7 @@ function getDisponibilidadeDia($horarios, $dia)
                                 <option value="bicicleta" <?= ($coletor['meio_transporte'] ?? '') === 'bicicleta' ? 'selected' : '' ?>>🚴 Bicicleta</option>
                                 <option value="motocicleta" <?= ($coletor['meio_transporte'] ?? '') === 'motocicleta' ? 'selected' : '' ?>>🏍️ Motocicleta</option>
                                 <option value="carroca" <?= ($coletor['meio_transporte'] ?? '') === 'carroca' ? 'selected' : '' ?>>🛒 Carroça</option>
-                                <option value="ape" <?= ($coletor['meio_transporte'] ?? '') === 'ape' ? 'selected' : '' ?>>🚶 À Pé</option>
+                                <option value="a_pe" <?= ($coletor['meio_transporte'] ?? '') === 'a_pe' ? 'selected' : '' ?>>🚶 À Pé</option>
                             </select>
                         </div>
                     </form>

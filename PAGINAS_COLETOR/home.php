@@ -467,14 +467,11 @@ function obterDiaSemana($data)
 
 
         <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-        <script src="../JS/acessibilidade.js"></script><script src="../JS/libras.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U"></script>
-        <script src="../JS/home-coletor.js"></script>
-        
-    </body>
+        <script src="../JS/acessibilidade.js"></script>
+        <script src="../JS/libras.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=geometry&callback=initMap" async defer></script>
+        <script src="../JS/home-coletor.js" defer></script>
+
+</body>
 
 </html>
-
-
-
-

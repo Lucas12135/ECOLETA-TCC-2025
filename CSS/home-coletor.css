@@ -20,6 +20,7 @@
   --status-concluido: #4caf50;
   --status-cancelado: #f44336;
 }
+
 * {
   margin: 0;
   padding: 0;
@@ -51,6 +52,7 @@ a {
   border-radius: 16px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
+
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -95,7 +97,9 @@ a {
 .sidebar-nav i {
   font-size: 1.25rem;
   color: var(--verde-escuro);
-} /* Main Content Styles */
+}
+
+/* Main Content Styles */
 .main-content {
   flex: 1;
   background-color: var(--background);
@@ -119,6 +123,7 @@ a {
   margin-bottom: 0.25rem;
   font-weight: 700;
 }
+
 .welcome-message p {
   color: #666;
 }
@@ -154,6 +159,7 @@ a {
   margin-bottom: 1rem;
   font-weight: 600;
 }
+
 .card-content {
   display: flex;
   flex-direction: column;
@@ -310,11 +316,13 @@ a {
   justify-content: center;
   transition: all 0.3s ease;
   flex-shrink: 0;
+  box-shadow: none;
 }
 
 .details .view-map-btn:hover {
   background-color: var(--cor-secondaria);
   transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(255, 206, 70, 0.3);
 }
 
 .details .view-map-btn i {
@@ -329,22 +337,203 @@ a {
   flex-shrink: 0;
 }
 
-.status.pending {
-  background-color: var(--pending-color);
-  color: var(--cor-texto-primaria);
+.status.agendada {
+  background-color: #e3f2fd;
+  color: var(--status-pendente);
+  border: 1px solid var(--status-pendente);
 }
 
+.status.em_andamento {
+  background-color: #fff3e0;
+  color: var(--cor-amarelo-escuro);
+  border: 1px solid var(--cor-amarelo-escuro);
+}
+
+.status.concluida {
+  background-color: #e8f5e9;
+  color: var(--status-concluido);
+  border: 1px solid var(--status-concluido);
+}
+
+.status.cancelada {
+  background-color: #ffebee;
+  color: var(--status-cancelado);
+  border: 1px solid var(--status-cancelado);
+}
+
+/* Map Container Styles - MELHORADO */
 .map-container {
+  position: relative;
   background-color: white;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 500px;
 }
 
 #map {
   width: 100%;
   height: 100%;
   min-height: 400px;
+}
+
+/* Painel de informações da rota - NOVO */
+#route-info-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-width: 320px;
+  animation: slideInFromRight 0.3s ease-out;
+  border: 2px solid var(--cor-secondaria);
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+#route-info-panel h4 {
+  margin: 0 0 15px 0;
+  color: var(--verde-escuro);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+#route-info-panel p {
+  margin: 10px 0;
+  color: var(--cor-texto-primaria);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+#route-info-panel p strong {
+  color: var(--verde-escuro);
+  font-weight: 600;
+}
+
+#route-info-panel button {
+  transition: all 0.3s ease;
+}
+
+#route-info-panel button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.route-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--status-cancelado);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.route-close-btn:hover {
+  background: #d32f2f;
+  transform: rotate(90deg);
+}
+
+.open-maps-btn {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  background: var(--status-concluido);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.open-maps-btn:hover {
+  background: #45a049;
+}
+
+/* Loading spinner para geocoding - NOVO */
+.loading-map {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 12px;
+  display: none;
+}
+
+.loading-map.active {
+  display: block;
+}
+
+.loading-map::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--cor-secondaria);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Customização do Info Window do Google Maps */
+.gm-style .gm-style-iw-c {
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.gm-style .gm-style-iw-d {
+  overflow: auto !important;
+}
+
+.gm-style-iw button {
+  background-color: var(--status-concluido) !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.gm-style-iw button:hover {
+  background-color: #45a049 !important;
+  transform: translateY(-2px) !important;
 }
 
 /* Upcoming Collections Styles */
@@ -496,11 +685,16 @@ a {
     flex-basis: 100%;
     justify-content: flex-start;
   }
+
+  .map-container {
+    height: 400px;
+  }
 }
 
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
+    padding: 10px;
   }
 
   .sidebar {
@@ -539,5 +733,17 @@ a {
 
   .collection-amount {
     align-items: flex-start;
+  }
+
+  .map-container {
+    height: 350px;
+  }
+
+  /* Painel de rota responsivo */
+  #route-info-panel {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
   }
 }

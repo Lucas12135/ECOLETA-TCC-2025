@@ -35,7 +35,7 @@ $sqlColetaAtual = "SELECT c.id, c.quantidade_oleo, c.data_agendada, c.periodo, c
                    LEFT JOIN coletores co ON c.id_coletor = co.id
                    LEFT JOIN historico_coletas hc ON c.id = hc.id_coleta
                    WHERE c.id_gerador = :id_gerador 
-                   AND c.status IN ('agendada', 'em_andamento', 'pendente')
+                   AND c.status IN ('agendada', 'em_andamento', 'pendente', 'solicitada')
                    ORDER BY c.data_agendada DESC LIMIT 1";
 $stmtColetaAtual = $conn->prepare($sqlColetaAtual);
 $stmtColetaAtual->bindParam(':id_gerador', $idGerador, PDO::PARAM_INT);
