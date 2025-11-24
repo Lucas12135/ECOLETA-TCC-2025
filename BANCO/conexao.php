@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
-$username = "root";
-$password = "";
+$username = "adminEcoleta";
+$password = "ecoleta2025";
 $dbname = "ecoleta";
 date_default_timezone_set('America/Sao_Paulo');
 
