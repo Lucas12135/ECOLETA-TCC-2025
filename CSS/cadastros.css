@@ -106,3 +106,30 @@ main {
   background-color: var(--cor-secondaria);
   color: var(--cor-texto-primaria);
 }
+
+/* Botão Admin Oculto no Canto Inferior Esquerdo */
+.admin-hidden-button {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(124, 58, 237, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+  opacity: 0.3;
+  border: 2px solid transparent;
+}
+
+.admin-hidden-button:hover {
+  opacity: 0.6;
+  background-color: rgba(124, 58, 237, 0.2);
+  border-color: rgba(124, 58, 237, 0.3);
+  transform: scale(1.1);
+}
