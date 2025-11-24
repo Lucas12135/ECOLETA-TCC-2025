@@ -3,7 +3,7 @@ session_start();
 require_once '../BANCO/conexao.php';
 
 // Verificar se o usuário está logado como coletor
-if (!isset($_SESSION['id_usuario']) || !isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] !== 'coletor') {
+if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] !== 'coletor') {
     header('Location: ../index.php');
     exit;
 }

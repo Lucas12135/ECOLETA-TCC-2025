@@ -3,7 +3,7 @@ session_start();
 require_once '../BANCO/conexao.php';
 
 // Verificar se o usuário está logado
-if (!isset($_SESSION['id_usuario'])) {
+if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] !== 'gerador') {
     header('Location: ../index.php');
     exit;
 }

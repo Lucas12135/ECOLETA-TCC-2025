@@ -3,7 +3,7 @@ session_start();
 
 // Verificar se o usuário está logado como admin
 if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] !== 'admin') {
-    header('Location: ../logins.php');
+    header('Location: ../index.php');
     exit;
 }
 
@@ -490,7 +490,7 @@ function corStatus($status) {
                     <h1>Dashboard Administrativo</h1>
                     <p style="color: #64748b; margin-top: 5px;">Bem-vindo ao painel de controle da Ecoleta</p>
                 </div>
-                <a href="../logout.php" class="admin-logout">
+                <a href="../index.php" class="admin-logout">
                     <i class="ri-logout-circle-line"></i>
                     Sair
                 </a>

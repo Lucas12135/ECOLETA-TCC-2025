@@ -2,7 +2,7 @@
 session_start();
 
 // Verificar se o usuário está logado
-if (!isset($_SESSION['id_usuario'])) {
+if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] !== 'gerador') {
     header('Location: ../index.php');
     exit;
 }
@@ -1011,10 +1011,20 @@ function corStatus($status) {
     </style>
 
     <script>
-        function abrirPerfilColetor(idColetor) {
+        // Inicia os dados do usuário para o arquivo perfil-coletor.js
+        usuarioLogado = true;
+        tipoUsuario = 'gerador';
+
+        // Função wrapper para abrirPerfilColetor que ajusta a URL para ../api
+        window.abrirPerfilColetor = function(idColetor) {
             const modal = document.getElementById('modalPerfilColetor');
             const conteudo = document.getElementById('perfilColetorConteudo');
             
+            if (!modal || !conteudo) {
+                console.error('Modal ou conteúdo não encontrado');
+                return;
+            }
+
             modal.classList.add('show');
 
             fetch(`../api/get_perfil_coletor.php?id=${idColetor}`)
@@ -1102,7 +1112,7 @@ function corStatus($status) {
                 .catch(error => {
                     conteudo.innerHTML = `<div style="text-align: center; padding: 40px; color: #e74c3c;"><i class="ri-error-warning-line" style="font-size: 48px; display: block; margin-bottom: 15px;"></i><p>Erro ao carregar perfil</p></div>`;
                 });
-        }
+        };
 
         document.querySelector('.modal-perfil-close').addEventListener('click', () => {
             document.getElementById('modalPerfilColetor').classList.remove('show');
@@ -1119,6 +1129,35 @@ function corStatus($status) {
     <script>
         new window.VLibras.Widget('https://vlibras.gov.br/app');
     </script>
+
+    <!-- Script para capturar coletor selecionado do perfil -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verifica se há um ID de coletor no sessionStorage
+            const idColetorSelecionado = sessionStorage.getItem('idColetorSelecionado');
+            
+            if (idColetorSelecionado) {
+                // Remove do sessionStorage após usar
+                sessionStorage.removeItem('idColetorSelecionado');
+                
+                // Muda o tipo de coleta para "especifico"
+                document.querySelector('input[name="tipo_coleta"][value="especifico"]').checked = true;
+                document.getElementById('coletor_id').value = idColetorSelecionado;
+                
+                // Exibe a seção de seleção de coletor
+                document.getElementById('coletor-selection').style.display = 'block';
+                
+                // Dispara o evento de mudança para atualizar a UI
+                document.querySelector('input[name="tipo_coleta"][value="especifico"]').dispatchEvent(new Event('change'));
+                
+                // Scroll para a seção de coletor
+                setTimeout(() => {
+                    document.getElementById('coletor-selection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            }
+        });
+    </script>
+
     <?php if (!$coleta_ativa): ?>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places"></script>
     <script src="../JS/solicitar-coleta.js"></script>

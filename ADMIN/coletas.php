@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] !== 'admin') {
-    header('Location: ../logins.php');
+    header('Location: ../index.php');
     exit;
 }
 
@@ -93,7 +93,7 @@ function traduzirStatus($status) {
                     <h1>Gerenciamento de Coletas</h1>
                     <p style="color: #64748b; margin-top: 5px;">Acompanhe todas as solicitações de coleta do sistema</p>
                 </div>
-                <a href="../logout.php" class="admin-logout">
+                <a href="../index.php" class="admin-logout">
                     <i class="ri-logout-circle-line"></i>
                     Sair
                 </a>

@@ -11,8 +11,8 @@ if (isset($_SESSION['nome_usuario']) && !isset($_SESSION['nome'])) {
     $_SESSION['nome'] = $_SESSION['nome_usuario'];
 }
 if (isset($_SESSION['tipo_usuario']) && $_SESSION['tipo_usuario'] !== 'gerador') {
-    // Opcional: bloquear acesso se não for gerador
-    // header('Location: ../index.php'); exit();
+    
+    header('Location: ../index.php'); exit();
 }
 
 /* ==============================================

@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] !== 'admin') {
-    header('Location: ../logins.php');
+    header('Location: ../index.php');
     exit;
 }
 
@@ -94,7 +94,7 @@ try {
                     <h1>Gerenciamento de Coletores</h1>
                     <p style="color: #64748b; margin-top: 5px;">Monitore e gerencie todos os coletores cadastrados</p>
                 </div>
-                <a href="../logout.php" class="admin-logout">
+                <a href="../index.php" class="admin-logout">
                     <i class="ri-logout-circle-line"></i>
                     Sair
                 </a>

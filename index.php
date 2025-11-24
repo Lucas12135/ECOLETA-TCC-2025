@@ -48,6 +48,8 @@ $ultimoNome = end($nomePartes);
                             <a href="PAGINAS_COLETOR/home.php" class="btn-filled">Ver Dashboard</a>
                         <?php elseif ($tipoUsuario === 'gerador'): ?>
                             <a href="PAGINAS_GERADOR/home.php" class="btn-filled">Ver Dashboard</a>
+                        <?php elseif ($tipoUsuario === 'admin'): ?>
+                            <a href="ADMIN/dashboard.php" class="btn-filled">Ver Dashboard</a>
                         <?php endif; ?>
                         <a href="logout.php" class="btn-outline">Sair</a>
                     </div>
@@ -450,7 +452,7 @@ $ultimoNome = end($nomePartes);
         .modal-perfil-coletor {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
@@ -602,6 +604,39 @@ $ultimoNome = end($nomePartes);
             color: #1e293b;
         }
 
+        .btn-solicitar-coleta {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-solicitar-coleta:hover:not(.btn-disabled) {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-solicitar-coleta:active:not(.btn-disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-solicitar-coleta.btn-disabled {
+            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -614,121 +649,21 @@ $ultimoNome = end($nomePartes);
     </style>
 
     <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script src="JS/perfil-coletor.js"></script>
     <script src="JS/coletores-proximos.js"></script>
     <script src="JS/index.js"></script>
     <script src="JS/acessibilidade.js"></script>
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U&libraries=places,marker&v=beta&callback=initAutocomplete&loading=async" async defer></script>
     <script>
+        // Dados do usuário logado (via PHP)
+        usuarioLogado = <?php echo json_encode($usuarioLogado); ?>;
+        tipoUsuario = <?php echo json_encode($tipoUsuario); ?>;
+
         // Inicializa o carousel do Bootstrap
         const benefitsCarousel = new bootstrap.Carousel(document.querySelector('#benefitsCarousel'), {
             interval: 3500,
             wrap: true
-        });
-
-        // Função para abrir modal do perfil do coletor
-        function abrirPerfilColetor(idColetor) {
-            const modal = document.getElementById('modalPerfilColetor');
-            const conteudo = document.getElementById('perfilColetorConteudo');
-            
-            modal.classList.add('show');
-
-            fetch(`api/get_perfil_coletor.php?id=${idColetor}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.sucesso) {
-                        const coletor = data.coletor;
-                        const estrelas = Array(5).fill('<i class="ri-star-fill"></i>').slice(0, Math.round(coletor.avaliacao_media)).join('');
-                        const estrelasBrancas = Array(5 - Math.round(coletor.avaliacao_media)).fill('<i class="ri-star-line"></i>').join('');
-
-                        const tipoTransporte = {
-                            'carro': '🚗 Carro',
-                            'moto': '🏍️ Motocicleta',
-                            'bicicleta': '🚴 Bicicleta',
-                            'carroca': '🚐 Carroça',
-                            'a_pe': '🚶 A Pé'
-                        };
-
-                        conteudo.innerHTML = `
-                            <div class="perfil-coletor-conteudo">
-                                <div class="perfil-header">
-                                    <img src="${coletor.foto_url || 'img/avatar-default.png'}" alt="${coletor.nome_completo}" class="perfil-foto" onerror="this.src='img/avatar-default.png'">
-                                    <div class="perfil-nome">${coletor.nome_completo}</div>
-                                    <div class="perfil-tipo">${coletor.tipo_coletor === 'pessoa_fisica' ? 'Pessoa Física' : 'Pessoa Jurídica'}</div>
-                                </div>
-
-                                <div class="perfil-info-section">
-                                    <div class="perfil-info-title">
-                                        <i class="ri-phone-line"></i> Contato
-                                    </div>
-                                    <div class="perfil-info-item">
-                                        <span class="perfil-info-label">Telefone</span>
-                                        <span class="perfil-info-value">${coletor.telefone}</span>
-                                    </div>
-                                    <div class="perfil-info-item">
-                                        <span class="perfil-info-label">Email</span>
-                                        <span class="perfil-info-value">${coletor.email}</span>
-                                    </div>
-                                </div>
-
-                                <div class="perfil-info-section">
-                                    <div class="perfil-info-title">
-                                        <i class="ri-star-line"></i> Avaliação
-                                    </div>
-                                    <div class="perfil-avaliacao">
-                                        <div class="perfil-stars">${estrelas}${estrelasBrancas}</div>
-                                        <div style="margin-top: 8px; color: #333; font-weight: 600;">
-                                            ${parseFloat(coletor.avaliacao_media).toFixed(1)} / 5.0 (${coletor.total_avaliacoes} avaliações)
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="perfil-info-section">
-                                    <div class="perfil-info-title">
-                                        <i class="ri-truck-line"></i> Meio de Transporte
-                                    </div>
-                                    <div class="perfil-transporte">
-                                        <div class="perfil-transporte-icon">${tipoTransporte[coletor.meio_transporte]?.split(' ')[0] || '🚗'}</div>
-                                        <div class="perfil-transporte-info">
-                                            <div class="perfil-transporte-label">Transporta com</div>
-                                            <div class="perfil-transporte-valor">${tipoTransporte[coletor.meio_transporte] || coletor.meio_transporte}</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="perfil-info-section">
-                                    <div class="perfil-info-title">
-                                        <i class="ri-history-line"></i> Estatísticas
-                                    </div>
-                                    <div class="perfil-info-item">
-                                        <span class="perfil-info-label">Total de Coletas</span>
-                                        <span class="perfil-info-value">${coletor.coletas}</span>
-                                    </div>
-                                    <div class="perfil-info-item">
-                                        <span class="perfil-info-label">Óleo Total Coletado</span>
-                                        <span class="perfil-info-value">${parseFloat(coletor.total_oleo).toFixed(1)}L</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        conteudo.innerHTML = `<div style="text-align: center; padding: 40px; color: #e74c3c;"><i class="ri-error-warning-line" style="font-size: 48px; display: block; margin-bottom: 15px;"></i><p>${data.mensagem}</p></div>`;
-                    }
-                })
-                .catch(error => {
-                    conteudo.innerHTML = `<div style="text-align: center; padding: 40px; color: #e74c3c;"><i class="ri-error-warning-line" style="font-size: 48px; display: block; margin-bottom: 15px;"></i><p>Erro ao carregar perfil</p></div>`;
-                });
-        }
-
-        // Fechar modal
-        document.querySelector('.modal-perfil-close').addEventListener('click', () => {
-            document.getElementById('modalPerfilColetor').classList.remove('show');
-        });
-
-        document.getElementById('modalPerfilColetor').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('modalPerfilColetor')) {
-                document.getElementById('modalPerfilColetor').classList.remove('show');
-            }
         });
     </script>
 </body>

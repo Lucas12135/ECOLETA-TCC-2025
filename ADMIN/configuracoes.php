@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] !== 'admin') {
-    header('Location: ../logins.php');
+    header('Location: ../index.php');
     exit;
 }
 
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h1>Configurações do Sistema</h1>
                     <p style="color: #64748b; margin-top: 5px;">Gerencie as configurações gerais da plataforma</p>
                 </div>
-                <a href="../logout.php" class="admin-logout">
+                <a href="../index.php" class="admin-logout">
                     <i class="ri-logout-circle-line"></i>
                     Sair
                 </a>

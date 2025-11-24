@@ -11,8 +11,8 @@ $ultimoNome = end($nomePartes);
 // Obter ID do gerador logado
 $idGerador = $_SESSION['id_usuario'] ?? null;
 
-if (!$idGerador) {
-    header('Location: ../logins.php');
+if (!isset($_SESSION['id_usuario']) || $_SESSION['tipo_usuario'] !== 'gerador') {
+    header('Location: ../index.php');
     exit;
 }
 
@@ -631,10 +631,21 @@ $statusClasses = [
     </style>
 
     <script>
-        function abrirPerfilColetor(idColetor) {
+        // Inicia os dados do usuário para o arquivo perfil-coletor.js
+        usuarioLogado = true;
+        tipoUsuario = 'gerador';
+
+        // Função wrapper para abrirPerfilColetor que ajusta a URL para ../api
+        const abrirPerfilColetorOriginal = window.abrirPerfilColetor;
+        window.abrirPerfilColetor = function(idColetor) {
             const modal = document.getElementById('modalPerfilColetor');
             const conteudo = document.getElementById('perfilColetorConteudo');
             
+            if (!modal || !conteudo) {
+                console.error('Modal ou conteúdo não encontrado');
+                return;
+            }
+
             modal.classList.add('show');
 
             fetch(`../api/get_perfil_coletor.php?id=${idColetor}`)
@@ -722,7 +733,7 @@ $statusClasses = [
                 .catch(error => {
                     conteudo.innerHTML = `<div style="text-align: center; padding: 40px; color: #e74c3c;"><i class="ri-error-warning-line" style="font-size: 48px; display: block; margin-bottom: 15px;"></i><p>Erro ao carregar perfil</p></div>`;
                 });
-        }
+        };
 
         document.querySelector('.modal-perfil-close').addEventListener('click', () => {
             document.getElementById('modalPerfilColetor').classList.remove('show');
