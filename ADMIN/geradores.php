@@ -28,10 +28,11 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
 try {
     $stmt = $conn->query("
         SELECT g.*, e.cep, e.cidade, e.estado,
-               COUNT(c.id) as total_coletas
+               COUNT(c.id) as total_coletas,
+               COALESCE(SUM(c.quantidade_oleo), 0) as total_oleo
         FROM geradores g
         LEFT JOIN enderecos e ON g.id_endereco = e.id
-        LEFT JOIN coletas c ON g.id = c.id_gerador
+        LEFT JOIN coletas c ON g.id = c.id_gerador AND c.status != 'cancelada'
         GROUP BY g.id
         ORDER BY g.created_at DESC
     ");

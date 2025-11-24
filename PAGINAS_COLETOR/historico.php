@@ -36,7 +36,7 @@ try {
             LEFT JOIN geradores g ON hc.id_gerador = g.id
             LEFT JOIN ganhos_coletores gc ON hc.id = gc.id_historico_coleta
             WHERE hc.id_coletor = :id_coletor
-            ORDER BY hc.data_conclusao DESC
+            ORDER BY hc.data_conclusao DESC, hc.data_inicio DESC
         ");
         $stmt_historico->bindParam(':id_coletor', $_SESSION['id_usuario']);
         $stmt_historico->execute();
@@ -67,8 +67,7 @@ function formatarStatus($status)
         'cancelada' => ['label' => 'Cancelada', 'class' => 'status-cancelada']
     ];
     return $statusMap[$status] ?? ['label' => $status, 'class' => 'status-padrao'];
-}
-?>
+}?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 

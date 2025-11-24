@@ -58,12 +58,26 @@ try {
     ");
     $geradores_ativos = $stmt_geradores_ativos->fetchAll(PDO::FETCH_ASSOC);
 
+    // Coletas concluídas
+    $stmt_coletas_concluidas = $conn->query("
+        SELECT COUNT(*) as total FROM coletas WHERE status = 'concluida'
+    ");
+    $coletas_concluidas_count = $stmt_coletas_concluidas->fetch(PDO::FETCH_ASSOC);
+
+    // Coletas canceladas
+    $stmt_coletas_canceladas = $conn->query("
+        SELECT COUNT(*) as total FROM coletas WHERE status = 'cancelada'
+    ");
+    $coletas_canceladas_count = $stmt_coletas_canceladas->fetch(PDO::FETCH_ASSOC);
+
 } catch (PDOException $e) {
     error_log("Erro ao buscar estatísticas: " . $e->getMessage());
     $stats = [];
     $coletas_recentes = [];
     $coletores_top = [];
     $geradores_ativos = [];
+    $coletas_concluidas_count = ['total' => 0];
+    $coletas_canceladas_count = ['total' => 0];
 }
 
 // Função para traduzir status
@@ -514,6 +528,22 @@ function corStatus($status) {
                         Total de Coletas
                     </div>
                     <div class="stat-value"><?php echo $stats['total_coletas'] ?? 0; ?></div>
+                </div>
+
+                <div class="stat-card" style="border-left-color: #22c55e;">
+                    <div class="stat-label">
+                        <i class="ri-check-double-line"></i>
+                        Coletas Concluídas
+                    </div>
+                    <div class="stat-value" style="color: #22c55e;"><?php echo $coletas_concluidas_count['total'] ?? 0; ?></div>
+                </div>
+
+                <div class="stat-card" style="border-left-color: #ef4444;">
+                    <div class="stat-label">
+                        <i class="ri-close-line"></i>
+                        Coletas Canceladas
+                    </div>
+                    <div class="stat-value" style="color: #ef4444;"><?php echo $coletas_canceladas_count['total'] ?? 0; ?></div>
                 </div>
             </div>
 

@@ -34,7 +34,7 @@ try {
     $stmt_geradores = $conn->query("
         SELECT g.nome_completo, COUNT(c.id) as coletas, SUM(c.quantidade_oleo) as oleo
         FROM geradores g
-        LEFT JOIN coletas c ON g.id = c.id_gerador
+        LEFT JOIN coletas c ON g.id = c.id_gerador AND c.status != 'cancelada'
         GROUP BY g.id
         ORDER BY oleo DESC
         LIMIT 10
