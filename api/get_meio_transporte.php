@@ -8,7 +8,7 @@ if (!isset($_SESSION['id_usuario'])) {
     exit;
 }
 
-include_once('conexao.php');
+include_once('../BANCO/conexao.php');
 
 try {
     // Buscar meio de transporte do coletor
