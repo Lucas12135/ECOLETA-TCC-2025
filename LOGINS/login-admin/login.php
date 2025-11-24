@@ -9,32 +9,20 @@ try {
     if (!isset($conn) || !$conn) {
         $errors['db'] = 'Não foi possível conectar ao banco de dados.';
     } elseif (!empty($_POST)) {
-        $email = trim($_POST['email'] ?? '');
+        $email = $_POST['email'] ?? '';
         $senha = $_POST['senha'] ?? '';
 
         if (empty($email) || empty($senha)) {
             $errors['login'] = 'Email e senha são obrigatórios.';
         } else {
-            // Buscar admin no banco de dados
-            $stmt = $conn->prepare('SELECT id, nome_completo, email, senha FROM coletores WHERE email = :email AND id = 1 LIMIT 1');
-            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-            $stmt->execute();
-            $admin = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($admin) {
-                // Verifica senha hash
-                if (password_verify($senha, $admin['senha'])) {
-                    // Senha correta
-                    $_SESSION['id_usuario'] = $admin['id'];
-                    $_SESSION['nome_usuario'] = $admin['nome_completo'];
-                    $_SESSION['email_usuario'] = $admin['email'];
-                    $_SESSION['tipo_usuario'] = 'admin';
-                    
-                    header('Location: ../../ADMIN/dashboard.php');
-                    exit;
-                } else {
-                    $errors['login'] = 'Email ou senha inválidos.';
-                }
+            if ($email === "admin@gmail.com" && $senha === "Admin123$") {
+                // Senha correta
+                $_SESSION['nome_usuario'] = 'Super Administrador';
+                $_SESSION['id_usuario'] = 0;
+                $_SESSION['tipo_usuario'] = 'admin';
+                
+                header('Location: ../../ADMIN/dashboard.php');
+                exit;
             } else {
                 $errors['login'] = 'Email ou senha inválidos.';
             }
