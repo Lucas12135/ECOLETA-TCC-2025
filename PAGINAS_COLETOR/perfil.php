@@ -12,6 +12,7 @@ if (!isset($_SESSION['id_usuario'])) {
 $id_coletor = $_SESSION['id_usuario'];
 $sql = "SELECT c.id, c.nome_completo, c.email, c.telefone, c.cpf_cnpj, 
                c.foto_perfil, c.avaliacao_media, c.total_avaliacoes,
+               c.coletas, c.total_oleo,
                e.rua, e.numero, e.complemento, e.bairro, e.cidade, e.cep
         FROM coletores c
         LEFT JOIN enderecos e ON c.id_endereco = e.id
@@ -26,26 +27,12 @@ if (!$coletor) {
     exit;
 }
 
-// Buscar estatísticas de coleta do coletor
-$sql_stats = "SELECT 
-                COUNT(hc.id) as total_coletas,
-                COALESCE(SUM(hc.quantidade_coletada), 0) as total_oleo,
-                COALESCE(AVG((ac.pontualidade + ac.profissionalismo + ac.qualidade_servico) / 3), 0) as avaliacao_media,
-                COUNT(DISTINCT ac.id) as total_avaliacoes
-              FROM historico_coletas hc
-              LEFT JOIN avaliacoes_coletores ac ON hc.id = ac.id_historico_coleta
-              WHERE hc.id_coletor = :id_coletor AND hc.status = 'concluida'";
-$stmt_stats = $conn->prepare($sql_stats);
-$stmt_stats->bindParam(':id_coletor', $id_coletor, PDO::PARAM_INT);
-$stmt_stats->execute();
-$stats = $stmt_stats->fetch(PDO::FETCH_ASSOC);
-
-// Preparar dados para exibição
+// Preparar dados para exibição (direto da tabela coletores)
 $nome_completo = $coletor['nome_completo'] ?? 'Coletor';
-$avaliacao_media = !empty($stats['avaliacao_media']) ? $stats['avaliacao_media'] : $coletor['avaliacao_media'] ?? 0;
-$total_avaliacoes = !empty($stats['total_avaliacoes']) ? $stats['total_avaliacoes'] : $coletor['total_avaliacoes'] ?? 0;
-$coletas = !empty($stats['total_coletas']) ? $stats['total_coletas'] : 0;
-$total_oleo = !empty($stats['total_oleo']) ? $stats['total_oleo'] : 0;
+$avaliacao_media = $coletor['avaliacao_media'] ?? 0;
+$total_avaliacoes = $coletor['total_avaliacoes'] ?? 0;
+$coletas = $coletor['coletas'] ?? 0;
+$total_oleo = $coletor['total_oleo'] ?? 0;
 
 // URL da foto
 $foto_url = $coletor['foto_perfil'] ? '../uploads/profile_photos/' . $coletor['foto_perfil'] : '../img/profile-placeholder.jpg';

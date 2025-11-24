@@ -202,7 +202,7 @@ function obterDiaSemana($data)
                         <?php if ($proximaColeta): ?>
                             <div class="time">
                                 <i class="ri-time-line"></i>
-                                <span><?php echo formatarHora($proximaColeta['data_agendada']); ?> - <?php echo formatarPeriodo($proximaColeta['periodo']); ?></span>
+                                <span><?php echo formatarPeriodo($proximaColeta['periodo']); ?></span>
                             </div>
                             <div class="location">
                                 <i class="ri-map-pin-line"></i>
