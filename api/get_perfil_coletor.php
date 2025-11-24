@@ -14,19 +14,20 @@ try {
 
     // Buscar dados do coletor
     $sql = "SELECT 
-                id,
-                nome_completo,
-                email,
-                telefone,
-                foto_perfil,
-                tipo_coletor,
-                meio_transporte,
-                avaliacao_media,
-                total_avaliacoes,
-                coletas,
-                total_oleo
-            FROM coletores
-            WHERE id = :id_coletor";
+                c.id,
+                c.nome_completo,
+                c.email,
+                c.telefone,
+                c.foto_perfil,
+                c.tipo_coletor,
+                cc.meio_transporte,
+                c.avaliacao_media,
+                c.total_avaliacoes,
+                c.coletas,
+                c.total_oleo
+            FROM coletores c
+            LEFT JOIN coletores_config cc ON c.id = cc.id_coletor
+            WHERE c.id = :id_coletor";
     
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':id_coletor', $idColetor, PDO::PARAM_INT);

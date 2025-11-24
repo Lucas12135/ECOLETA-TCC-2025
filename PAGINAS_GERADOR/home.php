@@ -649,8 +649,8 @@ $statusClasses = [
                             'carro': '🚗 Carro',
                             'moto': '🏍️ Motocicleta',
                             'bicicleta': '🚴 Bicicleta',
-                            'van': '🚐 Van',
-                            'caminhao': '🚚 Caminhão'
+                            'carroca': '🚐 Carroça',
+                            'a_pe': '🚶 A Pé'
                         };
 
                         conteudo.innerHTML = `

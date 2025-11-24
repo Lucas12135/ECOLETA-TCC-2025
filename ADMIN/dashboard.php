@@ -20,7 +20,9 @@ try {
             (SELECT COUNT(*) FROM geradores) as total_geradores,
             (SELECT COUNT(*) FROM coletores) as total_coletores,
             (SELECT COUNT(*) FROM coletas) as total_coletas,
-            (SELECT SUM(quantidade_oleo) FROM coletas WHERE status = 'concluida') as total_oleo_coletado
+            COALESCE(SUM(hc.quantidade_coletada), 0) AS total_oleo_coletado
+            FROM historico_coletas hc
+            WHERE hc.status = 'concluida'
     ");
     $stats = $stmt_total_usuarios->fetch(PDO::FETCH_ASSOC);
 
@@ -47,9 +49,9 @@ try {
 
     // Geradores mais ativos
     $stmt_geradores_ativos = $conn->query("
-        SELECT g.id, g.nome_completo, COUNT(c.id) as total_coletas_solicitadas, SUM(c.quantidade_oleo) as total_oleo
+        SELECT g.id, g.nome_completo, COUNT(c.id) as total_coletas_solicitadas, COALESCE(SUM(c.quantidade_oleo), 0) as total_oleo
         FROM geradores g
-        LEFT JOIN coletas c ON g.id = c.id_gerador
+        LEFT JOIN coletas c ON g.id = c.id_gerador AND c.status != 'cancelada'
         GROUP BY g.id
         ORDER BY total_coletas_solicitadas DESC
         LIMIT 5

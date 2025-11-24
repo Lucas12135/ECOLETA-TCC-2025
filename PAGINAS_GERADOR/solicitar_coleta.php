@@ -1029,14 +1029,14 @@ function corStatus($status) {
                             'carro': '🚗 Carro',
                             'moto': '🏍️ Motocicleta',
                             'bicicleta': '🚴 Bicicleta',
-                            'van': '🚐 Van',
-                            'caminhao': '🚚 Caminhão'
+                            'carroca': '🚐 Carroça',
+                            'a_pe': '🚶 A Pé'
                         };
 
                         conteudo.innerHTML = `
                             <div class="perfil-coletor-conteudo">
                                 <div class="perfil-header">
-                                    <img src="${coletor.foto_url ? '../' + coletor.foto_url : '../img/avatar-default.png'}" alt="${coletor.nome_completo}" class="perfil-foto" onerror="this.src='../img/avatar-default.png'">>>
+                                    <img src="${coletor.foto_url ? '../' + coletor.foto_url : '../img/avatar-default.png'}" alt="${coletor.nome_completo}" class="perfil-foto" onerror="this.src='../img/avatar-default.png'">
                                     <div class="perfil-nome">${coletor.nome_completo}</div>
                                     <div class="perfil-tipo">${coletor.tipo_coletor === 'pessoa_fisica' ? 'Pessoa Física' : 'Pessoa Jurídica'}</div>
                                 </div>
