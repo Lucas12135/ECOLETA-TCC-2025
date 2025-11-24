@@ -4,6 +4,7 @@ let geocoder;
 let markers = [];
 let userLocation = null;
 let routePolyline = null;
+let loadingPanelId = null;
 const GOOGLE_MAPS_API_KEY = 'AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U';
 
 // Inicialização do mapa
@@ -11,10 +12,34 @@ function initMap() {
   // Inicializar geocoder
   geocoder = new google.maps.Geocoder();
   
-  // Criar mapa centralizado em Campinas, SP
+  // Centro padrão: Campinas, SP
+  let mapCenter = { lat: -22.9099384, lng: -47.0626332 };
+  let initialZoom = 13;
+  
+  // Tentar obter localização atual para centrar o mapa
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        mapCenter = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        if (map) {
+          map.setCenter(mapCenter);
+          map.setZoom(14);
+        }
+      },
+      () => {
+        // Silenciosamente falha se geolocalização não estiver disponível
+      },
+      { timeout: 5000, maximumAge: 0 }
+    );
+  }
+  
+  // Criar mapa centralizado no ponto inicial
   map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: -22.9099384, lng: -47.0626332 },
-    zoom: 13,
+    center: mapCenter,
+    zoom: initialZoom,
     mapTypeControl: true,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
@@ -308,9 +333,30 @@ function calcularTempoEstimado(distanceMeters, meioTransporte) {
 async function calculateRouteWithRoutesAPI(origin, destination, address, markerNumber) {
   showLoadingPanel("🗺️ Calculando melhor rota...");
   
+  let loadingCompleted = false;
+  
+  // Timeout de segurança para esconder o loading após 5 segundos
+  const timeoutId = setTimeout(() => {
+    if (!loadingCompleted) {
+      loadingCompleted = true;
+      hideLoadingPanel();
+      showNotification("⏱️ A requisição demorou muito. Tente novamente.", "warning");
+    }
+  }, 5000);
+  
   try {
-    // Obter meio de transporte do banco
-    const meioTransporte = await getMeioTransporte();
+    // Obter meio de transporte do banco com timeout
+    let meioTransporte = 'carro';
+    try {
+      meioTransporte = await Promise.race([
+        getMeioTransporte(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
+      ]);
+    } catch (e) {
+      console.warn("Erro ao obter meio de transporte, usando padrão:", e);
+      meioTransporte = 'carro';
+    }
+    
     const travelMode = getTravelMode(meioTransporte);
     
     const response = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
@@ -345,13 +391,18 @@ async function calculateRouteWithRoutesAPI(origin, destination, address, markerN
       })
     });
 
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
     
-    hideLoadingPanel(); // IMPORTANTE: Esconder loading ANTES de mostrar resultado
+    if (!loadingCompleted) {
+      loadingCompleted = true;
+      hideLoadingPanel(); // IMPORTANTE: Esconder loading ANTES de mostrar resultado
+    }
     
     if (data.routes && data.routes.length > 0) {
       const route = data.routes[0];
@@ -362,7 +413,11 @@ async function calculateRouteWithRoutesAPI(origin, destination, address, markerN
     }
     
   } catch (error) {
-    hideLoadingPanel(); // IMPORTANTE: Esconder loading em caso de erro também
+    clearTimeout(timeoutId);
+    if (!loadingCompleted) {
+      loadingCompleted = true;
+      hideLoadingPanel(); // IMPORTANTE: Esconder loading em caso de erro também
+    }
     console.error("Erro ao calcular rota:", error);
     showNotification("❌ Erro ao calcular rota. Abrindo Google Maps...", "warning");
     // Fallback: abrir diretamente no Google Maps
@@ -541,8 +596,15 @@ function openInGoogleMaps(lat, lng) {
 
 // Loading panel
 function showLoadingPanel(message) {
+  // Remove painel anterior se existir
+  const existingPanel = document.getElementById('loading-panel');
+  if (existingPanel) {
+    existingPanel.remove();
+  }
+  
   const loadingPanel = document.createElement('div');
   loadingPanel.id = 'loading-panel';
+  loadingPanelId = loadingPanel.id;
   loadingPanel.style.cssText = `
     position: fixed;
     top: 50%;
@@ -568,7 +630,11 @@ function hideLoadingPanel() {
   if (loadingPanel) {
     loadingPanel.style.opacity = '0';
     loadingPanel.style.transition = 'opacity 0.3s';
-    setTimeout(() => loadingPanel.remove(), 300);
+    setTimeout(() => {
+      if (loadingPanel && loadingPanel.parentNode) {
+        loadingPanel.remove();
+      }
+    }, 300);
   }
 }
 
