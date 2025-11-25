@@ -1,4 +1,4 @@
-// JS/index.js — versão corrigida, completa e comentada
+// JS/index.js – versão original completa e comentada
 // Requer:
 // <script src="JS/index.js"></script>
 // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&libraries=places,marker&v=beta&callback=initAutocomplete" async defer></script>
@@ -71,7 +71,9 @@ function createInfoWindowHTML(coletor) {
   // HTML simples para a InfoWindow (pode ser estilizado)
   const defaultAvatar =
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23e0e0e0' width='100' height='100'/%3E%3Ccircle cx='50' cy='35' r='20' fill='%23999'/%3E%3Cellipse cx='50' cy='70' rx='30' ry='25' fill='%23999'/%3E%3C/svg%3E";
-  const foto = coletor.foto_perfil ? `uploads/profile_photos/${coletor.foto_perfil}` : defaultAvatar;
+  const foto = coletor.foto_perfil
+    ? `uploads/profile_photos/${coletor.foto_perfil}`
+    : defaultAvatar;
   const tempo = coletor.created_at
     ? calcularTempoDeAfiliacao(coletor.created_at) + " de atuação"
     : "";
@@ -379,9 +381,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Mostra o botão de libras quando o painel está pronto
   setTimeout(() => {
-    const librasButton = document.querySelector('.libras-button');
+    const librasButton = document.querySelector(".libras-button");
     if (librasButton) {
-      librasButton.classList.add('show');
+      librasButton.classList.add("show");
     }
   }, 500);
 
@@ -389,10 +391,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event) event.stopPropagation();
 
     const target = event.currentTarget;
-    
+
     // Se clicou no botão de libras
-    if (target.classList.contains('libras-button')) {
-      const vlibrasButton = document.querySelector('div[vw-access-button]');
+    if (target.classList.contains("libras-button")) {
+      const vlibrasButton = document.querySelector("div[vw-access-button]");
       if (vlibrasButton) {
         vlibrasButton.click();
       }

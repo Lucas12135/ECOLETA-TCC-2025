@@ -342,7 +342,7 @@ function obterDiaSemana($data)
                                                 <div class="upcoming-collection-item">
                                                     <div class="collection-time">
                                                         <i class="ri-time-line"></i>
-                                                        <span><?php echo formatarHora($coleta['data_agendada']); ?></span>
+                                                        <span><?php echo formatarPeriodo($coleta['periodo']); ?></span>
                                                     </div>
                                                     <div class="collection-info">
                                                         <p class="generator"><?php echo htmlspecialchars($coleta['nome_completo']); ?></p>
@@ -350,7 +350,6 @@ function obterDiaSemana($data)
                                                     </div>
                                                     <div class="collection-amount">
                                                         <span><?php echo $coleta['quantidade_oleo']; ?>L</span>
-                                                        <span class="period"><?php echo formatarPeriodo($coleta['periodo']); ?></span>
                                                     </div>
                                                 </div>
                                             <?php endforeach; ?>

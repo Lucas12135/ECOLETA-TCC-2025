@@ -102,7 +102,6 @@ try {
 
                 <div class="form-footer">
                     <p>Não tem uma conta? <a href="../../cadastros.php">Criar conta</a></p>
-                    <p><a href="#">Esqueceu sua senha?</a></p>
                 </div>
             </div>
         </div>

@@ -5,24 +5,24 @@ let markers = [];
 let userLocation = null;
 let routePolyline = null;
 let loadingPanelId = null;
-const GOOGLE_MAPS_API_KEY = 'AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U';
+const GOOGLE_MAPS_API_KEY = "AIzaSyAe884hZ7UbSCJDuS4hkEWrR-ls0XVBe_U";
 
 // Inicialização do mapa
 function initMap() {
   // Inicializar geocoder
   geocoder = new google.maps.Geocoder();
-  
+
   // Centro padrão: Campinas, SP
   let mapCenter = { lat: -22.9099384, lng: -47.0626332 };
   let initialZoom = 13;
-  
+
   // Tentar obter localização atual para centrar o mapa
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         mapCenter = {
           lat: position.coords.latitude,
-          lng: position.coords.longitude
+          lng: position.coords.longitude,
         };
         if (map) {
           map.setCenter(mapCenter);
@@ -35,7 +35,7 @@ function initMap() {
       { timeout: 5000, maximumAge: 0 }
     );
   }
-  
+
   // Criar mapa centralizado no ponto inicial
   map = new google.maps.Map(document.getElementById("map"), {
     center: mapCenter,
@@ -43,31 +43,31 @@ function initMap() {
     mapTypeControl: true,
     mapTypeControlOptions: {
       style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
-      position: google.maps.ControlPosition.TOP_RIGHT
+      position: google.maps.ControlPosition.TOP_RIGHT,
     },
     streetViewControl: true,
     streetViewControlOptions: {
-      position: google.maps.ControlPosition.RIGHT_BOTTOM
+      position: google.maps.ControlPosition.RIGHT_BOTTOM,
     },
     fullscreenControl: true,
     fullscreenControlOptions: {
-      position: google.maps.ControlPosition.RIGHT_TOP
+      position: google.maps.ControlPosition.RIGHT_TOP,
     },
     zoomControl: true,
     zoomControlOptions: {
-      position: google.maps.ControlPosition.RIGHT_CENTER
+      position: google.maps.ControlPosition.RIGHT_CENTER,
     },
     styles: [
       {
         featureType: "poi.business",
-        stylers: [{ visibility: "off" }]
+        stylers: [{ visibility: "off" }],
       },
       {
         featureType: "transit",
         elementType: "labels.icon",
-        stylers: [{ visibility: "off" }]
-      }
-    ]
+        stylers: [{ visibility: "off" }],
+      },
+    ],
   });
 
   // Tentar obter localização do usuário
@@ -83,16 +83,16 @@ function getUserLocation() {
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
-      maximumAge: 0
+      maximumAge: 0,
     };
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         userLocation = {
           lat: position.coords.latitude,
-          lng: position.coords.longitude
+          lng: position.coords.longitude,
         };
-        
+
         // Adicionar marcador da localização do usuário
         new google.maps.Marker({
           position: userLocation,
@@ -105,9 +105,9 @@ function getUserLocation() {
             fillColor: "#4285F4",
             fillOpacity: 1,
             strokeColor: "#ffffff",
-            strokeWeight: 3
+            strokeWeight: 3,
           },
-          zIndex: 1000
+          zIndex: 1000,
         });
 
         // Adicionar círculo de precisão
@@ -119,7 +119,7 @@ function getUserLocation() {
           fillOpacity: 0.1,
           map: map,
           center: userLocation,
-          radius: position.coords.accuracy
+          radius: position.coords.accuracy,
         });
 
         // Centralizar mapa
@@ -128,7 +128,10 @@ function getUserLocation() {
       },
       (error) => {
         console.log("Erro ao obter localização:", error);
-        showNotification("💡 Permita o acesso à localização para calcular rotas", "info");
+        showNotification(
+          "💡 Permita o acesso à localização para calcular rotas",
+          "info"
+        );
       },
       options
     );
@@ -140,20 +143,20 @@ function getUserLocation() {
 // Adicionar marcadores para todas as coletas
 function addCollectionMarkers() {
   const collections = document.querySelectorAll(".collection-item");
-  
+
   collections.forEach((collection, index) => {
     const locationElement = collection.querySelector(".location");
     if (!locationElement) return;
-    
+
     const address = locationElement.textContent.trim();
     const timeElement = collection.querySelector(".time");
     const quantityElement = collection.querySelector(".quantity");
     const statusElement = collection.querySelector(".status");
-    
+
     const time = timeElement ? timeElement.textContent : "N/A";
     const quantity = quantityElement ? quantityElement.textContent : "N/A";
     const statusText = statusElement ? statusElement.textContent : "Agendada";
-    
+
     // Geocodificar com delay para animação
     setTimeout(() => {
       geocodeAddress(address, time, quantity, statusText, index);
@@ -164,20 +167,21 @@ function addCollectionMarkers() {
 // Geocodificar endereço e criar marcador
 function geocodeAddress(address, time, quantity, statusText, index) {
   const fullAddress = `${address}, Campinas, São Paulo, Brasil`;
-  
+
   geocoder.geocode({ address: fullAddress }, (results, status) => {
     if (status === "OK") {
       const location = results[0].geometry.location;
       const position = {
         lat: location.lat(),
-        lng: location.lng()
+        lng: location.lng(),
       };
-      
+
       // Escolher cor do marcador
       let markerColor = "red";
       if (statusText.toLowerCase().includes("conclu")) markerColor = "green";
-      else if (statusText.toLowerCase().includes("andamento")) markerColor = "yellow";
-      
+      else if (statusText.toLowerCase().includes("andamento"))
+        markerColor = "yellow";
+
       const marker = new google.maps.Marker({
         position: position,
         map: map,
@@ -187,12 +191,12 @@ function geocodeAddress(address, time, quantity, statusText, index) {
           text: `${index + 1}`,
           color: "white",
           fontSize: "15px",
-          fontWeight: "bold"
+          fontWeight: "bold",
         },
         icon: {
           url: `http://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png`,
-          scaledSize: new google.maps.Size(40, 40)
-        }
+          scaledSize: new google.maps.Size(40, 40),
+        },
       });
 
       // Info Window
@@ -203,7 +207,9 @@ function geocodeAddress(address, time, quantity, statusText, index) {
               <div style="background: linear-gradient(135deg, #223e2a, #386043); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">
                 ${index + 1}
               </div>
-              <h4 style="margin: 0; color: #223e2a; font-size: 17px; font-weight: 600;">Coleta #${index + 1}</h4>
+              <h4 style="margin: 0; color: #223e2a; font-size: 17px; font-weight: 600;">Coleta #${
+                index + 1
+              }</h4>
             </div>
             
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
@@ -232,18 +238,20 @@ function geocodeAddress(address, time, quantity, statusText, index) {
               </div>
             </div>
             
-            <button onclick="showRouteToLocation(${position.lat}, ${position.lng}, '${address.replace(/'/g, "\\'")}', ${index + 1})" 
+            <button onclick="showRouteToLocation(${position.lat}, ${
+          position.lng
+        }, '${address.replace(/'/g, "\\'")}', ${index + 1})" 
                     style="width: 100%; padding: 12px; background: linear-gradient(135deg, #4CAF50, #45a049); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s; box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);"
                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(76, 175, 80, 0.4)'"
                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(76, 175, 80, 0.3)'">
               🗺️ Calcular Rota
             </button>
           </div>
-        `
+        `,
       });
 
       marker.addListener("click", () => {
-        markers.forEach(m => {
+        markers.forEach((m) => {
           if (m.infoWindow) m.infoWindow.close();
         });
         infoWindow.open(map, marker);
@@ -264,15 +272,20 @@ function showRouteToLocation(lat, lng, address, markerNumber) {
 
   if (!userLocation) {
     showNotification("🔍 Obtendo sua localização...", "info");
-    
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           userLocation = {
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
           };
-          calculateRouteWithRoutesAPI(userLocation, destination, address, markerNumber);
+          calculateRouteWithRoutesAPI(
+            userLocation,
+            destination,
+            address,
+            markerNumber
+          );
         },
         (error) => {
           showNotification("❌ Permita o acesso à localização", "error");
@@ -282,136 +295,168 @@ function showRouteToLocation(lat, lng, address, markerNumber) {
       showNotification("⚠️ Geolocalização não disponível", "warning");
     }
   } else {
-    calculateRouteWithRoutesAPI(userLocation, destination, address, markerNumber);
+    calculateRouteWithRoutesAPI(
+      userLocation,
+      destination,
+      address,
+      markerNumber
+    );
   }
 }
 
 // Obter meio de transporte do coletor
 async function getMeioTransporte() {
   try {
-    const response = await fetch('../api/get_meio_transporte.php');
+    const response = await fetch("../api/get_meio_transporte.php");
     const data = await response.json();
-    return data.meio_transporte || 'carro';
+    return data.meio_transporte || "carro";
   } catch (error) {
-    console.error('Erro ao obter meio de transporte:', error);
-    return 'carro'; // default
+    console.error("Erro ao obter meio de transporte:", error);
+    return "carro"; // default
   }
 }
 
 // Mapear meio de transporte para modo de viagem da API
 function getTravelMode(meioTransporte) {
   const modos = {
-    'carro': 'DRIVE',
-    'bicicleta': 'BICYCLE',
-    'motocicleta': 'DRIVE',
-    'carroca': 'DRIVE',
-    'a_pe': 'WALK'
+    carro: "DRIVE",
+    bicicleta: "BICYCLE",
+    motocicleta: "TWO_WHEELER",
+    carroca: "DRIVE",
+    a_pe: "WALK",
   };
-  return modos[meioTransporte] || 'DRIVE';
+  return modos[meioTransporte] || "DRIVE";
 }
 
 // Calcular tempo estimado baseado no meio de transporte
 function calcularTempoEstimado(distanceMeters, meioTransporte) {
   // Velocidades médias em km/h
   const velocidades = {
-    'carro': 40,
-    'motocicleta': 45,
-    'bicicleta': 15,
-    'carroca': 10,
-    'a_pe': 5
+    carro: 40,
+    motocicleta: 45,
+    bicicleta: 15,
+    carroca: 10,
+    a_pe: 5,
   };
-  
+
   const velocidade = velocidades[meioTransporte] || 40;
   const distanceKm = distanceMeters / 1000;
   const horas = distanceKm / velocidade;
   const minutos = Math.ceil(horas * 60);
-  
+
   return minutos;
 }
 
 // Calcular rota usando Routes API
-async function calculateRouteWithRoutesAPI(origin, destination, address, markerNumber) {
+async function calculateRouteWithRoutesAPI(
+  origin,
+  destination,
+  address,
+  markerNumber
+) {
   showLoadingPanel("🗺️ Calculando melhor rota...");
-  
+
   let loadingCompleted = false;
-  
+
   // Timeout de segurança para esconder o loading após 5 segundos
   const timeoutId = setTimeout(() => {
     if (!loadingCompleted) {
       loadingCompleted = true;
       hideLoadingPanel();
-      showNotification("⏱️ A requisição demorou muito. Tente novamente.", "warning");
+      showNotification(
+        "⏱️ A requisição demorou muito. Tente novamente.",
+        "warning"
+      );
     }
   }, 5000);
-  
+
   try {
     // Obter meio de transporte do banco com timeout
-    let meioTransporte = 'carro';
+    let meioTransporte = "carro";
     try {
       meioTransporte = await Promise.race([
         getMeioTransporte(),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Timeout")), 5000)
+        ),
       ]);
     } catch (e) {
       console.warn("Erro ao obter meio de transporte, usando padrão:", e);
-      meioTransporte = 'carro';
+      meioTransporte = "carro";
     }
-    
+
     const travelMode = getTravelMode(meioTransporte);
-    
-    const response = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Goog-Api-Key': GOOGLE_MAPS_API_KEY,
-        'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline'
+
+    // Configurar preferência de roteamento baseado no modo
+    const requestBody = {
+      origin: {
+        location: {
+          latLng: {
+            latitude: origin.lat,
+            longitude: origin.lng,
+          },
+        },
       },
-      body: JSON.stringify({
-        origin: {
-          location: {
-            latLng: {
-              latitude: origin.lat,
-              longitude: origin.lng
-            }
-          }
+      destination: {
+        location: {
+          latLng: {
+            latitude: destination.lat,
+            longitude: destination.lng,
+          },
         },
-        destination: {
-          location: {
-            latLng: {
-              latitude: destination.lat,
-              longitude: destination.lng
-            }
-          }
+      },
+      travelMode: travelMode,
+      computeAlternativeRoutes: false,
+      languageCode: "pt-BR",
+      units: "METRIC",
+    };
+
+    // TRAFFIC_AWARE só funciona com DRIVE
+    if (travelMode === "DRIVE") {
+      requestBody.routingPreference = "TRAFFIC_AWARE";
+    }
+
+    const response = await fetch(
+      "https://routes.googleapis.com/directions/v2:computeRoutes",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
+          "X-Goog-FieldMask":
+            "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
         },
-        travelMode: travelMode,
-        routingPreference: 'TRAFFIC_AWARE',
-        computeAlternativeRoutes: false,
-        languageCode: 'pt-BR',
-        units: 'METRIC'
-      })
-    });
+        body: JSON.stringify(requestBody),
+      }
+    );
 
     clearTimeout(timeoutId);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    
+
     if (!loadingCompleted) {
       loadingCompleted = true;
       hideLoadingPanel(); // IMPORTANTE: Esconder loading ANTES de mostrar resultado
     }
-    
+
     if (data.routes && data.routes.length > 0) {
       const route = data.routes[0];
-      displayRoute(route, origin, destination, address, markerNumber, meioTransporte);
+      displayRoute(
+        route,
+        origin,
+        destination,
+        address,
+        markerNumber,
+        meioTransporte
+      );
       showNotification("✅ Rota calculada com sucesso!", "success");
     } else {
-      throw new Error('Nenhuma rota encontrada');
+      throw new Error("Nenhuma rota encontrada");
     }
-    
   } catch (error) {
     clearTimeout(timeoutId);
     if (!loadingCompleted) {
@@ -419,7 +464,10 @@ async function calculateRouteWithRoutesAPI(origin, destination, address, markerN
       hideLoadingPanel(); // IMPORTANTE: Esconder loading em caso de erro também
     }
     console.error("Erro ao calcular rota:", error);
-    showNotification("❌ Erro ao calcular rota. Abrindo Google Maps...", "warning");
+    showNotification(
+      "❌ Erro ao calcular rota. Abrindo Google Maps...",
+      "warning"
+    );
     // Fallback: abrir diretamente no Google Maps
     setTimeout(() => {
       openInGoogleMaps(destination.lat, destination.lng);
@@ -428,78 +476,95 @@ async function calculateRouteWithRoutesAPI(origin, destination, address, markerN
 }
 
 // Exibir rota no mapa
-function displayRoute(route, origin, destination, address, markerNumber, meioTransporte) {
+function displayRoute(
+  route,
+  origin,
+  destination,
+  address,
+  markerNumber,
+  meioTransporte
+) {
   // Limpar rota anterior
   if (routePolyline) {
     routePolyline.setMap(null);
   }
-  
+
   // Decodificar polyline
-  const path = google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline);
-  
+  const path = google.maps.geometry.encoding.decodePath(
+    route.polyline.encodedPolyline
+  );
+
   // Criar polyline
   routePolyline = new google.maps.Polyline({
     path: path,
     geodesic: true,
-    strokeColor: '#4CAF50',
+    strokeColor: "#4CAF50",
     strokeOpacity: 0.8,
     strokeWeight: 6,
-    map: map
+    map: map,
   });
-  
+
   // Ajustar bounds
   const bounds = new google.maps.LatLngBounds();
-  path.forEach(point => bounds.extend(point));
+  path.forEach((point) => bounds.extend(point));
   map.fitBounds(bounds, {
-    padding: { top: 100, right: 100, bottom: 100, left: 100 }
+    padding: { top: 100, right: 100, bottom: 100, left: 100 },
   });
-  
+
   // Calcular distância e duração baseado no meio de transporte
   const distanceKm = (route.distanceMeters / 1000).toFixed(1);
-  const durationMin = calcularTempoEstimado(route.distanceMeters, meioTransporte);
-  
+  const durationMin = calcularTempoEstimado(
+    route.distanceMeters,
+    meioTransporte
+  );
+
   // Ícones por meio de transporte
   const icones = {
-    'carro': '🚗',
-    'motocicleta': '🏍️',
-    'bicicleta': '🚴',
-    'carroca': '🛺',
-    'a_pe': '🚶'
+    carro: "🚗",
+    motocicleta: "🏍️",
+    bicicleta: "🚴",
+    carroca: "🛺",
+    a_pe: "🚶",
   };
-  
-  const icone = icones[meioTransporte] || '🚗';
-  
+
+  const icone = icones[meioTransporte] || "🚗";
+
   // Mostrar painel de informações
-  showRouteInfo({
-    distance: `${distanceKm} km`,
-    duration: `${durationMin} min`,
-    distanceMeters: route.distanceMeters,
-    meioTransporte: meioTransporte,
-    icone: icone
-  }, address, destination, markerNumber);
+  showRouteInfo(
+    {
+      distance: `${distanceKm} km`,
+      duration: `${durationMin} min`,
+      distanceMeters: route.distanceMeters,
+      meioTransporte: meioTransporte,
+      icone: icone,
+    },
+    address,
+    destination,
+    markerNumber
+  );
 }
 
 // Exibir informações da rota
 function showRouteInfo(route, address, destination, markerNumber) {
-  const existingPanel = document.getElementById('route-info-panel');
+  const existingPanel = document.getElementById("route-info-panel");
   if (existingPanel) {
     existingPanel.remove();
   }
-  
+
   // Nomes amigáveis dos meios de transporte
   const nomesTransporte = {
-    'carro': 'Carro',
-    'motocicleta': 'Motocicleta',
-    'bicicleta': 'Bicicleta',
-    'carroca': 'Carroça',
-    'a_pe': 'A pé'
+    carro: "Carro",
+    motocicleta: "Motocicleta",
+    bicicleta: "Bicicleta",
+    carroca: "Carroça",
+    a_pe: "A pé",
   };
-  
-  const nomeTransporte = nomesTransporte[route.meioTransporte] || 'Carro';
-  
-  const routeInfoPanel = document.createElement('div');
-  routeInfoPanel.id = 'route-info-panel';
-  
+
+  const nomeTransporte = nomesTransporte[route.meioTransporte] || "Carro";
+
+  const routeInfoPanel = document.createElement("div");
+  routeInfoPanel.id = "route-info-panel";
+
   routeInfoPanel.innerHTML = `
     <div style="position: relative;">
       <button onclick="closeRouteInfo()" class="route-close-btn">×</button>
@@ -547,19 +612,21 @@ function showRouteInfo(route, address, destination, markerNumber) {
       </button>
     </div>
   `;
-  
+
   document.body.appendChild(routeInfoPanel);
 }
 
 // Compartilhar rota
 function shareRoute(address, distance, duration) {
   const text = `📍 Rota para coleta:\n${address}\n\n📏 Distância: ${distance}\n⏱️ Tempo: ${duration}`;
-  
+
   if (navigator.share) {
-    navigator.share({
-      title: 'Rota de Coleta - Ecoleta',
-      text: text
-    }).catch(() => {});
+    navigator
+      .share({
+        title: "Rota de Coleta - Ecoleta",
+        text: text,
+      })
+      .catch(() => {});
   } else {
     navigator.clipboard.writeText(text).then(() => {
       showNotification("✅ Informações copiadas!", "success");
@@ -569,18 +636,18 @@ function shareRoute(address, distance, duration) {
 
 // Fechar painel de rota
 function closeRouteInfo() {
-  const panel = document.getElementById('route-info-panel');
+  const panel = document.getElementById("route-info-panel");
   if (panel) {
-    panel.style.opacity = '0';
-    panel.style.transform = 'translateX(100%)';
-    panel.style.transition = 'all 0.3s';
+    panel.style.opacity = "0";
+    panel.style.transform = "translateX(100%)";
+    panel.style.transition = "all 0.3s";
     setTimeout(() => panel.remove(), 300);
   }
-  
+
   if (routePolyline) {
     routePolyline.setMap(null);
   }
-  
+
   if (userLocation) {
     map.setCenter(userLocation);
     map.setZoom(14);
@@ -590,20 +657,20 @@ function closeRouteInfo() {
 // Abrir Google Maps
 function openInGoogleMaps(lat, lng) {
   const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
-  window.open(url, '_blank');
+  window.open(url, "_blank");
   showNotification("🚗 Abrindo Google Maps...", "success");
 }
 
 // Loading panel
 function showLoadingPanel(message) {
   // Remove painel anterior se existir
-  const existingPanel = document.getElementById('loading-panel');
+  const existingPanel = document.getElementById("loading-panel");
   if (existingPanel) {
     existingPanel.remove();
   }
-  
-  const loadingPanel = document.createElement('div');
-  loadingPanel.id = 'loading-panel';
+
+  const loadingPanel = document.createElement("div");
+  loadingPanel.id = "loading-panel";
   loadingPanelId = loadingPanel.id;
   loadingPanel.style.cssText = `
     position: fixed;
@@ -626,10 +693,10 @@ function showLoadingPanel(message) {
 }
 
 function hideLoadingPanel() {
-  const loadingPanel = document.getElementById('loading-panel');
+  const loadingPanel = document.getElementById("loading-panel");
   if (loadingPanel) {
-    loadingPanel.style.opacity = '0';
-    loadingPanel.style.transition = 'opacity 0.3s';
+    loadingPanel.style.opacity = "0";
+    loadingPanel.style.transition = "opacity 0.3s";
     setTimeout(() => {
       if (loadingPanel && loadingPanel.parentNode) {
         loadingPanel.remove();
@@ -639,15 +706,15 @@ function hideLoadingPanel() {
 }
 
 // Sistema de notificações
-function showNotification(message, type = 'info') {
+function showNotification(message, type = "info") {
   const colors = {
-    success: '#4CAF50',
-    error: '#f44336',
-    warning: '#ff9800',
-    info: '#2196F3'
+    success: "#4CAF50",
+    error: "#f44336",
+    warning: "#ff9800",
+    info: "#2196F3",
   };
-  
-  const notification = document.createElement('div');
+
+  const notification = document.createElement("div");
   notification.style.cssText = `
     position: fixed;
     top: 20px;
@@ -665,46 +732,52 @@ function showNotification(message, type = 'info') {
   `;
   notification.textContent = message;
   document.body.appendChild(notification);
-  
+
   setTimeout(() => {
-    notification.style.opacity = '0';
-    notification.style.transform = 'translateX(100%)';
-    notification.style.transition = 'all 0.3s';
+    notification.style.opacity = "0";
+    notification.style.transform = "translateX(100%)";
+    notification.style.transition = "all 0.3s";
     setTimeout(() => notification.remove(), 300);
   }, 3500);
 }
 
 // Event listeners
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
   setTimeout(() => {
-    document.querySelectorAll('.next-collection .view-map-btn').forEach(button => {
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        const locationElement = this.closest('.card-content').querySelector('.location span');
-        if (locationElement) {
-          const address = locationElement.textContent.trim();
-          geocodeAndShowRoute(address);
-        }
+    document
+      .querySelectorAll(".next-collection .view-map-btn")
+      .forEach((button) => {
+        button.addEventListener("click", function (e) {
+          e.preventDefault();
+          const locationElement =
+            this.closest(".card-content").querySelector(".location span");
+          if (locationElement) {
+            const address = locationElement.textContent.trim();
+            geocodeAndShowRoute(address);
+          }
+        });
       });
-    });
 
-    document.querySelectorAll('.collection-item .view-map-btn').forEach((button, index) => {
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        const locationElement = this.closest('.collection-item').querySelector('.location');
-        if (locationElement) {
-          const address = locationElement.textContent.trim();
-          geocodeAndShowRoute(address, index + 1);
-        }
-        
-        setTimeout(() => {
-          document.getElementById('map').scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          });
-        }, 300);
+    document
+      .querySelectorAll(".collection-item .view-map-btn")
+      .forEach((button, index) => {
+        button.addEventListener("click", function (e) {
+          e.preventDefault();
+          const locationElement =
+            this.closest(".collection-item").querySelector(".location");
+          if (locationElement) {
+            const address = locationElement.textContent.trim();
+            geocodeAndShowRoute(address, index + 1);
+          }
+
+          setTimeout(() => {
+            document.getElementById("map").scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }, 300);
+        });
       });
-    });
   }, 1000);
 });
 
@@ -715,19 +788,19 @@ function geocodeAndShowRoute(address, markerNumber = 1) {
     setTimeout(() => geocodeAndShowRoute(address, markerNumber), 1000);
     return;
   }
-  
+
   const fullAddress = `${address}, Campinas, São Paulo, Brasil`;
-  
+
   showLoadingPanel("🔍 Localizando endereço...");
-  
+
   geocoder.geocode({ address: fullAddress }, (results, status) => {
     hideLoadingPanel();
-    
+
     if (status === "OK") {
       const location = results[0].geometry.location;
       const position = {
         lat: location.lat(),
-        lng: location.lng()
+        lng: location.lng(),
       };
       showRouteToLocation(position.lat, position.lng, address, markerNumber);
     } else {
@@ -740,14 +813,14 @@ function geocodeAndShowRoute(address, markerNumber = 1) {
 window.initMap = initMap;
 
 function toggleMobileMenu() {
-  const sidebar = document.querySelector('.sidebar');
+  const sidebar = document.querySelector(".sidebar");
   if (sidebar) {
-    sidebar.classList.toggle('mobile-active');
+    sidebar.classList.toggle("mobile-active");
   }
 }
 
 // Animações CSS
-const style = document.createElement('style');
+const style = document.createElement("style");
 style.textContent = `
   @keyframes spin {
     0% { transform: rotate(0deg); }
