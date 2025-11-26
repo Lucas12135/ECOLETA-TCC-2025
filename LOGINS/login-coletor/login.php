@@ -42,7 +42,7 @@ try {
             $_SESSION['tipo_usuario'] = 'coletor';
 
             // Redireciona para a página principal do coletor
-            header('Location: ../../index.php');
+            header('Location: ../../PAGINAS_COLETOR/home.php');
             exit;
         } else {
             $errors['login'] = 'Email ou senha inválidos.';
@@ -102,7 +102,6 @@ try {
 
                 <div class="form-footer">
                     <p>Não tem uma conta? <a href="../../cadastros.php">Criar conta</a></p>
-                    <p><a href="#">Esqueceu sua senha?</a></p>
                 </div>
             </div>
         </div>

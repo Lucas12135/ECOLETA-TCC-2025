@@ -170,7 +170,7 @@ unset($_SESSION['cadastro_completo']);
     <script src="../JS/acessibilidade.js"></script>
     <script>
         document.getElementById('visitProfileBtn').addEventListener('click', function() {
-            window.location.href = "../index.php";
+            window.location.href = "../PAGINAS_GERADOR/home.php";
         });
     </script>
 </body>

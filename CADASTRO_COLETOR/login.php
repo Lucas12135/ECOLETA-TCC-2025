@@ -91,7 +91,7 @@ if (!empty($_POST)) {
       $_SESSION['otp_purpose'] = 'cadastro_coletor';
 
       // Disparo do OTP via endpoint HTTP
-      $otpUrl   = 'http://localhost/ECOLETA/ECOLETA-TCC-2025/auth/request_otp.php';
+      $otpUrl   = 'http://localhost/Ecoleta/auth/request_otp.php';
       $postData = http_build_query([
         'email'   => $email,
         'purpose' => 'cadastro_coletor'
@@ -352,15 +352,9 @@ if (!empty($_POST)) {
             <div class="input-error"><?= $errors['tipo'] ?></div>
           <?php endif; ?>
           <label>
-            <input type="checkbox" required>
-            <span>Aceito os <a href="#">Termos de Uso</a> e condições da Ecoleta</span>
           </label>
           <button type="submit">Cadastrar agora</button>
         </form>
-        <p>
-          Ao continuar, você concorda em receber comunicações da Ecoleta.
-          Confira nossa <a href="#">Declaração de Privacidade</a>.
-        </p>
       </div>
     </div>
   </main>

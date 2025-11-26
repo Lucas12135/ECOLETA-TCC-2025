@@ -45,7 +45,7 @@ try {
             $_SESSION['tipo_usuario'] = 'gerador';
 
             // Redireciona para a página principal do Gerador
-            header('Location: ../../index.php');
+            header('Location: ../../PAGINAS_GERADOR/home.php');
             exit;
         } else {
             $errors['login'] = 'Email ou senha inválidos.';
@@ -116,7 +116,6 @@ try {
 
             <div class="form-footer">
                 <p>Não tem uma conta? <a href="../../cadastros.php">Criar conta</a></p>
-                <p><a href="#">Esqueceu sua senha?</a></p>
             </div>
         </div>
     </div>

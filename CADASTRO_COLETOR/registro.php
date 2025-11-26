@@ -200,10 +200,6 @@ if (!empty($_POST)) {
             <button type="submit" class="btn-continue" href="ultregistro.html">Continuar Cadastro</button>
           </div>
         </form>
-
-        <p>
-          Seus dados estão protegidos conforme nossa <a href="#">Política de Privacidade</a>.
-        </p>
       </div>
     </div>
   </main>

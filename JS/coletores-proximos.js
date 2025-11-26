@@ -50,63 +50,108 @@ function calcularTempoAfiliacao(data_criacao) {
   return "Afiliado recentemente";
 }
 
+// Variável global para armazenar localização do usuário
+let userCurrentLocation = null;
+
+// Função para obter localização do usuário
+function obterLocalizacaoUsuario() {
+  return new Promise((resolve, reject) => {
+    if (userCurrentLocation) {
+      resolve(userCurrentLocation);
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      reject(new Error("Geolocalização não suportada"));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        userCurrentLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        console.log("Localização do usuário obtida:", userCurrentLocation);
+        resolve(userCurrentLocation);
+      },
+      (error) => {
+        console.error("Erro ao obter localização:", error);
+        reject(error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  });
+}
+
 // Função para buscar coletores próximos com geolocalização
 async function buscarColetoresPorGeolocation() {
-  if (!navigator.geolocation) {
-    alert("Seu navegador não suporta geolocalização");
-    return;
-  }
-
-  // Mostrar mensagem de carregamento
   exibirCarregando();
 
-  navigator.geolocation.getCurrentPosition(
-    async function (position) {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
+  try {
+    const location = await obterLocalizacaoUsuario();
+    
+    const response = await fetch(
+      `api/get_coletores_proximos.php?latitude=${location.latitude}&longitude=${location.longitude}`
+    );
+    const text = await response.text();
 
-      try {
-        const response = await fetch(
-          `api/get_coletores_proximos.php?latitude=${latitude}&longitude=${longitude}`
-        );
-        const text = await response.text();
+    console.log("Resposta da API:", text);
 
-        // Debug: verificar se é JSON válido
-        console.log("Resposta da API:", text);
-
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (parseError) {
-          console.error("Erro ao fazer parse do JSON:", text);
-          exibirMensagemErro("Erro ao buscar coletores. Tente novamente.");
-          return;
-        }
-
-        if (data.success && data.coletores.length > 0) {
-          exibirColetores(data.coletores);
-        } else if (data.success) {
-          exibirMensagemVazia();
-        } else {
-          exibirMensagemErro(data.message || "Erro ao buscar coletores");
-        }
-      } catch (error) {
-        console.error("Erro ao buscar coletores:", error);
-        exibirMensagemErro("Erro ao buscar coletores próximos");
-      }
-    },
-    function (error) {
-      console.error("Erro de geolocalização:", error);
-      exibirMensagemErro(
-        "Erro ao obter sua localização. Tente inserir um CEP manualmente."
-      );
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0,
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error("Erro ao fazer parse do JSON:", text);
+      exibirMensagemErro("Erro ao buscar coletores. Tente novamente.");
+      return;
     }
-  );
+
+    if (data.success && data.coletores.length > 0) {
+      // Filtrar coletores pelo raio de atuação
+      const coletoresFiltrados = filtrarColetoresPorRaio(data.coletores, location);
+      
+      if (coletoresFiltrados.length > 0) {
+        exibirColetores(coletoresFiltrados);
+      } else {
+        exibirMensagemVazia();
+      }
+    } else if (data.success) {
+      exibirMensagemVazia();
+    } else {
+      exibirMensagemErro(data.message || "Erro ao buscar coletores");
+    }
+  } catch (error) {
+    console.error("Erro ao buscar coletores:", error);
+    exibirMensagemErro("Erro ao obter sua localização. Tente inserir um endereço manualmente.");
+  }
+}
+
+// Função para filtrar coletores pelo raio de atuação
+function filtrarColetoresPorRaio(coletores, userLocation) {
+  return coletores.filter((coletor) => {
+    // Calcular distância real
+    const distancia = calcularDistancia(
+      userLocation.latitude,
+      userLocation.longitude,
+      parseFloat(coletor.latitude),
+      parseFloat(coletor.longitude)
+    );
+    
+    // Adicionar distância calculada ao objeto
+    coletor.distancia = distancia;
+    
+    // Verificar se está dentro do raio de atuação
+    const raioAtuacao = parseFloat(coletor.raio_atuacao) || 50;
+    
+    console.log(`Coletor ${coletor.nome}: distância=${distancia.toFixed(2)}km, raio=${raioAtuacao}km`);
+    
+    return distancia <= raioAtuacao;
+  });
 }
 
 // Função para buscar coletores próximos por CEP
@@ -118,7 +163,6 @@ async function buscarColetoresProximos(cep) {
     );
     const text = await response.text();
 
-    // Debug: verificar se é JSON válido
     console.log("Resposta da API (CEP):", text);
 
     let data;
@@ -131,7 +175,23 @@ async function buscarColetoresProximos(cep) {
     }
 
     if (data.success && data.coletores.length > 0) {
-      exibirColetores(data.coletores);
+      // Se tem localização do CEP, filtrar por raio
+      if (data.latitude && data.longitude) {
+        const location = {
+          latitude: parseFloat(data.latitude),
+          longitude: parseFloat(data.longitude)
+        };
+        
+        const coletoresFiltrados = filtrarColetoresPorRaio(data.coletores, location);
+        
+        if (coletoresFiltrados.length > 0) {
+          exibirColetores(coletoresFiltrados);
+        } else {
+          exibirMensagemVazia();
+        }
+      } else {
+        exibirColetores(data.coletores);
+      }
     } else if (data.success) {
       exibirMensagemVazia();
     } else {
@@ -188,11 +248,12 @@ function exibirColetores(coletores) {
       ? `uploads/profile_photos/${coletor.foto_perfil}`
       : defaultAvatar;
 
-    console.log("Coletor nome:", coletor.nome); // Debug
+    console.log("Coletor nome:", coletor.nome);
     console.log("Foto perfil:", coletor.foto_perfil);
 
     const card = document.createElement("div");
     card.className = "coletor-card";
+    card.setAttribute("data-id", coletor.id);
     card.innerHTML = `
       <div class="card-content" style="color: var(--cor-texto-primaria);">
         <div class="avatar-placeholder" style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: #f0f0f0; margin: 0 auto 10px;">
@@ -201,6 +262,10 @@ function exibirColetores(coletores) {
         
         <h2 class="coletor-nome">${escapeHtml(coletor.nome)}</h2>
         <p class="coletor-info">${tempoAfiliacao}</p>
+        
+        <p class="coletor-distancia" style="color: #2ecc71; font-weight: 600; margin: 8px 0;">
+          📍 ${distancia} km de você
+        </p>
         
         <div class="star-rating">
           ${estrelas}
@@ -216,7 +281,7 @@ function exibirColetores(coletores) {
         </p>
 
         <p class="coletor-raio">
-          Distância: ${distancia} km | Raio: ${coletor.raio_atuacao} km
+          Raio de atuação: ${coletor.raio_atuacao} km
         </p>
 
         <button class="coletor-btn" onclick="verPerfilColetor(${coletor.id})">
@@ -237,7 +302,8 @@ function exibirMensagemVazia() {
 
   container.innerHTML = `
     <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
-      <p style="font-size: 18px; color: #666;">Nenhum coletor disponível na região</p>
+      <p style="font-size: 18px; color: #666;">Nenhum coletor disponível na sua região</p>
+      <p style="font-size: 14px; color: #999; margin-top: 10px;">Os coletores mostrados atendem apenas dentro do seu raio de atuação</p>
     </div>
   `;
 }
@@ -296,16 +362,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Tentar carregar coletores automaticamente usando geolocalização ao carregar a página
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        console.log("Localização obtida automaticamente:", position.coords);
-        // Auto-buscar coletores próximos
-        buscarColetoresPorGeolocation();
-      },
-      function (error) {
-        console.log("Geolocalização não disponível:", error);
-      }
-    );
-  }
+  console.log("Iniciando busca automática de coletores...");
+  buscarColetoresPorGeolocation();
 });

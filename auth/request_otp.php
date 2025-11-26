@@ -56,9 +56,20 @@ if (!$email) {
     exit;
 }
 
+// Validar purpose
+$validPurposes = ['cadastro_gerador', 'cadastro_coletor', 'reset_password', 'login_otp'];
+if (!in_array($purpose, $validPurposes, true)) {
+    http_response_code(400);
+    echo json_encode([
+        'status'  => 'error',
+        'message' => 'Propósito inválido'
+    ]);
+    exit;
+}
+
 // Limites / regras
 $COOLDOWN = 90;  // 90 segundos = 1m30s
-$MAX_DAILY = 1000;  // máximo de 10 códigos por dia (por e-mail)
+$MAX_DAILY = 100;  // máximo de 10 códigos por dia (por e-mail)
 
 // ================== LIMITE DIÁRIO ==================
 try {
