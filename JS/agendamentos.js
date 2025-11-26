@@ -286,6 +286,30 @@ document.addEventListener("DOMContentLoaded", function () {
       e.stopPropagation();
       const coletaId = btn.getAttribute("data-coleta-id");
       const quantidade = btn.getAttribute("data-quantidade");
+      const dataAgendada = btn.getAttribute("data-data-agendada");
+
+      // ===== VALIDAÇÃO: Verificar se a data agendada já chegou =====
+      if (dataAgendada) {
+        const dateParts = dataAgendada.split(" ");
+        const dateObj = new Date(dateParts[0] + "T" + (dateParts[1] || "00:00:00"));
+        const agora = new Date();
+
+        if (agora < dateObj) {
+          // A data agendada ainda não chegou
+          const dataFormatada = dateObj.toLocaleDateString("pt-BR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          });
+          
+          mostrarResultado(
+            "erro",
+            "Ação Não Permitida",
+            `Não é possível concluir a coleta antes da data agendada.\n\nData agendada: ${dataFormatada}`
+          );
+          return;
+        }
+      }
 
       // Abrir modal
       const modal = document.getElementById("modalConcluir");

@@ -279,7 +279,7 @@ function formatarData($data)
                                             <span class="agendamento-solicitante"><?php echo htmlspecialchars($coleta['nome_completo']); ?></span>
                                         </div>
                                         <div class="agendamento-actions">
-                                            <button class="btn-concluir" data-coleta-id="<?php echo $coleta['id']; ?>" data-quantidade="<?php echo $coleta['quantidade_oleo']; ?>">
+                                            <button class="btn-concluir" data-coleta-id="<?php echo $coleta['id']; ?>" data-quantidade="<?php echo $coleta['quantidade_oleo']; ?>" data-data-agendada="<?php echo $coleta['data_agendada']; ?>">
                                                 <i class="ri-check-double-line"></i>
                                                 Concluir
                                             </button>

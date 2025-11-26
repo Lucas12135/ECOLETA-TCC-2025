@@ -42,7 +42,7 @@ try {
             $_SESSION['tipo_usuario'] = 'coletor';
 
             // Redireciona para a página principal do coletor
-            header('Location: ../../index.php');
+            header('Location: ../../PAGINAS_COLETOR/home.php');
             exit;
         } else {
             $errors['login'] = 'Email ou senha inválidos.';

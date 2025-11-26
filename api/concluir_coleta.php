@@ -53,6 +53,19 @@ try {
             exit;
         }
         
+        // ===== VALIDAÇÃO: Verificar se a data agendada ainda não chegou =====
+        $data_agendada = new DateTime($coleta['data_agendada']);
+        $agora = new DateTime();
+        
+        if ($agora < $data_agendada) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false, 
+                'message' => 'Não é possível concluir uma coleta antes da data agendada. Data agendada: ' . $data_agendada->format('d/m/Y H:i:s')
+            ]);
+            exit;
+        }
+        
         // Iniciar transação
         $conn->beginTransaction();
         

@@ -45,7 +45,7 @@ try {
             $_SESSION['tipo_usuario'] = 'gerador';
 
             // Redireciona para a página principal do Gerador
-            header('Location: ../../index.php');
+            header('Location: ../../PAGINAS_GERADOR/home.php');
             exit;
         } else {
             $errors['login'] = 'Email ou senha inválidos.';
