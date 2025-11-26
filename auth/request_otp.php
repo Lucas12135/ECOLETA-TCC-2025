@@ -58,7 +58,7 @@ if (!$email) {
 
 // Limites / regras
 $COOLDOWN = 90;  // 90 segundos = 1m30s
-$MAX_DAILY = 10;  // máximo de 10 códigos por dia (por e-mail)
+$MAX_DAILY = 1000;  // máximo de 10 códigos por dia (por e-mail)
 
 // ================== LIMITE DIÁRIO ==================
 try {
