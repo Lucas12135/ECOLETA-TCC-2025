@@ -83,7 +83,7 @@ if (!empty($_POST)) {
             $_SESSION['otp_purpose'] = 'cadastro_gerador';
 
             // Disparo do OTP via endpoint HTTP
-            $otpUrl   = 'http://localhost/ECOLETA/ECOLETA-TCC-2025/auth/request_otp.php';
+            $otpUrl   = 'http://localhost/Ecoleta/auth/request_otp.php';
             $postData = http_build_query([
                 'email'   => $email,
                 'purpose' => 'cadastro_gerador'
@@ -105,7 +105,7 @@ if (!empty($_POST)) {
             // Log opcional para debug (remove em produção):
             // error_log("OTP Response: " . $response);
 
-            header('Location: ../auth/view/otp_verify_gerador.php?email=' . urlencode($email) . '&origin=cadastro_gerador');
+            header('Location: ../auth/view/otp_verify_gerador.php?email=' . urlencode($email) . '&purpose=cadastro_gerador');
             exit;
         }
     }
