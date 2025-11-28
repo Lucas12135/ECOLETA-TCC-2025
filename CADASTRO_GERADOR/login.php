@@ -78,6 +78,7 @@ if (!empty($_POST)) {
             $_SESSION['cadastro']['email'] = $email;
             $_SESSION['cadastro']['senha'] = $senha;
 
+            /*
             // Guarda dados para fluxo de OTP
             $_SESSION['otp_email']   = $email;
             $_SESSION['otp_purpose'] = 'cadastro_gerador';
@@ -106,7 +107,9 @@ if (!empty($_POST)) {
             // error_log("OTP Response: " . $response);
 
             header('Location: ../auth/view/otp_verify_gerador.php?email=' . urlencode($email) . '&origin=cadastro_gerador');
-            exit;
+           */
+            header('location:registro.php');
+            exit();
         }
     }
 }

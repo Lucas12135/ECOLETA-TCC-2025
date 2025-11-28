@@ -86,6 +86,7 @@ if (!empty($_POST)) {
       $_SESSION['cadastro']['senha'] = password_hash($senha, PASSWORD_DEFAULT);
       $_SESSION['cadastro']['tipo'] = $tipo;
 
+      /*
       // Guarda dados para fluxo de OTP
       $_SESSION['otp_email']   = $email;
       $_SESSION['otp_purpose'] = 'cadastro_coletor';
@@ -119,8 +120,11 @@ if (!empty($_POST)) {
         // error_log("OTP Response: " . $response);
 
         header('Location: ../auth/view/otp_verify_coletor.php?email=' . urlencode($email) . '&origin=cadastro_coletor');
-        exit;
-      }
+       
+      }*/
+
+        header('location:registro.php');
+        exit();
     }
   }
 }
